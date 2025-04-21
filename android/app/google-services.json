@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "853648866936",
+    "project_id": "kidsdo-1a5bf",
+    "storage_bucket": "kidsdo-1a5bf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853648866936:android:dead0010f83ff5f493778d",
+        "android_client_info": {
+          "package_name": "com.kidsdo.kidsdo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "853648866936-lmidq00rjrd3dagd4dkgd8bsm7mgsqem.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6sjTuZ3lTSbzuwGuppvPjS1YOzMhxhZ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "853648866936-lmidq00rjrd3dagd4dkgd8bsm7mgsqem.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "853648866936-lvdcv7f7tmg0dkmpkbjk93l0e2fc27rr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.oarjones.kidsdo"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853648866936:android:9c459fe0807415a393778d",
+        "android_client_info": {
+          "package_name": "com.oarjones.kidsdo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "853648866936-lmidq00rjrd3dagd4dkgd8bsm7mgsqem.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6sjTuZ3lTSbzuwGuppvPjS1YOzMhxhZ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "853648866936-lmidq00rjrd3dagd4dkgd8bsm7mgsqem.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "853648866936-lvdcv7f7tmg0dkmpkbjk93l0e2fc27rr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.oarjones.kidsdo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
