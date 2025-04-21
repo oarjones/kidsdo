@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
             icon: const Icon(Icons.logout),
             onPressed: () {
               // Lógica de cierre de sesión
-              Get.offAllNamed(Routes.LOGIN);
+              Get.offAllNamed(Routes.login);
             },
           ),
         ],

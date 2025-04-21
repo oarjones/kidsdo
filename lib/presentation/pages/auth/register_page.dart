@@ -57,7 +57,7 @@ class RegisterPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Lógica de registro
-                  Get.offAllNamed(Routes.HOME);
+                  Get.offAllNamed(Routes.home);
                 },
                 child: const Text(AppStrings.register),
               ),

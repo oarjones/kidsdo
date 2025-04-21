@@ -5,32 +5,32 @@ import 'package:kidsdo/presentation/pages/auth/register_page.dart';
 import 'package:kidsdo/presentation/pages/home/home_page.dart';
 
 abstract class Routes {
-  static const SPLASH = '/splash';
-  static const LOGIN = '/login';
-  static const REGISTER = '/register';
-  static const HOME = '/home';
-  static const PROFILE = '/profile';
-  static const FAMILY = '/family';
-  static const CREATE_CHILD = '/create-child';
+  static const splash = '/splash';
+  static const login = '/login';
+  static const register = '/register';
+  static const home = '/home';
+  static const profile = '/profile';
+  static const family = '/family';
+  static const createChild = '/create-child';
 }
 
 class AppPages {
   static final routes = [
     GetPage(
-      name: Routes.SPLASH,
+      name: Routes.splash,
       page: () => const SplashPage(),
       transition: Transition.fade,
     ),
     GetPage(
-      name: Routes.LOGIN,
+      name: Routes.login,
       page: () => const LoginPage(),
     ),
     GetPage(
-      name: Routes.REGISTER,
+      name: Routes.register,
       page: () => const RegisterPage(),
     ),
     GetPage(
-      name: Routes.HOME,
+      name: Routes.home,
       page: () => const HomePage(),
     ),
     // Otras rutas se añadirán según avance el desarrollo

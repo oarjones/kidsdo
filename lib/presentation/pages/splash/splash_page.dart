@@ -24,7 +24,7 @@ class _SplashPageState extends State<SplashPage> {
 
     // Aquí eventualmente comprobaríamos si el usuario está autenticado
     // y navegaríamos a HOME o LOGIN según corresponda
-    Get.offAllNamed(Routes.LOGIN);
+    Get.offAllNamed(Routes.login);
   }
 
   @override

@@ -63,7 +63,7 @@ class LoginPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Lógica de inicio de sesión
-                  Get.offAllNamed(Routes.HOME);
+                  Get.offAllNamed(Routes.home);
                 },
                 child: const Text(AppStrings.login),
               ),
@@ -82,7 +82,7 @@ class LoginPage extends StatelessWidget {
                   const Text(AppStrings.dontHaveAccount),
                   TextButton(
                     onPressed: () {
-                      Get.toNamed(Routes.REGISTER);
+                      Get.toNamed(Routes.register);
                     },
                     child: const Text(AppStrings.register),
                   ),
