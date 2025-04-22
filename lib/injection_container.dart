@@ -18,6 +18,11 @@ import 'package:kidsdo/domain/repositories/auth_repository.dart';
 import 'package:kidsdo/domain/repositories/user_repository.dart';
 import 'package:kidsdo/domain/repositories/family_repository.dart';
 
+// Controllers
+import 'package:kidsdo/presentation/controllers/session_controller.dart';
+import 'package:kidsdo/presentation/controllers/auth_controller.dart';
+import 'package:kidsdo/presentation/controllers/language_controller.dart';
+
 Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
 
@@ -74,9 +79,27 @@ Future<void> init() async {
     fenix: true,
   );
 
-  // UseCases
-  // Se implementarán en sesiones futuras
-
   // Controllers
-  // Se implementarán en sesiones futuras
+  Get.lazyPut<SessionController>(
+    () => SessionController(
+      authRepository: Get.find<IAuthRepository>(),
+      sharedPreferences: Get.find<SharedPreferences>(),
+    ),
+    fenix: true,
+  );
+
+  Get.lazyPut<AuthController>(
+    () => AuthController(
+      authRepository: Get.find<IAuthRepository>(),
+      sessionController: Get.find<SessionController>(),
+    ),
+    fenix: true,
+  );
+
+  Get.lazyPut<LanguageController>(
+    () => LanguageController(
+      sharedPreferences: Get.find<SharedPreferences>(),
+    ),
+    fenix: true,
+  );
 }

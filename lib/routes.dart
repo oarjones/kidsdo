@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:kidsdo/core/middleware/auth_middleware.dart';
 import 'package:kidsdo/presentation/pages/splash/splash_page.dart';
 import 'package:kidsdo/presentation/pages/auth/login_page.dart';
 import 'package:kidsdo/presentation/pages/auth/register_page.dart';
@@ -24,15 +25,33 @@ class AppPages {
     GetPage(
       name: Routes.login,
       page: () => const LoginPage(),
+      middlewares: [NoAuthMiddleware()],
     ),
     GetPage(
       name: Routes.register,
       page: () => const RegisterPage(),
+      middlewares: [NoAuthMiddleware()],
     ),
     GetPage(
       name: Routes.home,
       page: () => const HomePage(),
+      middlewares: [AuthMiddleware()],
     ),
-    // Otras rutas se añadirán según avance el desarrollo
+    // Otras rutas protegidas
+    GetPage(
+      name: Routes.profile,
+      page: () => const HomePage(), // Temporalmente usando HomePage
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: Routes.family,
+      page: () => const HomePage(), // Temporalmente usando HomePage
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: Routes.createChild,
+      page: () => const HomePage(), // Temporalmente usando HomePage
+      middlewares: [AuthMiddleware()],
+    ),
   ];
 }
