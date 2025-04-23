@@ -9,22 +9,37 @@ import 'package:kidsdo/presentation/widgets/auth/auth_message.dart';
 import 'package:kidsdo/presentation/widgets/auth/auth_text_field.dart';
 import 'package:kidsdo/presentation/widgets/auth/language_selector_auth.dart';
 
-class RegisterPage extends GetView<AuthController> {
+// 1. Convertir a StatefulWidget
+class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
 
   @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+// 2. Crear la clase State
+class _RegisterPageState extends State<RegisterPage> {
+  // 3. Definir la GlobalKey localmente
+  final _formKey = GlobalKey<FormState>();
+
+  // 4. Obtener la instancia del controlador
+  final AuthController controller = Get.find<AuthController>();
+
+  @override
   Widget build(BuildContext context) {
+    // 5. Mover el método build aquí
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppDimensions.lg),
+          // 6. Usar Obx para observar cambios en el controlador
           child: Obx(
             () => Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildHeader(),
                 const SizedBox(height: AppDimensions.lg),
-                _buildRegisterForm(context),
+                _buildRegisterForm(context), // Pasar context
                 const SizedBox(height: AppDimensions.lg),
                 AuthTheme.dividerWithText(TrKeys.or.tr),
                 const SizedBox(height: AppDimensions.lg),
@@ -39,6 +54,7 @@ class RegisterPage extends GetView<AuthController> {
     );
   }
 
+  // 7. Mover todos los métodos _buildXXX aquí
   Widget _buildHeader() {
     return Column(
       children: [
@@ -50,18 +66,15 @@ class RegisterPage extends GetView<AuthController> {
             IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                controller.clearForm();
+                controller.clearForm(); // Llamar al método del controlador
                 Get.back();
               },
             ),
-
             // Selector de idioma
             const LanguageSelectorAuth(),
           ],
         ),
-
         const SizedBox(height: AppDimensions.md),
-
         // Título y subtítulo
         Text(
           TrKeys.createAccount.tr,
@@ -80,7 +93,8 @@ class RegisterPage extends GetView<AuthController> {
 
   Widget _buildRegisterForm(BuildContext context) {
     return Form(
-      key: controller.registerFormKey,
+      // 8. Usar la _formKey local
+      key: _formKey,
       child: Column(
         children: [
           // Nombre
@@ -143,7 +157,12 @@ class RegisterPage extends GetView<AuthController> {
             validator: controller.validateConfirmPassword,
             focusNode: controller.confirmPasswordFocusNode,
             textInputAction: TextInputAction.done,
-            onSubmitted: (_) => controller.register(),
+            // 9. Validar con _formKey local antes de llamar a register
+            onSubmitted: (_) {
+              if (_formKey.currentState?.validate() ?? false) {
+                controller.register(); // Llamar al método del controlador
+              }
+            },
             autoValidate: true,
           ),
 
@@ -167,7 +186,12 @@ class RegisterPage extends GetView<AuthController> {
           AuthButton(
             text: TrKeys.register.tr,
             onPressed: controller.status.value != AuthStatus.loading
-                ? controller.register
+                ? () {
+                    // 10. Validar con _formKey local antes de llamar a register
+                    if (_formKey.currentState?.validate() ?? false) {
+                      controller.register(); // Llamar al método del controlador
+                    }
+                  }
                 : null,
             isLoading: controller.status.value == AuthStatus.loading,
             type: AuthButtonType.primary,
@@ -194,7 +218,7 @@ class RegisterPage extends GetView<AuthController> {
     return AuthButton(
       text: TrKeys.signInWithGoogle.tr,
       onPressed: controller.status.value != AuthStatus.loading
-          ? controller.signInWithGoogle
+          ? controller.signInWithGoogle // Llamar al método del controlador
           : null,
       type: AuthButtonType.social,
       icon: Icons.g_mobiledata,
@@ -211,7 +235,7 @@ class RegisterPage extends GetView<AuthController> {
         TextButton(
           onPressed: controller.status.value != AuthStatus.loading
               ? () {
-                  controller.clearForm();
+                  controller.clearForm(); // Llamar al método del controlador
                   Get.back();
                 }
               : null,

@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 abstract class IAuthRemoteDataSource {
   /// Registra un nuevo usuario con email y contraseña
@@ -37,6 +39,8 @@ abstract class IAuthRemoteDataSource {
 class AuthRemoteDataSource implements IAuthRemoteDataSource {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
+
+  final Logger logger = Get.find<Logger>();
 
   AuthRemoteDataSource({
     required FirebaseAuth firebaseAuth,
@@ -87,33 +91,33 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
   @override
   Future<User> signInWithGoogle() async {
     try {
-      print("Iniciando proceso de autenticación con Google...");
+      logger.i("Iniciando proceso de autenticación con Google...");
 
       // Iniciar el flujo de autenticación de Google
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
-        print("El usuario canceló el inicio de sesión con Google");
+        logger.i("El usuario canceló el inicio de sesión con Google");
         throw FirebaseAuthException(
           code: 'google-sign-in-canceled',
           message: 'El inicio de sesión con Google fue cancelado',
         );
       }
 
-      print("Usuario de Google obtenido: ${googleUser.email}");
+      logger.i("Usuario de Google obtenido: ${googleUser.email}");
 
       // Obtener detalles de autenticación de la solicitud
-      print("Obteniendo tokens de autenticación...");
+      logger.i("Obteniendo tokens de autenticación...");
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      print(
+      logger.i(
           "Token de acceso obtenido: ${googleAuth.accessToken?.substring(0, 10)}...");
-      print("Token ID obtenido: ${googleAuth.idToken?.substring(0, 10)}...");
+      logger.i("Token ID obtenido: ${googleAuth.idToken?.substring(0, 10)}...");
 
       // Verificar que tengamos tokens válidos
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-        print("Error: No se pudieron obtener tokens válidos de Google");
+        logger.i("Error: No se pudieron obtener tokens válidos de Google");
         throw FirebaseAuthException(
           code: 'google-sign-in-no-tokens',
           message:
@@ -122,19 +126,19 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
       }
 
       // Crear una nueva credencial
-      print("Creando credencial de Firebase con tokens de Google...");
+      logger.i("Creando credencial de Firebase con tokens de Google...");
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken!,
         idToken: googleAuth.idToken!,
       );
 
       // Iniciar sesión con la credencial
-      print("Iniciando sesión en Firebase con credencial de Google...");
+      logger.i("Iniciando sesión en Firebase con credencial de Google...");
       final userCredential =
           await _firebaseAuth.signInWithCredential(credential);
 
       if (userCredential.user == null) {
-        print(
+        logger.i(
             "Error: Firebase devolvió un usuario nulo después de la autenticación");
         throw FirebaseAuthException(
           code: 'google-sign-in-failed',
@@ -142,12 +146,12 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
         );
       }
 
-      print(
+      logger.i(
           "Inicio de sesión con Google exitoso para usuario: ${userCredential.user!.email}");
       return userCredential.user!;
     } catch (e) {
       // Registrar el error para depuración
-      print('Error en signInWithGoogle: $e');
+      logger.i('Error en signInWithGoogle: $e');
 
       if (e is FirebaseAuthException) {
         rethrow;
@@ -155,10 +159,10 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
 
       // En modo de desarrollo, imprimimos detalles adicionales de depuración
       if (e is PlatformException) {
-        print('PlatformException detallada:');
-        print('  Código: ${e.code}');
-        print('  Mensaje: ${e.message}');
-        print('  Detalles: ${e.details}');
+        logger.i('PlatformException detallada:');
+        logger.i('  Código: ${e.code}');
+        logger.i('  Mensaje: ${e.message}');
+        logger.i('  Detalles: ${e.details}');
       }
 
       throw FirebaseAuthException(

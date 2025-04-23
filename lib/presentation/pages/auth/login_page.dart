@@ -11,16 +11,32 @@ import 'package:kidsdo/presentation/widgets/auth/language_selector_auth.dart';
 import 'package:kidsdo/presentation/widgets/common/app_logo.dart';
 import 'package:kidsdo/routes.dart';
 
-class LoginPage extends GetView<AuthController> {
+// 1. Convertir a StatefulWidget
+class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+// 2. Crear la clase State
+class _LoginPageState extends State<LoginPage> {
+  // 3. Definir la GlobalKey localmente
+  final _formKey = GlobalKey<FormState>();
+
+  // 4. Obtener la instancia del controlador
+  //    (Asegúrate de que AuthController se haya inicializado antes con Get.put o Get.lazyPut)
+  final AuthController controller = Get.find<AuthController>();
+
+  @override
   Widget build(BuildContext context) {
+    // 5. Mover el método build aquí
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(AppDimensions.lg),
+            // 6. Usar Obx para observar cambios en el controlador
             child: Obx(
               () => Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -37,7 +53,7 @@ class LoginPage extends GetView<AuthController> {
                   const SizedBox(height: AppDimensions.xl),
                   _buildHeader(),
                   const SizedBox(height: AppDimensions.xxl),
-                  _buildLoginForm(context),
+                  _buildLoginForm(context), // Pasar context si es necesario
                   const SizedBox(height: AppDimensions.lg),
                   AuthTheme.dividerWithText(TrKeys.or.tr),
                   const SizedBox(height: AppDimensions.lg),
@@ -53,6 +69,7 @@ class LoginPage extends GetView<AuthController> {
     );
   }
 
+  // 7. Mover todos los métodos _buildXXX aquí
   Widget _buildHeader() {
     return const Column(
       children: [
@@ -67,12 +84,9 @@ class LoginPage extends GetView<AuthController> {
   }
 
   Widget _buildLoginForm(BuildContext context) {
-    // Crear una nueva clave única para este formulario específico
-    final formKey = GlobalKey<FormState>(
-        debugLabel: 'loginForm_${DateTime.now().millisecondsSinceEpoch}');
-
     return Form(
-      key: formKey, // Usar la clave local en lugar de controller.loginFormKey
+      // 8. Usar la _formKey local
+      key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -88,7 +102,7 @@ class LoginPage extends GetView<AuthController> {
             textInputAction: TextInputAction.next,
             onSubmitted: (_) => FocusScope.of(context)
                 .requestFocus(controller.passwordFocusNode),
-            autoValidate: true,
+            autoValidate: true, // Mantenido de la versión anterior
           ),
           const SizedBox(height: AppDimensions.md),
 
@@ -97,18 +111,21 @@ class LoginPage extends GetView<AuthController> {
             controller: controller.passwordController,
             hintText: TrKeys.password.tr,
             prefixIcon: Icons.lock_outline,
+            // Usar el estado observable del controlador
             obscureText: controller.obscurePassword.value,
+            // Llamar al método del controlador
             onToggleVisibility: controller.togglePasswordVisibility,
             enabled: controller.status.value != AuthStatus.loading,
             validator: controller.validatePassword,
             focusNode: controller.passwordFocusNode,
             textInputAction: TextInputAction.done,
             onSubmitted: (_) {
-              if (formKey.currentState?.validate() ?? false) {
-                controller.login();
+              // 9. Validar usando la _formKey local antes de llamar a login
+              if (_formKey.currentState?.validate() ?? false) {
+                controller.login(); // Llamar al método del controlador
               }
             },
-            autoValidate: true,
+            autoValidate: true, // Mantenido de la versión anterior
           ),
 
           // Forgot password link
@@ -125,12 +142,14 @@ class LoginPage extends GetView<AuthController> {
           ),
 
           // Error message if any
+          // Usar el estado observable del controlador
           if (controller.errorMessage.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(bottom: AppDimensions.md),
               child: AuthMessage(
                 message: controller.errorMessage.value,
                 type: MessageType.error,
+                // Llamar al método del controlador
                 onDismiss: () => controller.errorMessage.value = '',
               ),
             ),
@@ -140,11 +159,13 @@ class LoginPage extends GetView<AuthController> {
             text: TrKeys.login.tr,
             onPressed: controller.status.value != AuthStatus.loading
                 ? () {
-                    if (formKey.currentState?.validate() ?? false) {
-                      controller.login();
+                    // 10. Validar usando la _formKey local antes de llamar a login
+                    if (_formKey.currentState?.validate() ?? false) {
+                      controller.login(); // Llamar al método del controlador
                     }
                   }
                 : null,
+            // Usar el estado observable del controlador
             isLoading: controller.status.value == AuthStatus.loading,
             type: AuthButtonType.primary,
           ),
@@ -157,6 +178,7 @@ class LoginPage extends GetView<AuthController> {
     return AuthButton(
       text: TrKeys.signInWithGoogle.tr,
       onPressed: controller.status.value != AuthStatus.loading
+          // Llamar al método del controlador
           ? controller.signInWithGoogle
           : null,
       type: AuthButtonType.social,
@@ -174,6 +196,7 @@ class LoginPage extends GetView<AuthController> {
         TextButton(
           onPressed: controller.status.value != AuthStatus.loading
               ? () {
+                  // Llamar al método del controlador
                   controller.clearForm();
                   Get.toNamed(Routes.register);
                 }
@@ -190,7 +213,7 @@ class LoginPage extends GetView<AuthController> {
   }
 
   void _showResetPasswordDialog(BuildContext context) {
-    // Navegar a la página de restablecimiento de contraseña en lugar de mostrar un diálogo
+    // Navegar a la página de restablecimiento de contraseña
     Get.toNamed(Routes.resetPassword);
   }
 }

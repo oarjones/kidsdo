@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,8 +24,30 @@ import 'package:kidsdo/presentation/controllers/session_controller.dart';
 import 'package:kidsdo/presentation/controllers/auth_controller.dart';
 import 'package:kidsdo/presentation/controllers/language_controller.dart';
 
+//Logging
+import 'package:logger/logger.dart';
+
 Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
+
+  // --- Logger ---
+  // Crea y configura tu instancia de Logger aquí
+  final logger = Logger(
+    printer: PrettyPrinter(
+        methodCount:
+            1, // Número de métodos a mostrar en stacktrace (útil para saber quién llama)
+        errorMethodCount: 8, // Más detalle para errores
+        lineLength: 90, // Ancho de línea
+        colors: true, // Colores
+        printEmojis: true, // Emojis para niveles
+        dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart),
+    level: kReleaseMode
+        ? Level.warning
+        : Level.debug, // Ejemplo: Menos logs en release
+  );
+
+  // Registra la instancia del logger como un singleton permanente
+  Get.put<Logger>(logger, permanent: true);
 
   // External
   Get.lazyPut(() => FirebaseAuth.instance, fenix: true);
@@ -44,7 +67,7 @@ Future<void> init() async {
           ),
       fenix: true);
 
-  Get.lazyPut(() => sharedPreferences, fenix: true);
+  Get.put<SharedPreferences>(sharedPreferences);
 
   // DataSources
   Get.lazyPut<IAuthRemoteDataSource>(
@@ -101,19 +124,15 @@ Future<void> init() async {
   );
 
   // Resto de controladores
-  Get.lazyPut<SessionController>(
-    () => SessionController(
+  Get.put<SessionController>(
+    SessionController(
       authRepository: Get.find<IAuthRepository>(),
       sharedPreferences: Get.find<SharedPreferences>(),
     ),
-    fenix: true,
   );
 
-  Get.lazyPut<AuthController>(
-    () => AuthController(
-      authRepository: Get.find<IAuthRepository>(),
-      sessionController: Get.find<SessionController>(),
-    ),
-    fenix: true,
-  );
+  Get.put<AuthController>(AuthController(
+    authRepository: Get.find<IAuthRepository>(),
+    sessionController: Get.find<SessionController>(),
+  ));
 }

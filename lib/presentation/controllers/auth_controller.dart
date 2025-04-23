@@ -32,12 +32,6 @@ class AuthController extends GetxController {
   final RxBool obscurePassword = RxBool(true);
   final RxBool obscureConfirmPassword = RxBool(true);
 
-  // Claves para los formularios - usando claves únicas para cada formulario
-  final loginFormKey = GlobalKey<FormState>(debugLabel: 'loginFormKey');
-  final registerFormKey = GlobalKey<FormState>(debugLabel: 'registerFormKey');
-  final resetPasswordFormKey =
-      GlobalKey<FormState>(debugLabel: 'resetPasswordFormKey');
-
   // Controladores de texto para formularios
   late TextEditingController emailController;
   late TextEditingController passwordController;
@@ -134,11 +128,6 @@ class AuthController extends GetxController {
     // Ocultar teclado
     FocusManager.instance.primaryFocus?.unfocus();
 
-    // Validar formulario con validaciones de Flutter
-    if (!registerFormKey.currentState!.validate()) {
-      return;
-    }
-
     status.value = AuthStatus.loading;
     errorMessage.value = '';
 
@@ -165,11 +154,6 @@ class AuthController extends GetxController {
   Future<void> login() async {
     // Ocultar teclado
     FocusManager.instance.primaryFocus?.unfocus();
-
-    // Validar formulario con validaciones de Flutter
-    if (!loginFormKey.currentState!.validate()) {
-      return;
-    }
 
     status.value = AuthStatus.loading;
     errorMessage.value = '';
@@ -238,11 +222,6 @@ class AuthController extends GetxController {
   Future<void> resetPassword() async {
     // Ocultar teclado
     FocusManager.instance.primaryFocus?.unfocus();
-
-    // Validar formulario
-    if (!resetPasswordFormKey.currentState!.validate()) {
-      return;
-    }
 
     status.value = AuthStatus.loading;
     errorMessage.value = '';
