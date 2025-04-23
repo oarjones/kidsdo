@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kidsdo/core/errors/failures.dart';
-//import 'package:kidsdo/domain/entities/parent.dart';
+import 'package:kidsdo/core/utils/form_validators.dart';
 import 'package:kidsdo/domain/repositories/auth_repository.dart';
 import 'package:kidsdo/presentation/controllers/session_controller.dart';
 import 'package:kidsdo/routes.dart';
@@ -30,29 +30,73 @@ class AuthController extends GetxController {
   final Rx<AuthStatus> status = Rx<AuthStatus>(AuthStatus.initial);
   final RxString errorMessage = RxString('');
   final RxBool obscurePassword = RxBool(true);
+  final RxBool obscureConfirmPassword = RxBool(true);
+
+  // Claves para los formularios - usando claves únicas para cada formulario
+  final loginFormKey = GlobalKey<FormState>(debugLabel: 'loginFormKey');
+  final registerFormKey = GlobalKey<FormState>(debugLabel: 'registerFormKey');
+  final resetPasswordFormKey =
+      GlobalKey<FormState>(debugLabel: 'resetPasswordFormKey');
 
   // Controladores de texto para formularios
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late TextEditingController confirmPasswordController;
   late TextEditingController nameController;
+  late TextEditingController resetPasswordEmailController;
+
+  // Focus nodes para gestionar el foco
+  late FocusNode emailFocusNode;
+  late FocusNode passwordFocusNode;
+  late FocusNode confirmPasswordFocusNode;
+  late FocusNode nameFocusNode;
 
   @override
   void onInit() {
     super.onInit();
+    // Inicializar controladores
     emailController = TextEditingController();
     passwordController = TextEditingController();
     confirmPasswordController = TextEditingController();
     nameController = TextEditingController();
+    resetPasswordEmailController = TextEditingController();
+
+    // Inicializar focus nodes
+    emailFocusNode = FocusNode();
+    passwordFocusNode = FocusNode();
+    confirmPasswordFocusNode = FocusNode();
+    nameFocusNode = FocusNode();
+
+    // Listeners para limpiar mensajes de error al modificar campos
+    emailController.addListener(_clearErrorOnChange);
+    passwordController.addListener(_clearErrorOnChange);
+    confirmPasswordController.addListener(_clearErrorOnChange);
+    nameController.addListener(_clearErrorOnChange);
   }
 
   @override
   void onClose() {
+    // Liberar controladores
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
     nameController.dispose();
+    resetPasswordEmailController.dispose();
+
+    // Liberar focus nodes
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
+    confirmPasswordFocusNode.dispose();
+    nameFocusNode.dispose();
+
     super.onClose();
+  }
+
+  /// Limpia el mensaje de error cuando el usuario modifica algún campo
+  void _clearErrorOnChange() {
+    if (errorMessage.isNotEmpty) {
+      errorMessage.value = '';
+    }
   }
 
   /// Toggle para mostrar/ocultar contraseña
@@ -60,19 +104,38 @@ class AuthController extends GetxController {
     obscurePassword.value = !obscurePassword.value;
   }
 
+  /// Toggle para mostrar/ocultar confirmación de contraseña
+  void toggleConfirmPasswordVisibility() {
+    obscureConfirmPassword.value = !obscureConfirmPassword.value;
+  }
+
+  /// Validador para campo de email
+  String? validateEmail(String? value) {
+    return FormValidators.email(value);
+  }
+
+  /// Validador para campo de contraseña
+  String? validatePassword(String? value) {
+    return FormValidators.password(value);
+  }
+
+  /// Validador para campo de confirmación de contraseña
+  String? validateConfirmPassword(String? value) {
+    return FormValidators.confirmPassword(value, passwordController.text);
+  }
+
+  /// Validador para campo de nombre
+  String? validateName(String? value) {
+    return FormValidators.name(value);
+  }
+
   /// Método para registrar un nuevo usuario
   Future<void> register() async {
-    // Validar formulario
-    if (nameController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty) {
-      errorMessage.value = TrKeys.allFieldsRequired.tr;
-      return;
-    }
+    // Ocultar teclado
+    FocusManager.instance.primaryFocus?.unfocus();
 
-    if (passwordController.text != confirmPasswordController.text) {
-      errorMessage.value = TrKeys.passwordsDoNotMatch.tr;
+    // Validar formulario con validaciones de Flutter
+    if (!registerFormKey.currentState!.validate()) {
       return;
     }
 
@@ -100,9 +163,11 @@ class AuthController extends GetxController {
 
   /// Método para iniciar sesión
   Future<void> login() async {
-    // Validar formulario
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      errorMessage.value = TrKeys.emailPasswordRequired.tr;
+    // Ocultar teclado
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    // Validar formulario con validaciones de Flutter
+    if (!loginFormKey.currentState!.validate()) {
       return;
     }
 
@@ -129,6 +194,9 @@ class AuthController extends GetxController {
 
   /// Método para iniciar sesión con Google
   Future<void> signInWithGoogle() async {
+    // Ocultar teclado
+    FocusManager.instance.primaryFocus?.unfocus();
+
     status.value = AuthStatus.loading;
     errorMessage.value = '';
 
@@ -167,16 +235,20 @@ class AuthController extends GetxController {
   }
 
   /// Método para enviar correo de recuperación de contraseña
-  Future<void> resetPassword(String email) async {
-    if (email.isEmpty) {
-      errorMessage.value = TrKeys.emailRequired.tr;
+  Future<void> resetPassword() async {
+    // Ocultar teclado
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    // Validar formulario
+    if (!resetPasswordFormKey.currentState!.validate()) {
       return;
     }
 
     status.value = AuthStatus.loading;
     errorMessage.value = '';
 
-    final result = await _authRepository.resetPassword(email);
+    final result = await _authRepository
+        .resetPassword(resetPasswordEmailController.text.trim());
 
     result.fold(
       (failure) {
@@ -185,13 +257,15 @@ class AuthController extends GetxController {
       },
       (_) {
         status.value = AuthStatus.success;
-        Get.snackbar(
-          TrKeys.emailSent.tr,
-          TrKeys.emailSentMessage.tr,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        // No cerramos la pantalla, mostramos mensaje de éxito
+        // La pantalla resetPassword mostrará un mensaje basado en este estado
+
+        Future.delayed(const Duration(seconds: 3), () {
+          if (Get.currentRoute == Routes.resetPassword) {
+            Get.back(); // Volver a la pantalla anterior después de 3 segundos
+            resetPasswordEmailController.clear();
+          }
+        });
       },
     );
   }
@@ -202,6 +276,7 @@ class AuthController extends GetxController {
     passwordController.clear();
     confirmPasswordController.clear();
     nameController.clear();
+    resetPasswordEmailController.clear();
     status.value = AuthStatus.initial;
     errorMessage.value = '';
   }

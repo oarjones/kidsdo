@@ -2,6 +2,7 @@
 final Map<String, String> esTranslations = {
   // Título de la aplicación
   'app_name': 'KidsDo',
+  'app_slogan': 'Motiva, premia y educa a tus hijos',
 
   // Autenticación
   'login': 'Iniciar sesión',
@@ -15,7 +16,9 @@ final Map<String, String> esTranslations = {
   'create_account': 'Crear cuenta',
   'sign_in_with_google': 'Iniciar sesión con Google',
   'reset_password': 'Restablecer contraseña',
-  'send_reset_link': 'Enviar enlace de restablecimiento',
+  'reset_password_description':
+      'Introduce tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.',
+  'send_reset_link': 'Enviar enlace',
   'logout': 'Cerrar sesión',
   'logout_confirmation': '¿Estás seguro de que deseas cerrar sesión?',
   'email_required': 'El email es obligatorio',
@@ -31,6 +34,13 @@ final Map<String, String> esTranslations = {
   'email_sent': 'Correo enviado',
   'email_sent_message':
       'Se ha enviado un correo para restablecer tu contraseña',
+  'back_to_login': 'Volver a iniciar sesión',
+  'or': 'o',
+  'register_subtitle': 'Crea una cuenta para comenzar a usar la app',
+  'register_terms_privacy':
+      'Al registrarte, aceptas nuestros Términos de Servicio y Política de Privacidad',
+  'name_too_short': 'El nombre debe tener al menos 2 caracteres',
+  'invalid_phone': 'El número de teléfono no es válido',
 
   // Validaciones
   'required_field': 'Este campo es obligatorio',

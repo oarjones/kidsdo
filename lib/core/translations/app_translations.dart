@@ -29,6 +29,7 @@ class Tr {
 class TrKeys {
   // Título de la aplicación
   static const appName = 'app_name';
+  static const appSlogan = 'app_slogan';
 
   // Autenticación
   static const login = 'login';
@@ -42,6 +43,7 @@ class TrKeys {
   static const createAccount = 'create_account';
   static const signInWithGoogle = 'sign_in_with_google';
   static const resetPassword = 'reset_password';
+  static const resetPasswordDescription = 'reset_password_description';
   static const sendResetLink = 'send_reset_link';
   static const logout = 'logout';
   static const logoutConfirmation = 'logout_confirmation';
@@ -56,6 +58,12 @@ class TrKeys {
   static const emailPasswordRequired = 'email_password_required';
   static const emailSent = 'email_sent';
   static const emailSentMessage = 'email_sent_message';
+  static const backToLogin = 'back_to_login';
+  static const or = 'or';
+  static const registerSubtitle = 'register_subtitle';
+  static const registerTermsPrivacy = 'register_terms_privacy';
+  static const nameTooShort = 'name_too_short';
+  static const invalidPhone = 'invalid_phone';
 
   // Validaciones
   static const requiredField = 'required_field';
@@ -63,18 +71,58 @@ class TrKeys {
   static const passwordTooShort = 'password_too_short';
   static const passwordsDoNotMatch = 'passwords_do_not_match';
 
-  static var cancel = 'cancel';
-  static var name = 'name';
+  // Perfil
+  static const profile = 'profile';
+  static const editProfile = 'edit_profile';
+  static const name = 'name';
+  static const age = 'age';
+  static const birthDate = 'birth_date';
+  static const selectAvatar = 'select_avatar';
 
-  //Errors
-  static var serverErrorMessage = 'server_error_message';
-  static var connectionErrorMessage = 'connection_error_message';
-  static var unexpectedErrorMessage = 'unexpected_error_message';
+  // Familia
+  static const family = 'family';
+  static const createFamily = 'create_family';
+  static const familyName = 'family_name';
+  static const addChild = 'add_child';
+  static const childName = 'child_name';
+  static const createChildProfile = 'create_child_profile';
 
-  //Menú
+  // Retos
+  static const challenges = 'challenges';
+  static const createChallenge = 'create_challenge';
+  static const editChallenge = 'edit_challenge';
+  static const challengeTitle = 'challenge_title';
+  static const challengeDescription = 'challenge_description';
+  static const points = 'points';
+  static const category = 'category';
+  static const frequency = 'frequency';
+  static const assignTo = 'assign_to';
+  static const startDate = 'start_date';
+  static const endDate = 'end_date';
+  static const status = 'status';
 
-  static var menuHome = 'menu_home';
-  static var menuChallenges = 'menu_challenges';
-  static var menuAwards = 'menu_awards';
-  static var menuProfile = 'menu_profile';
+  // General
+  static const save = 'save';
+  static const cancel = 'cancel';
+  static const delete = 'delete';
+  static const edit = 'edit';
+  static const ok = 'ok';
+  static const confirm = 'confirm';
+  static const loading = 'loading';
+  static const noData = 'no_data';
+  static const error = 'error';
+  static const success = 'success';
+  static const warning = 'warning';
+  static const info = 'info';
+
+  // Errores
+  static const serverErrorMessage = 'server_error_message';
+  static const connectionErrorMessage = 'connection_error_message';
+  static const unexpectedErrorMessage = 'unexpected_error_message';
+
+  // Menú
+  static const menuHome = 'menu_home';
+  static const menuChallenges = 'menu_challenges';
+  static const menuAwards = 'menu_awards';
+  static const menuProfile = 'menu_profile';
 }

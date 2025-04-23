@@ -2,6 +2,7 @@
 final Map<String, String> enTranslations = {
   // App title
   'app_name': 'KidsDo',
+  'app_slogan': 'Motivate, reward and educate your children',
 
   // Authentication
   'login': 'Log in',
@@ -15,6 +16,8 @@ final Map<String, String> enTranslations = {
   'create_account': 'Create account',
   'sign_in_with_google': 'Sign in with Google',
   'reset_password': 'Reset password',
+  'reset_password_description':
+      'Enter your email address and we will send you a link to reset your password.',
   'send_reset_link': 'Send reset link',
   'logout': 'Log out',
   'logout_confirmation': 'Are you sure you want to log out?',
@@ -29,6 +32,13 @@ final Map<String, String> enTranslations = {
   'email_password_required': 'Email and password are required',
   'email_sent': 'Email sent',
   'email_sent_message': 'An email has been sent to reset your password',
+  'back_to_login': 'Back to login',
+  'or': 'or',
+  'register_subtitle': 'Create an account to start using the app',
+  'register_terms_privacy':
+      'By signing up, you agree to our Terms of Service and Privacy Policy',
+  'name_too_short': 'Name must be at least 2 characters',
+  'invalid_phone': 'Phone number is not valid',
 
   // Validations
   'required_field': 'This field is required',

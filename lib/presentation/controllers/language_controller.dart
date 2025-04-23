@@ -63,16 +63,21 @@ class LanguageController extends GetxController {
     // Guardar el idioma seleccionado
     _sharedPreferences.setString(_languageKey, locale.languageCode);
     _sharedPreferences.setString(_countryKey, locale.countryCode ?? '');
+
+    // Notificar a los widgets que usan GetBuilder
+    update();
   }
 
   /// Cambia al idioma español
   void changeToSpanish() {
     updateLocale(const Locale('es', 'ES'));
+    update(); // Llamar a update() para notificar a los widgets que usan GetBuilder
   }
 
   /// Cambia al idioma inglés
   void changeToEnglish() {
     updateLocale(const Locale('en', 'US'));
+    update(); // Llamar a update() para notificar a los widgets que usan GetBuilder
   }
 
   /// Obtiene el nombre del idioma actual

@@ -30,7 +30,20 @@ Future<void> init() async {
   Get.lazyPut(() => FirebaseAuth.instance, fenix: true);
   Get.lazyPut(() => FirebaseFirestore.instance, fenix: true);
   Get.lazyPut(() => FirebaseStorage.instance, fenix: true);
-  Get.lazyPut(() => GoogleSignIn(), fenix: true);
+
+  // Configuración específica para GoogleSignIn
+  Get.lazyPut(
+      () => GoogleSignIn(
+            // En desarrollo, no uses scopes o usa los mínimos necesarios
+            scopes: [
+              'email',
+              'profile',
+            ],
+            // Usa 'serverClientId' si estás configurando OAuth para backend
+            // serverClientId: 'tu-client-id-web.apps.googleusercontent.com',
+          ),
+      fenix: true);
+
   Get.lazyPut(() => sharedPreferences, fenix: true);
 
   // DataSources
@@ -79,7 +92,15 @@ Future<void> init() async {
     fenix: true,
   );
 
-  // Controllers
+  // Controllers - Inicializar primero LanguageController
+  Get.put<LanguageController>(
+    LanguageController(
+      sharedPreferences: Get.find<SharedPreferences>(),
+    ),
+    permanent: true, // Hacerlo permanente para que no se elimine de la memoria
+  );
+
+  // Resto de controladores
   Get.lazyPut<SessionController>(
     () => SessionController(
       authRepository: Get.find<IAuthRepository>(),
@@ -92,13 +113,6 @@ Future<void> init() async {
     () => AuthController(
       authRepository: Get.find<IAuthRepository>(),
       sessionController: Get.find<SessionController>(),
-    ),
-    fenix: true,
-  );
-
-  Get.lazyPut<LanguageController>(
-    () => LanguageController(
-      sharedPreferences: Get.find<SharedPreferences>(),
     ),
     fenix: true,
   );

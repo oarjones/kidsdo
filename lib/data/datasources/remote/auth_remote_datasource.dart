@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 abstract class IAuthRemoteDataSource {
@@ -85,37 +86,86 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
 
   @override
   Future<User> signInWithGoogle() async {
-    // Iniciar el flujo de autenticación de Google
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    try {
+      print("Iniciando proceso de autenticación con Google...");
 
-    if (googleUser == null) {
+      // Iniciar el flujo de autenticación de Google
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        print("El usuario canceló el inicio de sesión con Google");
+        throw FirebaseAuthException(
+          code: 'google-sign-in-canceled',
+          message: 'El inicio de sesión con Google fue cancelado',
+        );
+      }
+
+      print("Usuario de Google obtenido: ${googleUser.email}");
+
+      // Obtener detalles de autenticación de la solicitud
+      print("Obteniendo tokens de autenticación...");
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      print(
+          "Token de acceso obtenido: ${googleAuth.accessToken?.substring(0, 10)}...");
+      print("Token ID obtenido: ${googleAuth.idToken?.substring(0, 10)}...");
+
+      // Verificar que tengamos tokens válidos
+      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+        print("Error: No se pudieron obtener tokens válidos de Google");
+        throw FirebaseAuthException(
+          code: 'google-sign-in-no-tokens',
+          message:
+              'No se pudieron obtener tokens válidos para la autenticación con Google',
+        );
+      }
+
+      // Crear una nueva credencial
+      print("Creando credencial de Firebase con tokens de Google...");
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken!,
+        idToken: googleAuth.idToken!,
+      );
+
+      // Iniciar sesión con la credencial
+      print("Iniciando sesión en Firebase con credencial de Google...");
+      final userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
+
+      if (userCredential.user == null) {
+        print(
+            "Error: Firebase devolvió un usuario nulo después de la autenticación");
+        throw FirebaseAuthException(
+          code: 'google-sign-in-failed',
+          message: 'No se pudo iniciar sesión con Google',
+        );
+      }
+
+      print(
+          "Inicio de sesión con Google exitoso para usuario: ${userCredential.user!.email}");
+      return userCredential.user!;
+    } catch (e) {
+      // Registrar el error para depuración
+      print('Error en signInWithGoogle: $e');
+
+      if (e is FirebaseAuthException) {
+        rethrow;
+      }
+
+      // En modo de desarrollo, imprimimos detalles adicionales de depuración
+      if (e is PlatformException) {
+        print('PlatformException detallada:');
+        print('  Código: ${e.code}');
+        print('  Mensaje: ${e.message}');
+        print('  Detalles: ${e.details}');
+      }
+
       throw FirebaseAuthException(
-        code: 'google-sign-in-canceled',
-        message: 'El inicio de sesión con Google fue cancelado',
+        code: 'google-sign-in-error',
+        message: 'Error al iniciar sesión con Google: ${e.toString()}',
       );
     }
-
-    // Obtener detalles de autenticación de la solicitud
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    // Crear una nueva credencial
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Iniciar sesión con la credencial
-    final userCredential = await _firebaseAuth.signInWithCredential(credential);
-
-    if (userCredential.user == null) {
-      throw FirebaseAuthException(
-        code: 'google-sign-in-failed',
-        message: 'No se pudo iniciar sesión con Google',
-      );
-    }
-
-    return userCredential.user!;
   }
 
   @override

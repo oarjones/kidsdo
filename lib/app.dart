@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/core/theme/app_theme.dart';
-//import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/routes.dart';
 import 'package:kidsdo/presentation/pages/splash/splash_page.dart';
 
