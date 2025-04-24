@@ -7,6 +7,10 @@ import 'package:kidsdo/presentation/pages/auth/reset_password_page.dart';
 import 'package:kidsdo/presentation/pages/home/home_page.dart';
 import 'package:kidsdo/presentation/pages/profile/profile_page.dart';
 import 'package:kidsdo/presentation/pages/profile/edit_profile_page.dart';
+import 'package:kidsdo/presentation/pages/family/family_page.dart';
+import 'package:kidsdo/presentation/pages/family/create_family_page.dart';
+import 'package:kidsdo/presentation/pages/family/join_family_page.dart';
+import 'package:kidsdo/presentation/pages/family/invite_code_page.dart';
 
 abstract class Routes {
   static const splash = '/splash';
@@ -18,6 +22,9 @@ abstract class Routes {
   static const editProfile = '/edit-profile';
   static const family = '/family';
   static const createChild = '/create-child';
+  static const createFamily = '/create-family';
+  static const joinFamily = '/join-family';
+  static const inviteCode = '/invite-code';
 }
 
 class AppPages {
@@ -53,7 +60,25 @@ class AppPages {
     ),
     GetPage(
       name: Routes.family,
-      page: () => const HomePage(), // Temporalmente usando HomePage
+      page: () => const FamilyPage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.createFamily,
+      page: () => const CreateFamilyPage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.joinFamily,
+      page: () => const JoinFamilyPage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.inviteCode,
+      page: () => const InviteCodePage(),
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
     ),

@@ -168,4 +168,45 @@ class TrKeys {
   static const joinFamilyActionButton = 'join_family_action_button';
   static const generateCodeActionButton = 'generate_code_action_button';
   static const leaveFamilyActionButton = 'leave_family_action_button';
+
+  // Nuevas claves para la UI de gestión de familias
+  static const familyInfoText = 'family_info_text';
+  static const familyRoleCreator = 'family_role_creator';
+  static const familyRoleMember = 'family_role_member';
+  static const familyMembersCount = 'family_members_count';
+  static const familyMembers = 'family_members';
+  static const familyInviteCode = 'family_invite_code';
+  static const familyCreatedOn = 'family_created_on';
+  static const createFamilyDescription = 'create_family_description';
+  static const familyCreatorInfo = 'family_creator_info';
+  static const familyInfoTitle = 'family_info_title';
+  static const joinFamily = 'join_family';
+  static const joinFamilyDescription = 'join_family_description';
+  static const inviteCode = 'invite_code';
+  static const inviteCodeExampleTitle = 'invite_code_example_title';
+  static const joinFamilyInfoTitle = 'join_family_info_title';
+  static const joinFamilyInfoContent = 'join_family_info_content';
+  static const familyInviteCodePageTitle = 'family_invite_code_page_title';
+  static const familyInviteCodeTitle = 'family_invite_code_title';
+  static const familyInviteCodeDescription = 'family_invite_code_description';
+  static const currentInviteCode = 'current_invite_code';
+  static const copyToClipboard = 'copy_to_clipboard';
+  static const codeValidInfo = 'code_valid_info';
+  static const noInviteCode = 'no_invite_code';
+  static const generateInviteCodeMessage = 'generate_invite_code_message';
+  static const regenerateInviteCode = 'regenerate_invite_code';
+  static const inviteCodeWarningTitle = 'invite_code_warning_title';
+  static const inviteCodeWarningContent = 'invite_code_warning_content';
+  static const codeCopiedTitle = 'code_copied_title';
+  static const codeCopiedMessage = 'code_copied_message';
+  static const leaveFamilyTitle = 'leave_family_title';
+  static const leaveFamilyConfirmation = 'leave_family_confirmation';
+  static const leaveFamilyConfirm = 'leave_family_confirm';
+
+  // Nuevas claves para visualización de miembros
+  static const noFamilyMembersFound = 'no_family_members_found';
+  static const familyCreatorLabel = 'family_creator_label';
+  static const familyParentLabel = 'family_parent_label';
+  static const familyChildLabel = 'family_child_label';
+  static const errorLoadingFamilyMembers = 'error_loading_family_members';
 }

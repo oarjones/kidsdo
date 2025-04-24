@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kidsdo/core/errors/failures.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
+import 'package:kidsdo/domain/entities/base_user.dart';
 import 'package:kidsdo/domain/entities/family.dart';
 import 'package:kidsdo/domain/repositories/family_repository.dart';
+import 'package:kidsdo/domain/repositories/user_repository.dart';
 import 'package:kidsdo/presentation/controllers/session_controller.dart';
 import 'package:logger/logger.dart';
 
@@ -17,6 +19,7 @@ enum FamilyStatus {
 class FamilyController extends GetxController {
   final IFamilyRepository _familyRepository;
   final SessionController _sessionController;
+  final IUserRepository _userRepository;
   final Logger _logger;
 
   // Observable state
@@ -36,11 +39,18 @@ class FamilyController extends GetxController {
   late FocusNode familyNameFocusNode;
   late FocusNode inviteCodeFocusNode;
 
+  // Propiedades para miembros de familia
+  final RxList<BaseUser> familyMembers = RxList<BaseUser>([]);
+  final RxBool isLoadingMembers = RxBool(false);
+  final RxString membersErrorMessage = RxString('');
+
   FamilyController({
     required IFamilyRepository familyRepository,
+    required IUserRepository userRepository,
     required SessionController sessionController,
     Logger? logger,
   })  : _familyRepository = familyRepository,
+        _userRepository = userRepository,
         _sessionController = sessionController,
         _logger = logger ?? Get.find<Logger>();
 
@@ -160,6 +170,9 @@ class FamilyController extends GetxController {
         status.value = FamilyStatus.success;
         currentFamily.value = family;
         _logger.i("Family loaded successfully: ${family.name}");
+
+        // Cargar los miembros de la familia
+        loadFamilyMembers();
       },
     );
   }
@@ -205,22 +218,38 @@ class FamilyController extends GetxController {
       (family) async {
         // Update the user's familyId in session
         final updatedUser = currentUser.copyWith(familyId: family.id);
-        _sessionController.setCurrentUser(updatedUser);
 
-        currentFamily.value = family;
-        status.value = FamilyStatus.success;
-        isCreatingFamily.value = false;
-        familyNameController.clear();
+        // Persistir el cambio en Firebase
+        _logger.i("Updating user familyId in Firestore: ${family.id}");
+        final saveResult = await _userRepository.saveParent(updatedUser);
 
-        _logger.i("Family created successfully: ${family.name}");
+        saveResult.fold(
+          (failure) {
+            status.value = FamilyStatus.error;
+            errorMessage.value = _mapFailureToMessage(failure);
+            isCreatingFamily.value = false;
+            _logger.e("Error updating user in Firestore: ${failure.message}");
+          },
+          (_) {
+            // Actualizar la sesión después de guardar en Firestore
+            _sessionController.setCurrentUser(updatedUser);
 
-        // Show success message
-        Get.snackbar(
-          'family_created_title'.tr,
-          'family_created_message'.tr,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withValues(alpha: 0.1),
-          colorText: Colors.green,
+            currentFamily.value = family;
+            status.value = FamilyStatus.success;
+            isCreatingFamily.value = false;
+            familyNameController.clear();
+
+            _logger.i("Family created successfully: ${family.name}");
+
+            // Show success message
+            Get.snackbar(
+              'family_created_title'.tr,
+              'family_created_message'.tr,
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.green.withValues(alpha: 0.1),
+              colorText: Colors.green,
+            );
+          },
         );
       },
     );
@@ -278,22 +307,39 @@ class FamilyController extends GetxController {
           (_) async {
             // Update the user's familyId in session
             final updatedUser = currentUser.copyWith(familyId: family.id);
-            _sessionController.setCurrentUser(updatedUser);
 
-            currentFamily.value = family;
-            status.value = FamilyStatus.success;
-            isJoiningFamily.value = false;
-            inviteCodeController.clear();
+            // Persistir el cambio en Firebase
+            _logger.i("Updating user familyId in Firestore: ${family.id}");
+            final saveResult = await _userRepository.saveParent(updatedUser);
 
-            _logger.i("Successfully joined family: ${family.name}");
+            saveResult.fold(
+              (failure) {
+                status.value = FamilyStatus.error;
+                errorMessage.value = _mapFailureToMessage(failure);
+                isJoiningFamily.value = false;
+                _logger
+                    .e("Error updating user in Firestore: ${failure.message}");
+              },
+              (_) {
+                // Actualizar la sesión después de guardar en Firestore
+                _sessionController.setCurrentUser(updatedUser);
 
-            // Show success message
-            Get.snackbar(
-              'family_joined_title'.tr,
-              'family_joined_message'.tr,
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green.withValues(alpha: 0.1),
-              colorText: Colors.green,
+                currentFamily.value = family;
+                status.value = FamilyStatus.success;
+                isJoiningFamily.value = false;
+                inviteCodeController.clear();
+
+                _logger.i("Successfully joined family: ${family.name}");
+
+                // Show success message
+                Get.snackbar(
+                  'family_joined_title'.tr,
+                  'family_joined_message'.tr,
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.green.withValues(alpha: 0.1),
+                  colorText: Colors.green,
+                );
+              },
             );
           },
         );
@@ -367,26 +413,101 @@ class FamilyController extends GetxController {
         errorMessage.value = _mapFailureToMessage(failure);
         _logger.e("Error leaving family: ${failure.message}");
       },
-      (_) {
+      (_) async {
         // Update the user's familyId in session
         final updatedUser = currentUser.copyWith(familyId: null);
-        _sessionController.setCurrentUser(updatedUser);
 
-        currentFamily.value = null;
-        status.value = FamilyStatus.success;
+        // Persistir el cambio en Firebase
+        _logger.i("Removing familyId from user in Firestore");
+        final saveResult = await _userRepository.saveParent(updatedUser);
 
-        _logger.i("Successfully left family");
+        saveResult.fold(
+          (failure) {
+            status.value = FamilyStatus.error;
+            errorMessage.value = _mapFailureToMessage(failure);
+            _logger.e("Error updating user in Firestore: ${failure.message}");
+          },
+          (_) {
+            // Actualizar la sesión después de guardar en Firestore
+            _sessionController.setCurrentUser(updatedUser);
 
-        // Show success message
-        Get.snackbar(
-          'family_left_title'.tr,
-          'family_left_message'.tr,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withValues(alpha: 0.1),
-          colorText: Colors.green,
+            currentFamily.value = null;
+            status.value = FamilyStatus.success;
+
+            _logger.i("Successfully left family");
+
+            // Show success message
+            Get.snackbar(
+              'family_left_title'.tr,
+              'family_left_message'.tr,
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.green.withValues(alpha: 0.1),
+              colorText: Colors.green,
+            );
+          },
         );
       },
     );
+  }
+
+  /// Carga los usuarios que pertenecen a la familia actual
+  Future<void> loadFamilyMembers() async {
+    if (currentFamily.value == null) {
+      _logger.w("No hay familia actual, no se pueden cargar miembros");
+      return;
+    }
+
+    isLoadingMembers.value = true;
+    membersErrorMessage.value = '';
+    familyMembers.clear();
+
+    try {
+      final family = currentFamily.value!;
+      _logger.i("Cargando miembros de la familia: ${family.id}");
+
+      // Cargar información de cada miembro
+      for (final memberId in family.members) {
+        try {
+          // Determinar si el miembro es padre o hijo
+          final userResult = await _userRepository.getUserById(memberId);
+
+          userResult.fold(
+            (failure) {
+              _logger.w(
+                  "No se pudo cargar el usuario $memberId: ${failure.message}");
+            },
+            (user) {
+              _logger.d("Usuario cargado: ${user.displayName} (${user.type})");
+              familyMembers.add(user);
+            },
+          );
+        } catch (e) {
+          _logger.e("Error cargando miembro $memberId: $e");
+        }
+      }
+
+      // Ordenar miembros (creador primero, luego padres, luego niños)
+      familyMembers.sort((a, b) {
+        // El creador va primero
+        if (a.uid == family.createdBy) return -1;
+        if (b.uid == family.createdBy) return 1;
+
+        // Después ordenamos por tipo (padres primero, luego niños)
+        if (a.type != b.type) {
+          return a.type == 'parent' ? -1 : 1;
+        }
+
+        // Si son del mismo tipo, ordenamos alfabéticamente
+        return a.displayName.compareTo(b.displayName);
+      });
+
+      _logger.i("Miembros de familia cargados: ${familyMembers.length}");
+    } catch (e) {
+      _logger.e("Error cargando miembros de familia: $e");
+      membersErrorMessage.value = 'error_loading_family_members'.tr;
+    } finally {
+      isLoadingMembers.value = false;
+    }
   }
 
   /// Maps failure types to user-friendly messages

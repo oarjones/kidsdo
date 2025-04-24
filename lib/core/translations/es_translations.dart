@@ -148,4 +148,55 @@ final Map<String, String> esTranslations = {
   'join_family_action_button': 'Unirse a familia',
   'generate_code_action_button': 'Generar código',
   'leave_family_action_button': 'Salir de la familia',
+
+  // Nuevas traducciones para la gestión de familias
+  'family_info_text':
+      'En KidsDo, puedes crear tu propia familia o unirte a una existente utilizando un código de invitación.',
+  'family_role_creator': 'Creador de la familia',
+  'family_role_member': 'Miembro',
+  'family_members_count': '@count miembros',
+  'family_members': 'Miembros de la familia',
+  'family_invite_code': 'Código de invitación',
+  'family_created_on': 'Creada el',
+  'create_family_description':
+      'Crea una familia para comenzar a gestionar los retos y recompensas de tus hijos.',
+  'family_creator_info':
+      'Como creador de la familia, podrás invitar a otros padres y gestionar a todos los niños de la familia.',
+  'family_info_title': 'Información importante',
+  'join_family': 'Unirse a una familia',
+  'join_family_description':
+      'Introduce el código de invitación que te ha proporcionado el creador de la familia.',
+  'invite_code': 'Código de invitación',
+  'invite_code_example_title': 'Ejemplo de código:',
+  'join_family_info_title': 'Sobre los códigos de invitación',
+  'join_family_info_content':
+      'Solicita el código de invitación al creador de la familia. El código tiene 6 caracteres alfanuméricos.',
+  'family_invite_code_page_title': 'Código de invitación',
+  'family_invite_code_title': 'Compartir acceso a tu familia',
+  'family_invite_code_description':
+      'Comparte este código con otros padres para que puedan unirse a tu familia.',
+  'current_invite_code': 'CÓDIGO DE INVITACIÓN ACTUAL',
+  'copy_to_clipboard': 'Copiar al portapapeles',
+  'code_valid_info': 'Este código es válido hasta que generes uno nuevo',
+  'no_invite_code': 'Sin código de invitación',
+  'generate_invite_code_message':
+      'Genera un código para compartir con otros padres',
+  'regenerate_invite_code': 'Regenerar código',
+  'invite_code_warning_title': 'Advertencia',
+  'invite_code_warning_content':
+      'Al generar un nuevo código, el anterior dejará de ser válido. Los miembros actuales de la familia no se verán afectados.',
+  'code_copied_title': 'Código copiado',
+  'code_copied_message':
+      'El código de invitación ha sido copiado al portapapeles',
+  'leave_family_title': 'Abandonar familia',
+  'leave_family_confirmation':
+      '¿Estás seguro que deseas abandonar esta familia? Perderás acceso a todos los niños y retos asociados.',
+  'leave_family_confirm': 'Abandonar',
+
+  // Visualización de miembros
+  'no_family_members_found': 'No se encontraron miembros en esta familia',
+  'family_creator_label': 'Creador',
+  'family_parent_label': 'Padre',
+  'family_child_label': 'Hijo',
+  'error_loading_family_members': 'Error al cargar los miembros de la familia',
 };

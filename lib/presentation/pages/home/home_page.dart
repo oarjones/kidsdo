@@ -81,16 +81,37 @@ class HomePage extends GetView<AuthController> {
                       ),
                     ),
               const SizedBox(height: 48),
-              ElevatedButton(
-                onPressed: () {
-                  // Eventualmente navegaríamos a la página de familia/niños
-                  Get.snackbar(
-                    'Próximamente',
-                    'Esta función estará disponible en la siguiente sesión',
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
-                },
-                child: const Text('Continuar con la configuración'),
+
+              // Opciones de configuración
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () => Get.toNamed(Routes.family),
+                      icon: const Icon(Icons.family_restroom),
+                      label: Text(TrKeys.family.tr),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Eventualmente navegaríamos a otras configuraciones
+                        Get.snackbar(
+                          TrKeys.comingSoon.tr,
+                          TrKeys.comingSoonMessage.tr,
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                      ),
+                      child: Text(TrKeys.continueConfig.tr),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

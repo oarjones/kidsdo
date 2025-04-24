@@ -144,4 +144,53 @@ final Map<String, String> enTranslations = {
   'join_family_action_button': 'Join family',
   'generate_code_action_button': 'Generate code',
   'leave_family_action_button': 'Leave family',
+
+  // New translations for family management
+  'family_info_text':
+      'In KidsDo, you can create your own family or join an existing one using an invitation code.',
+  'family_role_creator': 'Family Creator',
+  'family_role_member': 'Member',
+  'family_members_count': '@count members',
+  'family_members': 'Family Members',
+  'family_invite_code': 'Invitation Code',
+  'family_created_on': 'Created on',
+  'create_family_description':
+      'Create a family to start managing challenges and rewards for your children.',
+  'family_creator_info':
+      'As the family creator, you can invite other parents and manage all the children in the family.',
+  'family_info_title': 'Important information',
+  'join_family': 'Join a family',
+  'join_family_description':
+      'Enter the invitation code provided by the family creator.',
+  'invite_code': 'Invitation code',
+  'invite_code_example_title': 'Code example:',
+  'join_family_info_title': 'About invitation codes',
+  'join_family_info_content':
+      'Request the invitation code from the family creator. The code has 6 alphanumeric characters.',
+  'family_invite_code_page_title': 'Invitation Code',
+  'family_invite_code_title': 'Share access to your family',
+  'family_invite_code_description':
+      'Share this code with other parents so they can join your family.',
+  'current_invite_code': 'CURRENT INVITATION CODE',
+  'copy_to_clipboard': 'Copy to clipboard',
+  'code_valid_info': 'This code is valid until you generate a new one',
+  'no_invite_code': 'No invitation code',
+  'generate_invite_code_message': 'Generate a code to share with other parents',
+  'regenerate_invite_code': 'Regenerate code',
+  'invite_code_warning_title': 'Warning',
+  'invite_code_warning_content':
+      'When generating a new code, the previous one will no longer be valid. Current family members will not be affected.',
+  'code_copied_title': 'Code copied',
+  'code_copied_message': 'The invitation code has been copied to clipboard',
+  'leave_family_title': 'Leave family',
+  'leave_family_confirmation':
+      'Are you sure you want to leave this family? You will lose access to all associated children and challenges.',
+  'leave_family_confirm': 'Leave',
+
+  // Member visualization
+  'no_family_members_found': 'No members found in this family',
+  'family_creator_label': 'Creator',
+  'family_parent_label': 'Parent',
+  'family_child_label': 'Child',
+  'error_loading_family_members': 'Error loading family members',
 };

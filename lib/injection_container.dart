@@ -156,6 +156,7 @@ Future<void> init() async {
   Get.put<FamilyController>(
     FamilyController(
       familyRepository: Get.find<IFamilyRepository>(),
+      userRepository: Get.find<IUserRepository>(),
       sessionController: Get.find<SessionController>(),
       logger: Get.find<Logger>(),
     ),
