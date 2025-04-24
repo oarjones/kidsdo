@@ -12,20 +12,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kidsdo/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:kidsdo/data/datasources/remote/user_remote_datasource.dart';
 import 'package:kidsdo/data/datasources/remote/family_remote_datasource.dart';
+import 'package:kidsdo/data/datasources/remote/family_child_remote_datasource.dart';
 
 // Repositories
 import 'package:kidsdo/data/repositories/auth_repository_impl.dart';
 import 'package:kidsdo/data/repositories/user_repository_impl.dart';
 import 'package:kidsdo/data/repositories/family_repository_impl.dart';
+import 'package:kidsdo/data/repositories/family_child_repository_impl.dart';
 import 'package:kidsdo/domain/repositories/auth_repository.dart';
 import 'package:kidsdo/domain/repositories/user_repository.dart';
 import 'package:kidsdo/domain/repositories/family_repository.dart';
+import 'package:kidsdo/domain/repositories/family_child_repository.dart';
 
 // Controllers
 import 'package:kidsdo/presentation/controllers/session_controller.dart';
 import 'package:kidsdo/presentation/controllers/auth_controller.dart';
 import 'package:kidsdo/presentation/controllers/language_controller.dart';
 import 'package:kidsdo/presentation/controllers/family_controller.dart';
+import 'package:kidsdo/presentation/controllers/child_profile_controller.dart';
 
 //Logging
 import 'package:logger/logger.dart';
@@ -96,6 +100,13 @@ Future<void> init() async {
     fenix: true,
   );
 
+  Get.lazyPut<IFamilyChildRemoteDataSource>(
+    () => FamilyChildRemoteDataSource(
+      firestore: Get.find<FirebaseFirestore>(),
+    ),
+    fenix: true,
+  );
+
   // Repositories
   Get.lazyPut<IAuthRepository>(
     () => AuthRepositoryImpl(
@@ -116,6 +127,13 @@ Future<void> init() async {
   Get.lazyPut<IFamilyRepository>(
     () => FamilyRepositoryImpl(
       familyRemoteDataSource: Get.find<IFamilyRemoteDataSource>(),
+    ),
+    fenix: true,
+  );
+
+  Get.lazyPut<IFamilyChildRepository>(
+    () => FamilyChildRepositoryImpl(
+      familyChildRemoteDataSource: Get.find<IFamilyChildRemoteDataSource>(),
     ),
     fenix: true,
   );
@@ -158,6 +176,18 @@ Future<void> init() async {
       familyRepository: Get.find<IFamilyRepository>(),
       userRepository: Get.find<IUserRepository>(),
       sessionController: Get.find<SessionController>(),
+      logger: Get.find<Logger>(),
+    ),
+  );
+
+  // ChildProfileController controller
+  Get.put<ChildProfileController>(
+    ChildProfileController(
+      familyChildRepository: Get.find<IFamilyChildRepository>(),
+      sessionController: Get.find<SessionController>(),
+      familyController: Get.find<FamilyController>(),
+      storage: Get.find<FirebaseStorage>(),
+      imagePicker: Get.find<ImagePicker>(),
       logger: Get.find<Logger>(),
     ),
   );

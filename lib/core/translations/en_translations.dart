@@ -193,4 +193,33 @@ final Map<String, String> enTranslations = {
   'family_parent_label': 'Parent',
   'family_child_label': 'Child',
   'error_loading_family_members': 'Error loading family members',
+
+  // Child Profiles
+  'child_profiles': 'Child Profiles',
+  'manage_child_profiles': 'Manage Child Profiles',
+  'add_child_profiles_message':
+      'Add profiles for your children to start managing their challenges and rewards',
+  'no_child_profiles': 'No Child Profiles',
+  'years_old': 'years old',
+  'level': 'Level',
+  'child_profile_theme': 'Theme Color',
+  'edit_child_profile': 'Edit Profile',
+  'view_child_challenges': 'View Challenges',
+  'view_child_rewards': 'View Rewards',
+  'access_child_mode': 'Access Child Mode',
+  'delete_child_profile': 'Delete Profile',
+  'confirm_delete_profile': 'Confirm Deletion',
+  'confirm_delete_profile_message':
+      'Are you sure you want to delete @name\'s profile? This action cannot be undone.',
+  'child_profile_no_family_user':
+      'You need to be in a family to create a child profile',
+  'child_profile_created_title': 'Profile Created',
+  'child_profile_created_message':
+      'The child profile has been created successfully',
+  'child_profile_updated_title': 'Profile Updated',
+  'child_profile_updated_message':
+      'The child profile has been updated successfully',
+  'child_profile_deleted_title': 'Profile Deleted',
+  'child_profile_deleted_message':
+      'The child profile has been deleted successfully',
 };

@@ -40,6 +40,17 @@ class FamilyPage extends GetView<FamilyController> {
         // Si el usuario pertenece a una familia, mostrar detalles de la familia
         return _buildFamilyDetails();
       }),
+      floatingActionButton: Obx(() {
+        // Solo mostrar el botón de acción flotante si hay una familia
+        if (controller.currentFamily.value != null) {
+          return FloatingActionButton(
+            onPressed: () => Get.toNamed(Routes.childProfiles),
+            tooltip: 'child_profiles'.tr,
+            child: const Icon(Icons.child_care),
+          );
+        }
+        return const SizedBox.shrink();
+      }),
     );
   }
 
@@ -354,6 +365,20 @@ class FamilyPage extends GetView<FamilyController> {
                   children: [
                     // Lista de miembros
                     FamilyMembersList(familyCreatorId: family.createdBy),
+
+                    // Sección de niños
+                    const Divider(height: AppDimensions.xl),
+
+                    // Botón para gestionar perfiles infantiles
+                    ElevatedButton.icon(
+                      onPressed: () => Get.toNamed(Routes.childProfiles),
+                      icon: const Icon(Icons.child_care),
+                      label: Text('manage_child_profiles'.tr),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.childBlue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
 
                     // Si no es el creador, mostrar botón para salir
                     if (!isCreator) ...[

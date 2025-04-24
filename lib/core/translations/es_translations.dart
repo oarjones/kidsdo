@@ -199,4 +199,33 @@ final Map<String, String> esTranslations = {
   'family_parent_label': 'Padre',
   'family_child_label': 'Hijo',
   'error_loading_family_members': 'Error al cargar los miembros de la familia',
+
+  // Perfiles infantiles
+  'child_profiles': 'Perfiles infantiles',
+  'manage_child_profiles': 'Gestionar perfiles infantiles',
+  'add_child_profiles_message':
+      'Añade perfiles para tus hijos para comenzar a gestionar sus retos y recompensas',
+  'no_child_profiles': 'No hay perfiles infantiles',
+  'years_old': 'años',
+  'level': 'Nivel',
+  'child_profile_theme': 'Color del tema',
+  'edit_child_profile': 'Editar perfil',
+  'view_child_challenges': 'Ver retos',
+  'view_child_rewards': 'Ver recompensas',
+  'access_child_mode': 'Acceder a modo infantil',
+  'delete_child_profile': 'Eliminar perfil',
+  'confirm_delete_profile': 'Confirmar eliminación',
+  'confirm_delete_profile_message':
+      '¿Estás seguro de que deseas eliminar el perfil de @name? Esta acción no se puede deshacer.',
+  'child_profile_no_family_user':
+      'Necesitas estar en una familia para crear un perfil infantil',
+  'child_profile_created_title': 'Perfil creado',
+  'child_profile_created_message':
+      'El perfil infantil ha sido creado correctamente',
+  'child_profile_updated_title': 'Perfil actualizado',
+  'child_profile_updated_message':
+      'El perfil infantil ha sido actualizado correctamente',
+  'child_profile_deleted_title': 'Perfil eliminado',
+  'child_profile_deleted_message':
+      'El perfil infantil ha sido eliminado correctamente',
 };

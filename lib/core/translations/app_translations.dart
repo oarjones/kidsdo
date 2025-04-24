@@ -209,4 +209,27 @@ class TrKeys {
   static const familyParentLabel = 'family_parent_label';
   static const familyChildLabel = 'family_child_label';
   static const errorLoadingFamilyMembers = 'error_loading_family_members';
+
+  // Claves para perfiles infantiles
+  static const childProfiles = 'child_profiles';
+  static const manageChildProfiles = 'manage_child_profiles';
+  static const addChildProfilesMessage = 'add_child_profiles_message';
+  static const noChildProfiles = 'no_child_profiles';
+  static const yearsOld = 'years_old';
+  static const level = 'level';
+  static const childProfileTheme = 'child_profile_theme';
+  static const editChildProfile = 'edit_child_profile';
+  static const viewChildChallenges = 'view_child_challenges';
+  static const viewChildRewards = 'view_child_rewards';
+  static const accessChildMode = 'access_child_mode';
+  static const deleteChildProfile = 'delete_child_profile';
+  static const confirmDeleteProfile = 'confirm_delete_profile';
+  static const confirmDeleteProfileMessage = 'confirm_delete_profile_message';
+  static const childProfileNoFamilyUser = 'child_profile_no_family_user';
+  static const childProfileCreatedTitle = 'child_profile_created_title';
+  static const childProfileCreatedMessage = 'child_profile_created_message';
+  static const childProfileUpdatedTitle = 'child_profile_updated_title';
+  static const childProfileUpdatedMessage = 'child_profile_updated_message';
+  static const childProfileDeletedTitle = 'child_profile_deleted_title';
+  static const childProfileDeletedMessage = 'child_profile_deleted_message';
 }

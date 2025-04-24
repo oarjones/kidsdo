@@ -11,6 +11,9 @@ import 'package:kidsdo/presentation/pages/family/family_page.dart';
 import 'package:kidsdo/presentation/pages/family/create_family_page.dart';
 import 'package:kidsdo/presentation/pages/family/join_family_page.dart';
 import 'package:kidsdo/presentation/pages/family/invite_code_page.dart';
+import 'package:kidsdo/presentation/pages/family/child_profiles_page.dart';
+import 'package:kidsdo/presentation/pages/family/create_child_profile_page.dart';
+import 'package:kidsdo/presentation/pages/family/edit_child_profile_page.dart';
 
 abstract class Routes {
   static const splash = '/splash';
@@ -21,7 +24,9 @@ abstract class Routes {
   static const profile = '/profile';
   static const editProfile = '/edit-profile';
   static const family = '/family';
+  static const childProfiles = '/child-profiles';
   static const createChild = '/create-child';
+  static const editChild = '/edit-child';
   static const createFamily = '/create-family';
   static const joinFamily = '/join-family';
   static const inviteCode = '/invite-code';
@@ -83,14 +88,27 @@ class AppPages {
       transition: Transition.rightToLeft,
     ),
     GetPage(
-      name: Routes.createChild,
-      page: () => const HomePage(), // Temporalmente usando HomePage
+      name: Routes.profile,
+      page: () => const ProfilePage(), // Temporalmente usando HomePage
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
     ),
     GetPage(
-      name: Routes.profile,
-      page: () => const ProfilePage(),
+      name: Routes.createChild,
+      page: () =>
+          const CreateChildProfilePage(), // Temporalmente usando HomePage
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.childProfiles,
+      page: () => const ChildProfilesPage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.editChild,
+      page: () => const EditChildProfilePage(),
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
     ),
