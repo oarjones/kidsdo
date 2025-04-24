@@ -41,16 +41,21 @@ class AuthTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: Icon(prefixIcon),
-        suffixIcon: obscureText && onToggleVisibility != null
+        suffixIcon: onToggleVisibility != null
             ? IconButton(
                 icon: Icon(
+                  // Cambia el icono basado en el estado actual de obscureText
                   obscureText
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
+                      ? Icons
+                          .visibility_off_outlined // Ojo tachado si está oculto
+                      : Icons.visibility_outlined, // Ojo normal si está visible
                 ),
-                onPressed: onToggleVisibility,
+                onPressed:
+                    onToggleVisibility, // Llama a la función para cambiar el estado
               )
-            : null,
+            : null, // Si no hay función onToggleVisibility, no muestra nada.
+        // --- FIN: Modificación ---
+
         errorText: errorText,
       ),
       obscureText: obscureText,

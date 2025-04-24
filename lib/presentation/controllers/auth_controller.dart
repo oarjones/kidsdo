@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:kidsdo/core/errors/failures.dart';
 import 'package:kidsdo/core/utils/form_validators.dart';
 import 'package:kidsdo/domain/repositories/auth_repository.dart';
+import 'package:kidsdo/presentation/controllers/profile_controller.dart';
 import 'package:kidsdo/presentation/controllers/session_controller.dart';
 import 'package:kidsdo/routes.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
+import 'package:logger/logger.dart';
 
 /// Estados posibles del proceso de autenticación
 enum AuthStatus {
@@ -19,71 +21,135 @@ enum AuthStatus {
 class AuthController extends GetxController {
   final IAuthRepository _authRepository;
   final SessionController _sessionController;
+  final Logger _logger;
 
   AuthController({
     required IAuthRepository authRepository,
     required SessionController sessionController,
+    Logger? logger,
   })  : _authRepository = authRepository,
-        _sessionController = sessionController;
+        _sessionController = sessionController,
+        _logger = logger ?? Get.find<Logger>();
 
   // Estado observable
   final Rx<AuthStatus> status = Rx<AuthStatus>(AuthStatus.initial);
   final RxString errorMessage = RxString('');
-  final RxBool obscurePassword = RxBool(true);
-  final RxBool obscureConfirmPassword = RxBool(true);
 
-  // Controladores de texto para formularios
-  late TextEditingController emailController;
-  late TextEditingController passwordController;
-  late TextEditingController confirmPasswordController;
-  late TextEditingController nameController;
+  // Estados de visibilidad para contraseñas
+  final RxBool loginPasswordVisible = RxBool(false);
+  final RxBool registerPasswordVisible = RxBool(false);
+  final RxBool registerConfirmPasswordVisible = RxBool(false);
+
+  // ---- Controladores de texto para LOGIN ----
+  late TextEditingController loginEmailController;
+  late TextEditingController loginPasswordController;
+  late FocusNode loginEmailFocusNode;
+  late FocusNode loginPasswordFocusNode;
+
+  // ---- Controladores de texto para REGISTRO ----
+  late TextEditingController registerNameController;
+  late TextEditingController registerEmailController;
+  late TextEditingController registerPasswordController;
+  late TextEditingController registerConfirmPasswordController;
+  late FocusNode registerNameFocusNode;
+  late FocusNode registerEmailFocusNode;
+  late FocusNode registerPasswordFocusNode;
+  late FocusNode registerConfirmPasswordFocusNode;
+
+  // ---- Controladores de texto para RESET PASSWORD ----
   late TextEditingController resetPasswordEmailController;
-
-  // Focus nodes para gestionar el foco
-  late FocusNode emailFocusNode;
-  late FocusNode passwordFocusNode;
-  late FocusNode confirmPasswordFocusNode;
-  late FocusNode nameFocusNode;
+  late FocusNode resetPasswordEmailFocusNode;
 
   @override
   void onInit() {
     super.onInit();
-    // Inicializar controladores
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-    confirmPasswordController = TextEditingController();
-    nameController = TextEditingController();
-    resetPasswordEmailController = TextEditingController();
+    _initializeControllers();
+    _logger.i("AuthController inicializado");
+  }
 
-    // Inicializar focus nodes
-    emailFocusNode = FocusNode();
-    passwordFocusNode = FocusNode();
-    confirmPasswordFocusNode = FocusNode();
-    nameFocusNode = FocusNode();
+  // Método separado para inicializar controladores
+  void _initializeControllers() {
+    // Inicializar controladores de LOGIN
+    loginEmailController = TextEditingController();
+    loginPasswordController = TextEditingController();
+    loginEmailFocusNode = FocusNode();
+    loginPasswordFocusNode = FocusNode();
+
+    // Inicializar controladores de REGISTRO
+    registerNameController = TextEditingController();
+    registerEmailController = TextEditingController();
+    registerPasswordController = TextEditingController();
+    registerConfirmPasswordController = TextEditingController();
+    registerNameFocusNode = FocusNode();
+    registerEmailFocusNode = FocusNode();
+    registerPasswordFocusNode = FocusNode();
+    registerConfirmPasswordFocusNode = FocusNode();
+
+    // Inicializar controladores de RESET PASSWORD
+    resetPasswordEmailController = TextEditingController();
+    resetPasswordEmailFocusNode = FocusNode();
 
     // Listeners para limpiar mensajes de error al modificar campos
-    emailController.addListener(_clearErrorOnChange);
-    passwordController.addListener(_clearErrorOnChange);
-    confirmPasswordController.addListener(_clearErrorOnChange);
-    nameController.addListener(_clearErrorOnChange);
+    // Login
+    loginEmailController.addListener(_clearErrorOnChange);
+    loginPasswordController.addListener(_clearErrorOnChange);
+
+    // Registro
+    registerNameController.addListener(_clearErrorOnChange);
+    registerEmailController.addListener(_clearErrorOnChange);
+    registerPasswordController.addListener(_clearErrorOnChange);
+    registerConfirmPasswordController.addListener(_clearErrorOnChange);
+
+    // Reset password
+    resetPasswordEmailController.addListener(_clearErrorOnChange);
+
+    _logger.d("Todos los controladores de texto inicializados");
   }
 
   @override
   void onClose() {
     // Liberar controladores
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    nameController.dispose();
-    resetPasswordEmailController.dispose();
-
-    // Liberar focus nodes
-    emailFocusNode.dispose();
-    passwordFocusNode.dispose();
-    confirmPasswordFocusNode.dispose();
-    nameFocusNode.dispose();
-
+    _disposeControllers();
+    _logger.i("AuthController cerrado");
     super.onClose();
+  }
+
+  // Método separado para liberar controladores
+  void _disposeControllers() {
+    _logger.d("Liberando controladores de texto");
+
+    // Remover listeners de Login
+    loginEmailController.removeListener(_clearErrorOnChange);
+    loginPasswordController.removeListener(_clearErrorOnChange);
+
+    // Remover listeners de Registro
+    registerNameController.removeListener(_clearErrorOnChange);
+    registerEmailController.removeListener(_clearErrorOnChange);
+    registerPasswordController.removeListener(_clearErrorOnChange);
+    registerConfirmPasswordController.removeListener(_clearErrorOnChange);
+
+    // Remover listeners de Reset Password
+    resetPasswordEmailController.removeListener(_clearErrorOnChange);
+
+    // Disponer controladores de Login
+    loginEmailController.dispose();
+    loginPasswordController.dispose();
+    loginEmailFocusNode.dispose();
+    loginPasswordFocusNode.dispose();
+
+    // Disponer controladores de Registro
+    registerNameController.dispose();
+    registerEmailController.dispose();
+    registerPasswordController.dispose();
+    registerConfirmPasswordController.dispose();
+    registerNameFocusNode.dispose();
+    registerEmailFocusNode.dispose();
+    registerPasswordFocusNode.dispose();
+    registerConfirmPasswordFocusNode.dispose();
+
+    // Disponer controladores de Reset Password
+    resetPasswordEmailController.dispose();
+    resetPasswordEmailFocusNode.dispose();
   }
 
   /// Limpia el mensaje de error cuando el usuario modifica algún campo
@@ -93,14 +159,26 @@ class AuthController extends GetxController {
     }
   }
 
-  /// Toggle para mostrar/ocultar contraseña
-  void togglePasswordVisibility() {
-    obscurePassword.value = !obscurePassword.value;
+  /// Toggle para mostrar/ocultar contraseña en LOGIN
+  void toggleLoginPasswordVisibility() {
+    _logger.d(
+        "Toggle visibilidad de contraseña login: ${!loginPasswordVisible.value}");
+    loginPasswordVisible.value = !loginPasswordVisible.value;
   }
 
-  /// Toggle para mostrar/ocultar confirmación de contraseña
-  void toggleConfirmPasswordVisibility() {
-    obscureConfirmPassword.value = !obscureConfirmPassword.value;
+  /// Toggle para mostrar/ocultar contraseña en REGISTRO
+  void toggleRegisterPasswordVisibility() {
+    _logger.d(
+        "Toggle visibilidad de contraseña registro: ${!registerPasswordVisible.value}");
+    registerPasswordVisible.value = !registerPasswordVisible.value;
+  }
+
+  /// Toggle para mostrar/ocultar confirmación de contraseña en REGISTRO
+  void toggleRegisterConfirmPasswordVisibility() {
+    _logger.d(
+        "Toggle visibilidad de confirmación: ${!registerConfirmPasswordVisible.value}");
+    registerConfirmPasswordVisible.value =
+        !registerConfirmPasswordVisible.value;
   }
 
   /// Validador para campo de email
@@ -115,7 +193,8 @@ class AuthController extends GetxController {
 
   /// Validador para campo de confirmación de contraseña
   String? validateConfirmPassword(String? value) {
-    return FormValidators.confirmPassword(value, passwordController.text);
+    return FormValidators.confirmPassword(
+        value, registerPasswordController.text);
   }
 
   /// Validador para campo de nombre
@@ -128,23 +207,26 @@ class AuthController extends GetxController {
     // Ocultar teclado
     FocusManager.instance.primaryFocus?.unfocus();
 
+    _logger.i("Iniciando registro de usuario: ${registerEmailController.text}");
     status.value = AuthStatus.loading;
     errorMessage.value = '';
 
     final result = await _authRepository.registerWithEmail(
-      email: emailController.text.trim(),
-      password: passwordController.text,
-      displayName: nameController.text.trim(),
+      email: registerEmailController.text.trim(),
+      password: registerPasswordController.text,
+      displayName: registerNameController.text.trim(),
     );
 
     result.fold(
       (failure) {
         status.value = AuthStatus.error;
         errorMessage.value = _mapFailureToMessage(failure);
+        _logger.e("Error en registro: ${failure.message}");
       },
       (parent) {
         status.value = AuthStatus.success;
         _sessionController.setCurrentUser(parent);
+        _logger.i("Registro exitoso: ${parent.uid}");
         Get.offAllNamed(Routes.home);
       },
     );
@@ -155,22 +237,25 @@ class AuthController extends GetxController {
     // Ocultar teclado
     FocusManager.instance.primaryFocus?.unfocus();
 
+    _logger.i("Iniciando sesión: ${loginEmailController.text}");
     status.value = AuthStatus.loading;
     errorMessage.value = '';
 
     final result = await _authRepository.signInWithEmail(
-      email: emailController.text.trim(),
-      password: passwordController.text,
+      email: loginEmailController.text.trim(),
+      password: loginPasswordController.text,
     );
 
     result.fold(
       (failure) {
         status.value = AuthStatus.error;
         errorMessage.value = _mapFailureToMessage(failure);
+        _logger.e("Error en login: ${failure.message}");
       },
       (parent) {
         status.value = AuthStatus.success;
         _sessionController.setCurrentUser(parent);
+        _logger.i("Login exitoso: ${parent.uid}");
         Get.offAllNamed(Routes.home);
       },
     );
@@ -181,6 +266,7 @@ class AuthController extends GetxController {
     // Ocultar teclado
     FocusManager.instance.primaryFocus?.unfocus();
 
+    _logger.i("Iniciando sesión con Google");
     status.value = AuthStatus.loading;
     errorMessage.value = '';
 
@@ -190,10 +276,12 @@ class AuthController extends GetxController {
       (failure) {
         status.value = AuthStatus.error;
         errorMessage.value = _mapFailureToMessage(failure);
+        _logger.e("Error en Google Sign-In: ${failure.message}");
       },
       (parent) {
         status.value = AuthStatus.success;
         _sessionController.setCurrentUser(parent);
+        _logger.i("Google Sign-In exitoso: ${parent.uid}");
         Get.offAllNamed(Routes.home);
       },
     );
@@ -201,7 +289,15 @@ class AuthController extends GetxController {
 
   /// Método para cerrar sesión
   Future<void> logout() async {
+    _logger.i("Iniciando proceso de cierre de sesión");
     status.value = AuthStatus.loading;
+
+    // Limpiar el controlador de perfil
+    if (Get.isRegistered<ProfileController>()) {
+      final profileController = Get.find<ProfileController>();
+      profileController.resetProfileData();
+      _logger.d("Datos de perfil reseteados");
+    }
 
     final result = await _authRepository.signOut();
 
@@ -209,10 +305,18 @@ class AuthController extends GetxController {
       (failure) {
         status.value = AuthStatus.error;
         errorMessage.value = _mapFailureToMessage(failure);
+        _logger.e("Error en cierre de sesión: ${failure.message}");
       },
       (_) {
         status.value = AuthStatus.initial;
         _sessionController.clearCurrentUser();
+
+        // Limpiar todos los campos de formulario
+        clearLoginForm();
+        clearRegisterForm();
+        clearResetPasswordForm();
+
+        _logger.i("Sesión cerrada exitosamente");
         Get.offAllNamed(Routes.login);
       },
     );
@@ -223,6 +327,8 @@ class AuthController extends GetxController {
     // Ocultar teclado
     FocusManager.instance.primaryFocus?.unfocus();
 
+    _logger.i(
+        "Enviando correo de recuperación: ${resetPasswordEmailController.text}");
     status.value = AuthStatus.loading;
     errorMessage.value = '';
 
@@ -233,14 +339,15 @@ class AuthController extends GetxController {
       (failure) {
         status.value = AuthStatus.error;
         errorMessage.value = _mapFailureToMessage(failure);
+        _logger.e("Error enviando correo de recuperación: ${failure.message}");
       },
       (_) {
         status.value = AuthStatus.success;
-        // No cerramos la pantalla, mostramos mensaje de éxito
-        // La pantalla resetPassword mostrará un mensaje basado en este estado
+        _logger.i("Correo de recuperación enviado exitosamente");
 
         Future.delayed(const Duration(seconds: 3), () {
           if (Get.currentRoute == Routes.resetPassword) {
+            _logger.d("Regresando a la pantalla de login después de reset");
             Get.back(); // Volver a la pantalla anterior después de 3 segundos
             resetPasswordEmailController.clear();
           }
@@ -249,15 +356,37 @@ class AuthController extends GetxController {
     );
   }
 
-  /// Método para limpiar los campos del formulario
-  void clearForm() {
-    emailController.clear();
-    passwordController.clear();
-    confirmPasswordController.clear();
-    nameController.clear();
-    resetPasswordEmailController.clear();
-    status.value = AuthStatus.initial;
+  /// Método para limpiar sólo el formulario de LOGIN
+  void clearLoginForm() {
+    _logger.d("Limpiando formulario de login");
+    loginEmailController.clear();
+    loginPasswordController.clear();
     errorMessage.value = '';
+    status.value = AuthStatus.initial;
+    // Restablecer visibilidad de contraseña
+    loginPasswordVisible.value = false;
+  }
+
+  /// Método para limpiar sólo el formulario de REGISTRO
+  void clearRegisterForm() {
+    _logger.d("Limpiando formulario de registro");
+    registerNameController.clear();
+    registerEmailController.clear();
+    registerPasswordController.clear();
+    registerConfirmPasswordController.clear();
+    errorMessage.value = '';
+    status.value = AuthStatus.initial;
+    // Restablecer visibilidad de contraseñas
+    registerPasswordVisible.value = false;
+    registerConfirmPasswordVisible.value = false;
+  }
+
+  /// Método para limpiar sólo el formulario de RESET PASSWORD
+  void clearResetPasswordForm() {
+    _logger.d("Limpiando formulario de recuperación de contraseña");
+    resetPasswordEmailController.clear();
+    errorMessage.value = '';
+    status.value = AuthStatus.initial;
   }
 
   /// Mapeo de errores a mensajes legibles

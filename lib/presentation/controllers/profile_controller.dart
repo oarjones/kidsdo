@@ -7,7 +7,6 @@ import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/parent.dart';
 import 'package:kidsdo/domain/repositories/user_repository.dart';
 import 'package:kidsdo/presentation/controllers/session_controller.dart';
-import 'package:kidsdo/routes.dart';
 import 'package:logger/logger.dart';
 
 enum ProfileStatus {
@@ -74,6 +73,18 @@ class ProfileController extends GetxController {
   void onClose() {
     nameController.dispose();
     super.onClose();
+  }
+
+  /// Método para resetear los datos del perfil (usado cuando se cierra sesión)
+  void resetProfileData() {
+    _logger.i('Reseteando datos del perfil');
+    profile.value = null;
+    imageFile.value = null;
+    isUploading.value = false;
+    uploadProgress.value = 0.0;
+    nameController.clear();
+    errorMessage.value = '';
+    status.value = ProfileStatus.initial;
   }
 
   // Cargar perfil desde SessionController
