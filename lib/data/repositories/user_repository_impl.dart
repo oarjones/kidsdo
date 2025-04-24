@@ -11,10 +11,13 @@ import 'package:kidsdo/domain/repositories/user_repository.dart';
 
 class UserRepositoryImpl implements IUserRepository {
   final IUserRemoteDataSource _userRemoteDataSource;
+  final FirebaseAuth _firebaseAuth;
 
   UserRepositoryImpl({
     required IUserRemoteDataSource userRemoteDataSource,
-  }) : _userRemoteDataSource = userRemoteDataSource;
+    required FirebaseAuth firebaseAuth,
+  })  : _userRemoteDataSource = userRemoteDataSource,
+        _firebaseAuth = firebaseAuth;
 
   @override
   Future<Either<Failure, void>> saveParent(Parent parent) async {
@@ -68,6 +71,51 @@ class UserRepositoryImpl implements IUserRepository {
             ValidationFailure(message: 'El usuario no es un padre'));
       }
       return Left(ServerFailure(message: e.message ?? 'Error del servidor'));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Parent?>> getCurrentParentFromAuth() async {
+    try {
+      // Obtener el usuario actual de Firebase Auth
+      final firebaseUser = _firebaseAuth.currentUser;
+
+      if (firebaseUser == null) {
+        return const Right(null);
+      }
+
+      try {
+        // Intentar obtener los datos del usuario desde Firestore
+        final parentModel =
+            await _userRemoteDataSource.getParentById(firebaseUser.uid);
+        return Right(parentModel);
+      } on FirebaseException catch (e) {
+        if (e.code == 'not-found') {
+          // Si el usuario no existe en Firestore pero sí en Auth,
+          // podemos crear un Parent básico a partir de los datos de Auth
+          final parent = ParentModel(
+            uid: firebaseUser.uid,
+            displayName: firebaseUser.displayName ?? 'Usuario',
+            email: firebaseUser.email ?? '',
+            avatarUrl: firebaseUser.photoURL,
+            createdAt:
+                DateTime.now(), // Como no tenemos la fecha real, usamos ahora
+            settings: const {
+              'theme': 'default',
+              'notifications': true,
+              'soundEffects': true,
+            },
+          );
+
+          // Opcionalmente podríamos guardar este usuario en Firestore
+          // await _userRemoteDataSource.saveParent(parent);
+
+          return Right(parent);
+        }
+        return Left(ServerFailure(message: e.message ?? 'Error del servidor'));
+      }
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

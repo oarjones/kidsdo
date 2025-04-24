@@ -4,6 +4,7 @@ import 'package:kidsdo/core/constants/colors.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/presentation/controllers/auth_controller.dart';
 import 'package:kidsdo/presentation/controllers/session_controller.dart';
+import 'package:kidsdo/routes.dart';
 
 class HomePage extends GetView<AuthController> {
   const HomePage({Key? key}) : super(key: key);
@@ -99,12 +100,18 @@ class HomePage extends GetView<AuthController> {
         currentIndex: 0,
         onTap: (index) {
           // Navegación entre secciones principales
-          if (index != 0) {
-            Get.snackbar(
-              'Próximamente',
-              'Esta sección estará disponible pronto',
-              snackPosition: SnackPosition.BOTTOM,
-            );
+          switch (index) {
+            case 0: // Home
+              break;
+            case 3: // Perfil
+              Get.toNamed(Routes.profile);
+              break;
+            default:
+              Get.snackbar(
+                TrKeys.comingSoon.tr,
+                TrKeys.comingSoonSection.tr,
+                snackPosition: SnackPosition.BOTTOM,
+              );
           }
         },
         items: [

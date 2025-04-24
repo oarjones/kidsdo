@@ -5,6 +5,8 @@ import 'package:kidsdo/presentation/pages/auth/login_page.dart';
 import 'package:kidsdo/presentation/pages/auth/register_page.dart';
 import 'package:kidsdo/presentation/pages/auth/reset_password_page.dart';
 import 'package:kidsdo/presentation/pages/home/home_page.dart';
+import 'package:kidsdo/presentation/pages/profile/profile_page.dart';
+import 'package:kidsdo/presentation/pages/profile/edit_profile_page.dart';
 
 abstract class Routes {
   static const splash = '/splash';
@@ -13,6 +15,7 @@ abstract class Routes {
   static const resetPassword = '/reset-password';
   static const home = '/home';
   static const profile = '/profile';
+  static const editProfile = '/edit-profile';
   static const family = '/family';
   static const createChild = '/create-child';
 }
@@ -48,13 +51,6 @@ class AppPages {
       middlewares: [AuthMiddleware()],
       transition: Transition.fadeIn,
     ),
-    // Otras rutas protegidas
-    GetPage(
-      name: Routes.profile,
-      page: () => const HomePage(), // Temporalmente usando HomePage
-      middlewares: [AuthMiddleware()],
-      transition: Transition.rightToLeft,
-    ),
     GetPage(
       name: Routes.family,
       page: () => const HomePage(), // Temporalmente usando HomePage
@@ -64,6 +60,18 @@ class AppPages {
     GetPage(
       name: Routes.createChild,
       page: () => const HomePage(), // Temporalmente usando HomePage
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.profile,
+      page: () => const ProfilePage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.editProfile,
+      page: () => const EditProfilePage(),
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
     ),

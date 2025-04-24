@@ -4,6 +4,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:kidsdo/presentation/controllers/profile_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // DataSources
@@ -53,6 +55,7 @@ Future<void> init() async {
   Get.lazyPut(() => FirebaseAuth.instance, fenix: true);
   Get.lazyPut(() => FirebaseFirestore.instance, fenix: true);
   Get.lazyPut(() => FirebaseStorage.instance, fenix: true);
+  Get.lazyPut<ImagePicker>(() => ImagePicker(), fenix: true);
 
   // Configuración específica para GoogleSignIn
   Get.lazyPut(
@@ -104,6 +107,7 @@ Future<void> init() async {
   Get.lazyPut<IUserRepository>(
     () => UserRepositoryImpl(
       userRemoteDataSource: Get.find<IUserRemoteDataSource>(),
+      firebaseAuth: Get.find<FirebaseAuth>(),
     ),
     fenix: true,
   );
@@ -135,4 +139,15 @@ Future<void> init() async {
     authRepository: Get.find<IAuthRepository>(),
     sessionController: Get.find<SessionController>(),
   ));
+
+  // Controlador de perfil
+  Get.put<ProfileController>(
+    ProfileController(
+      userRepository: Get.find<IUserRepository>(),
+      sessionController: Get.find<SessionController>(),
+      storage: Get.find<FirebaseStorage>(),
+      imagePicker: Get.find<ImagePicker>(),
+      logger: Get.find<Logger>(),
+    ),
+  );
 }

@@ -18,6 +18,9 @@ abstract class IUserRepository {
   /// Obtiene un usuario padre por su id
   Future<Either<Failure, Parent>> getParentById(String parentId);
 
+  /// Obtiene el usuario padre actual a partir de Auth
+  Future<Either<Failure, Parent?>> getCurrentParentFromAuth();
+
   /// Obtiene un usuario hijo por su id
   Future<Either<Failure, Child>> getChildById(String childId);
 

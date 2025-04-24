@@ -125,4 +125,29 @@ class TrKeys {
   static const menuChallenges = 'menu_challenges';
   static const menuAwards = 'menu_awards';
   static const menuProfile = 'menu_profile';
+
+  // Perfil
+  // static const profile = 'profile';
+  // static const editProfile = 'edit_profile';
+  // static const name = 'name';
+  // static const age = 'age';
+  // static const birthDate = 'birth_date';
+  // static const selectAvatar = 'select_avatar';
+  static const selectImageSource = 'select_image_source';
+  static const gallery = 'gallery';
+  static const camera = 'camera';
+  static const retry = 'retry';
+  static const noProfileData = 'no_profile_data';
+  static const errorSelectingImage = 'error_selecting_image';
+  static const errorCapturingImage = 'error_capturing_image';
+  static const errorUploadingImage = 'error_uploading_image';
+  static const children = 'children';
+  static const accountCreated = 'account_created';
+  static const familyCreated = 'family_created';
+  static const noFamily = 'no_family';
+  static const profileUpdatedSuccessfully = 'profile_updated_successfully';
+  static const notifications = 'notifications';
+  static const privacy = 'privacy';
+  static const help = 'help';
+  static const sessionExpired = 'session_expired';
 }
