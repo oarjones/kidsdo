@@ -129,4 +129,23 @@ final Map<String, String> esTranslations = {
   'help': 'Ayuda',
   'session_expired':
       'La sesión ha expirado, por favor inicia sesión nuevamente',
+
+  // Familia - nuevas traducciones
+  'family_created_title': 'Familia creada',
+  'family_created_message': 'Tu familia ha sido creada correctamente',
+  'family_joined_title': 'Te has unido a una familia',
+  'family_joined_message': 'Te has unido correctamente a la familia',
+  'family_left_title': 'Has salido de la familia',
+  'family_left_message': 'Has salido correctamente de la familia',
+  'family_name_too_short':
+      'El nombre de la familia debe tener al menos 3 caracteres',
+  'invalid_invite_code': 'El código de invitación no es válido',
+  'not_logged_in': 'Debes iniciar sesión para realizar esta acción',
+  'already_in_family': 'Ya perteneces a una familia',
+  'creator_cant_leave': 'El creador de la familia no puede abandonarla',
+  'family_not_found': 'Familia no encontrada',
+  'create_family_action_button': 'Crear familia',
+  'join_family_action_button': 'Unirse a familia',
+  'generate_code_action_button': 'Generar código',
+  'leave_family_action_button': 'Salir de la familia',
 };

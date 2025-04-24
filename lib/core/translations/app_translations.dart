@@ -150,4 +150,22 @@ class TrKeys {
   static const privacy = 'privacy';
   static const help = 'help';
   static const sessionExpired = 'session_expired';
+
+  // Familia - nuevas claves
+  static const familyCreatedTitle = 'family_created_title';
+  static const familyCreatedMessage = 'family_created_message';
+  static const familyJoinedTitle = 'family_joined_title';
+  static const familyJoinedMessage = 'family_joined_message';
+  static const familyLeftTitle = 'family_left_title';
+  static const familyLeftMessage = 'family_left_message';
+  static const familyNameTooShort = 'family_name_too_short';
+  static const invalidInviteCode = 'invalid_invite_code';
+  static const notLoggedIn = 'not_logged_in';
+  static const alreadyInFamily = 'already_in_family';
+  static const familyNotFound = 'family_not_found';
+  static const creatorCantLeave = 'creator_cant_leave';
+  static const createFamilyActionButton = 'create_family_action_button';
+  static const joinFamilyActionButton = 'join_family_action_button';
+  static const generateCodeActionButton = 'generate_code_action_button';
+  static const leaveFamilyActionButton = 'leave_family_action_button';
 }

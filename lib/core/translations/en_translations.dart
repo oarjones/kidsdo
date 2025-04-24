@@ -126,4 +126,22 @@ final Map<String, String> enTranslations = {
   'privacy': 'Privacy',
   'help': 'Help',
   'session_expired': 'Your session has expired, please login again',
+
+  // Family - new translations
+  'family_created_title': 'Family created',
+  'family_created_message': 'Your family has been created successfully',
+  'family_joined_title': 'Joined a family',
+  'family_joined_message': 'You have successfully joined the family',
+  'family_left_title': 'Left the family',
+  'family_left_message': 'You have successfully left the family',
+  'family_name_too_short': 'Family name must be at least 3 characters long',
+  'invalid_invite_code': 'The invitation code is not valid',
+  'not_logged_in': 'You must be logged in to perform this action',
+  'already_in_family': 'You already belong to a family',
+  'creator_cant_leave': 'The family creator cannot leave it',
+  'family_not_found': 'Family not found',
+  'create_family_action_button': 'Create family',
+  'join_family_action_button': 'Join family',
+  'generate_code_action_button': 'Generate code',
+  'leave_family_action_button': 'Leave family',
 };
