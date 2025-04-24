@@ -219,7 +219,7 @@ class FamilyController extends GetxController {
           'family_created_title'.tr,
           'family_created_message'.tr,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.1),
+          backgroundColor: Colors.green.withValues(alpha: 0.1),
           colorText: Colors.green,
         );
       },
@@ -292,7 +292,7 @@ class FamilyController extends GetxController {
               'family_joined_title'.tr,
               'family_joined_message'.tr,
               snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green.withOpacity(0.1),
+              backgroundColor: Colors.green.withValues(alpha: 0.1),
               colorText: Colors.green,
             );
           },
@@ -382,7 +382,7 @@ class FamilyController extends GetxController {
           'family_left_title'.tr,
           'family_left_message'.tr,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.1),
+          backgroundColor: Colors.green.withValues(alpha: 0.1),
           colorText: Colors.green,
         );
       },
