@@ -55,6 +55,18 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     nameController = TextEditingController();
+
+    // --- INICIO: Modificación ---
+    // Escuchar cambios en el usuario de la sesión
+    ever(_sessionController.currentUser, (_) {
+      // Si el usuario cambia (inicia sesión, cierra sesión),
+      // recargar el perfil.
+      _logger.i(
+          'Detectado cambio en SessionController.currentUser, recargando perfil.');
+      loadProfile();
+    });
+    // --- FIN: Modificación ---
+
     loadProfile();
   }
 
@@ -65,67 +77,127 @@ class ProfileController extends GetxController {
   }
 
   // Cargar perfil desde SessionController
+  // Future<void> loadProfile() async {
+  //   status.value = ProfileStatus.loading;
+  //   errorMessage.value = '';
+
   Future<void> loadProfile() async {
     status.value = ProfileStatus.loading;
     errorMessage.value = '';
 
+    // Limpiar datos anteriores antes de cargar nuevos
+    profile.value =
+        null; // <- Puedes descomentar esto si quieres limpiar visualmente antes de cargar
+    nameController.clear(); // <- Puedes descomentar esto también
+
     try {
-      _logger.i('Cargando perfil de usuario');
+      _logger.i('Cargando perfil de usuario...'); // Log existente
 
       // Intentar obtener el usuario actual de la sesión
       final currentUser = _sessionController.currentUser.value;
 
       if (currentUser != null) {
-        _logger
-            .i('Usuario encontrado en SessionController: ${currentUser.uid}');
+        _logger.i(
+            'Usuario encontrado en SessionController: ${currentUser.uid}'); // Log existente
         profile.value = currentUser;
+        // Asegúrate de actualizar el nameController aquí también
         nameController.text = currentUser.displayName;
         status.value = ProfileStatus.success;
+        // Limpiar el archivo de imagen si se estaba editando
+        imageFile.value = null;
         return; // Salir temprano si tenemos el usuario
       }
 
-      // Si llegamos aquí, no hay usuario en el SessionController
-      _logger.w('No se encontró usuario en SessionController');
+      // Si llegamos aquí, no hay usuario en el SessionController (caso logout o error inicial)
+      _logger.w(
+          'No se encontró usuario en SessionController. Estableciendo perfil a null.'); // Log existente
+      // Asegúrate de limpiar explícitamente el perfil si no hay usuario
+      profile.value = null;
+      nameController.clear();
+      imageFile.value = null; // Limpiar imagen también
+      status.value =
+          ProfileStatus.initial; // O error si prefieres manejarlo así
 
-      // Intentar obtener el usuario a través de Firebase Auth directamente
-      final authResult = await _userRepository.getCurrentParentFromAuth();
+      // El código original intentaba obtenerlo de Auth si no estaba en sesión,
+      // pero para el flujo de logout->login, si currentUser es null,
+      // deberíamos limpiar el perfil localmente.
+      // La lógica de redirección al login si no hay usuario se maneja en otros lugares (Middleware).
 
-      authResult.fold(
-        (failure) {
-          _logger.e(
-              'No se pudo obtener el usuario autenticado: ${failure.message}');
-          status.value = ProfileStatus.error;
-          errorMessage.value = TrKeys.sessionExpired.tr;
-
-          // Redirigir al login si no hay sesión
-          _sessionController.clearCurrentUser();
-          Get.offAllNamed(Routes.login);
-        },
-        (parent) {
-          if (parent != null) {
-            _logger.i('Perfil obtenido desde Auth: ${parent.uid}');
-            profile.value = parent;
-            nameController.text = parent.displayName;
-            // Actualizar el SessionController
-            _sessionController.setCurrentUser(parent);
-            status.value = ProfileStatus.success;
-          } else {
-            _logger.e('No hay usuario autenticado');
-            status.value = ProfileStatus.error;
-            errorMessage.value = TrKeys.sessionExpired.tr;
-
-            // Redirigir al login si no hay sesión
-            _sessionController.clearCurrentUser();
-            Get.offAllNamed(Routes.login);
-          }
-        },
-      );
+      // // Código original para obtener de Auth (lo comento porque si currentUser es null, deberíamos limpiar)
+      // final authResult = await _userRepository.getCurrentParentFromAuth();
+      // authResult.fold(
+      //   (failure) { ... }, // Manejo de error original
+      //   (parent) { ... }, // Manejo de éxito original
+      // );
     } catch (e, stackTrace) {
-      _logger.e('Error cargando perfil: $e', error: e, stackTrace: stackTrace);
+      _logger.e('Error cargando perfil: $e',
+          error: e, stackTrace: stackTrace); // Log existente
       status.value = ProfileStatus.error;
       errorMessage.value = e.toString();
+      // Limpiar datos en caso de error
+      profile.value = null;
+      nameController.clear();
+      imageFile.value = null;
     }
   }
+
+  //   try {
+  //     _logger.i('Cargando perfil de usuario');
+
+  //     // Intentar obtener el usuario actual de la sesión
+  //     final currentUser = _sessionController.currentUser.value;
+
+  //     if (currentUser != null) {
+  //       _logger
+  //           .i('Usuario encontrado en SessionController: ${currentUser.uid}');
+  //       profile.value = currentUser;
+  //       nameController.text = currentUser.displayName;
+  //       status.value = ProfileStatus.success;
+  //       return; // Salir temprano si tenemos el usuario
+  //     }
+
+  //     // Si llegamos aquí, no hay usuario en el SessionController
+  //     _logger.w('No se encontró usuario en SessionController');
+
+  //     // Intentar obtener el usuario a través de Firebase Auth directamente
+  //     final authResult = await _userRepository.getCurrentParentFromAuth();
+
+  //     authResult.fold(
+  //       (failure) {
+  //         _logger.e(
+  //             'No se pudo obtener el usuario autenticado: ${failure.message}');
+  //         status.value = ProfileStatus.error;
+  //         errorMessage.value = TrKeys.sessionExpired.tr;
+
+  //         // Redirigir al login si no hay sesión
+  //         _sessionController.clearCurrentUser();
+  //         Get.offAllNamed(Routes.login);
+  //       },
+  //       (parent) {
+  //         if (parent != null) {
+  //           _logger.i('Perfil obtenido desde Auth: ${parent.uid}');
+  //           profile.value = parent;
+  //           nameController.text = parent.displayName;
+  //           // Actualizar el SessionController
+  //           _sessionController.setCurrentUser(parent);
+  //           status.value = ProfileStatus.success;
+  //         } else {
+  //           _logger.e('No hay usuario autenticado');
+  //           status.value = ProfileStatus.error;
+  //           errorMessage.value = TrKeys.sessionExpired.tr;
+
+  //           // Redirigir al login si no hay sesión
+  //           _sessionController.clearCurrentUser();
+  //           Get.offAllNamed(Routes.login);
+  //         }
+  //       },
+  //     );
+  //   } catch (e, stackTrace) {
+  //     _logger.e('Error cargando perfil: $e', error: e, stackTrace: stackTrace);
+  //     status.value = ProfileStatus.error;
+  //     errorMessage.value = e.toString();
+  //   }
+  // }
 
   // Seleccionar imagen de la galería
   Future<void> pickImage() async {
