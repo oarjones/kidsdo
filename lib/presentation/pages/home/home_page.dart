@@ -96,6 +96,17 @@ class HomePage extends GetView<AuthController> {
                       ),
                     ),
                     const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: () =>
+                          Get.toNamed(Routes.childProfileSelection),
+                      icon: const Icon(Icons.child_care),
+                      label: Text('access_child_mode'.tr),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                        backgroundColor: AppColors.childBlue,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () {
                         // Eventualmente navegaríamos a otras configuraciones

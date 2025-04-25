@@ -232,4 +232,56 @@ class TrKeys {
   static const childProfileUpdatedMessage = 'child_profile_updated_message';
   static const childProfileDeletedTitle = 'child_profile_deleted_title';
   static const childProfileDeletedMessage = 'child_profile_deleted_message';
+
+  // Claves para interfaz infantil y acceso
+  static const selectAvatarOption = 'select_avatar_option';
+  static const themeStyle = 'theme_style';
+  static const themeColor = 'theme_color';
+  static const interfaceSize = 'interface_size';
+  static const themeStyleDefault = 'theme_style_default';
+  static const themeStyleSpace = 'theme_style_space';
+  static const themeStyleSea = 'theme_style_sea';
+  static const themeStyleJungle = 'theme_style_jungle';
+  static const themeStylePrincess = 'theme_style_princess';
+  static const interfaceSizeSmall = 'interface_size_small';
+  static const interfaceSizeMedium = 'interface_size_medium';
+  static const interfaceSizeLarge = 'interface_size_large';
+  static const themePreview = 'theme_preview';
+  static const previewGreeting = 'preview_greeting';
+  static const previewSubtitle = 'preview_subtitle';
+  static const previewChallenge1 = 'preview_challenge1';
+  static const previewChallenge2 = 'preview_challenge2';
+  static const previewButton = 'preview_button';
+  static const childNamePreview = 'child_name_preview';
+  static const whoIsUsing = 'who_is_using';
+  static const selectProfileMessage = 'select_profile_message';
+  static const accessProfile = 'access_profile';
+  static const parentMode = 'parent_mode';
+  static const enterParentalPin = 'enter_parental_pin';
+  static const enterParentalPinMessage = 'enter_parental_pin_message';
+  static const pin = 'pin';
+  static const incorrectPin = 'incorrect_pin';
+  static const incorrectPinMessage = 'incorrect_pin_message';
+  static const noChildProfilesAccess = 'no_child_profiles_access';
+  static const noChildProfilesAccessMessage =
+      'no_child_profiles_access_message';
+  static const switchProfile = 'switch_profile';
+  static const parentAccess = 'parent_access';
+  static const goodMorning = 'good_morning';
+  static const goodAfternoon = 'good_afternoon';
+  static const goodEvening = 'good_evening';
+  static const childDashboardSubtitle = 'child_dashboard_subtitle';
+  static const yourPoints = 'your_points';
+  static const nextLevel = 'next_level';
+  static const yourChallenges = 'your_challenges';
+  static const yourRewards = 'your_rewards';
+  static const viewAll = 'view_all';
+  static const dailyChallenge = 'daily_challenge';
+  static const weeklyChallenge = 'weekly_challenge';
+  static const challengeExample1 = 'challenge_example1';
+  static const challengeExample2 = 'challenge_example2';
+  static const challengeExample3 = 'challenge_example3';
+  static const rewardExample1 = 'reward_example1';
+  static const rewardExample2 = 'reward_example2';
+  static const menuAchievements = 'menu_achievements';
 }

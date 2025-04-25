@@ -14,6 +14,8 @@ import 'package:kidsdo/presentation/pages/family/invite_code_page.dart';
 import 'package:kidsdo/presentation/pages/family/child_profiles_page.dart';
 import 'package:kidsdo/presentation/pages/family/create_child_profile_page.dart';
 import 'package:kidsdo/presentation/pages/family/edit_child_profile_page.dart';
+import 'package:kidsdo/presentation/pages/child_access/child_profile_selection_page.dart';
+import 'package:kidsdo/presentation/pages/child_access/child_dashboard_page.dart';
 
 abstract class Routes {
   static const splash = '/splash';
@@ -30,6 +32,13 @@ abstract class Routes {
   static const createFamily = '/create-family';
   static const joinFamily = '/join-family';
   static const inviteCode = '/invite-code';
+
+  // Rutas para acceso infantil
+  static const childProfileSelection = '/child-profile-selection';
+  static const childDashboard = '/child-dashboard';
+  static const childChallenges = '/child-challenges';
+  static const childRewards = '/child-rewards';
+  static const childAchievements = '/child-achievements';
 }
 
 class AppPages {
@@ -117,6 +126,18 @@ class AppPages {
       page: () => const EditProfilePage(),
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
+    ),
+
+    // Rutas para acceso infantil
+    GetPage(
+      name: Routes.childProfileSelection,
+      page: () => const ChildProfileSelectionPage(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: Routes.childDashboard,
+      page: () => const ChildDashboardPage(),
+      transition: Transition.fadeIn,
     ),
   ];
 }

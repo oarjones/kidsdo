@@ -6,6 +6,7 @@ import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/family_child.dart';
 import 'package:kidsdo/presentation/controllers/child_profile_controller.dart';
+import 'package:kidsdo/presentation/controllers/child_access_controller.dart';
 import 'package:kidsdo/presentation/widgets/common/cached_avatar.dart';
 import 'package:kidsdo/routes.dart';
 
@@ -442,12 +443,10 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
               title: Text('access_child_mode'.tr),
               onTap: () {
                 Get.back();
-                // Implementar en el futuro
-                Get.snackbar(
-                  TrKeys.comingSoon.tr,
-                  TrKeys.comingSoonMessage.tr,
-                  snackPosition: SnackPosition.BOTTOM,
-                );
+                // Acceder al modo infantil
+                Get.find<ChildAccessController>().selectChild(child).then((_) {
+                  Get.toNamed(Routes.childDashboard);
+                });
               },
             ),
             ListTile(

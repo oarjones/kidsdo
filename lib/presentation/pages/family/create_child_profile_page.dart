@@ -8,6 +8,9 @@ import 'package:kidsdo/presentation/controllers/child_profile_controller.dart';
 import 'package:kidsdo/presentation/widgets/auth/auth_button.dart';
 import 'package:kidsdo/presentation/widgets/auth/auth_message.dart';
 import 'package:kidsdo/presentation/widgets/auth/auth_text_field.dart';
+import 'package:kidsdo/presentation/widgets/child/avatar_picker.dart';
+import 'package:kidsdo/presentation/widgets/child/theme_preview.dart';
+import 'package:kidsdo/presentation/widgets/child/theme_selector.dart';
 
 class CreateChildProfilePage extends StatefulWidget {
   const CreateChildProfilePage({Key? key}) : super(key: key);
@@ -113,65 +116,16 @@ class _CreateChildProfilePageState extends State<CreateChildProfilePage> {
   }
 
   Widget _buildAvatarPicker() {
-    final hasNewImage = controller.imageFile.value != null;
-
     return Center(
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
-          // Avatar actual o nuevo
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withAlpha(30),
-              shape: BoxShape.circle,
-              image: hasNewImage
-                  ? DecorationImage(
-                      image: FileImage(controller.imageFile.value!),
-                      fit: BoxFit.cover,
-                    )
-                  : null,
-            ),
-            child: !hasNewImage
-                ? const Icon(
-                    Icons.person,
-                    size: 60,
-                    color: AppColors.primary,
-                  )
-                : null,
-          ),
-
-          // Botón para cambiar avatar
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
-            ),
-            child: hasNewImage
-                ? IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: controller.clearSelectedImage,
-                  )
-                : IconButton(
-                    icon: const Icon(Icons.camera_alt, color: Colors.white),
-                    onPressed: () => _showImageSourceDialog(context),
-                  ),
-          ),
-
-          // Indicador de progreso si está subiendo
-          if (controller.isUploading.value)
-            Positioned.fill(
-              child: CircularProgressIndicator(
-                value: controller.uploadProgress.value,
-                strokeWidth: 3,
-                backgroundColor: Colors.white.withAlpha(127),
-                valueColor:
-                    const AlwaysStoppedAnimation<Color>(AppColors.primary),
-              ),
-            ),
-        ],
+      child: AvatarPicker(
+        selectedImage: controller.imageFile.value,
+        selectedPredefinedAvatar:
+            controller.childSettings['predefinedAvatar'] as String?,
+        onPredefinedAvatarSelected: controller.selectPredefinedAvatar,
+        onPickImage: () => _showImageSourceDialog(context),
+        onClearImage: controller.clearSelectedImage,
+        isUploading: controller.isUploading.value,
+        uploadProgress: controller.uploadProgress.value,
       ),
     );
   }
@@ -236,63 +190,29 @@ class _CreateChildProfilePageState extends State<CreateChildProfilePage> {
   }
 
   Widget _buildThemeSelector() {
-    final selectedColor =
-        controller.childSettings['color'] as String? ?? 'blue';
-
-    // Definir colores disponibles
-    final colors = {
-      'blue': AppColors.childBlue,
-      'purple': AppColors.childPurple,
-      'green': AppColors.childGreen,
-      'orange': AppColors.childOrange,
-      'pink': AppColors.childPink,
-    };
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'child_profile_theme'.tr,
-          style: const TextStyle(
-            fontSize: AppDimensions.fontSm,
-            color: AppColors.textMedium,
-          ),
+        // Selector de tema avanzado
+        ThemeSelector(
+          currentSettings: controller.childSettings,
+          onSettingUpdated: controller.updateSetting,
         ),
-        const SizedBox(height: AppDimensions.sm),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: colors.entries.map((entry) {
-            final isSelected = selectedColor == entry.key;
-            return InkWell(
-              onTap: () => controller.updateSetting('color', entry.key),
-              borderRadius:
-                  BorderRadius.circular(AppDimensions.borderRadiusCircular),
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: isSelected
-                      ? Border.all(color: entry.value, width: 2)
-                      : null,
-                ),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: entry.value,
-                    shape: BoxShape.circle,
-                  ),
-                  child: isSelected
-                      ? const Icon(
-                          Icons.check,
-                          color: Colors.white,
-                          size: AppDimensions.iconSm,
-                        )
-                      : null,
-                ),
-              ),
-            );
-          }).toList(),
+
+        const SizedBox(height: AppDimensions.xl),
+
+        // Vista previa del tema
+        ThemePreview(
+          childName: controller.nameController.text.isNotEmpty
+              ? controller.nameController.text
+              : 'child_name_preview'.tr,
+          childAge:
+              controller.birthDate.value.difference(DateTime.now()).inDays ~/
+                  -365,
+          settings: controller.childSettings,
+          avatarUrl: null,
+          predefinedAvatar:
+              controller.childSettings['predefinedAvatar'] as String?,
         ),
       ],
     );

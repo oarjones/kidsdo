@@ -52,6 +52,7 @@ class ChildProfileController extends GetxController {
     'theme': 'default',
     'avatar': 'default',
     'color': 'blue',
+    'interfaceSize': 'medium',
   });
 
   ChildProfileController({
@@ -157,6 +158,7 @@ class ChildProfileController extends GetxController {
       'theme': 'default',
       'avatar': 'default',
       'color': 'blue',
+      'interfaceSize': 'medium',
     };
     _logger.d("Formulario preparado para nuevo perfil infantil");
   }
@@ -168,7 +170,21 @@ class ChildProfileController extends GetxController {
     levelController.text = child.level.toString();
     birthDate.value = child.birthDate;
     imageFile.value = null;
+
+    // Copiar configuraciones del perfil
     childSettings.value = Map<String, dynamic>.from(child.settings);
+
+    // Asegurarse de que tenga configuraciones por defecto si faltan
+    if (!childSettings.containsKey('theme')) {
+      childSettings['theme'] = 'default';
+    }
+    if (!childSettings.containsKey('color')) {
+      childSettings['color'] = 'blue';
+    }
+    if (!childSettings.containsKey('interfaceSize')) {
+      childSettings['interfaceSize'] = 'medium';
+    }
+
     _logger.d("Formulario preparado para editar el perfil: ${child.name}");
   }
 
@@ -192,6 +208,10 @@ class ChildProfileController extends GetxController {
 
       if (pickedFile != null) {
         imageFile.value = File(pickedFile.path);
+        // Si se selecciona una imagen personalizada, limpiar el avatar predefinido
+        if (childSettings.containsKey('predefinedAvatar')) {
+          childSettings.remove('predefinedAvatar');
+        }
         _logger.d("Imagen seleccionada de la galería");
       }
     } catch (e, stackTrace) {
@@ -211,6 +231,10 @@ class ChildProfileController extends GetxController {
 
       if (pickedFile != null) {
         imageFile.value = File(pickedFile.path);
+        // Si se selecciona una imagen personalizada, limpiar el avatar predefinido
+        if (childSettings.containsKey('predefinedAvatar')) {
+          childSettings.remove('predefinedAvatar');
+        }
         _logger.d("Imagen capturada con la cámara");
       }
     } catch (e, stackTrace) {
@@ -223,7 +247,19 @@ class ChildProfileController extends GetxController {
   /// Limpia la imagen seleccionada
   void clearSelectedImage() {
     imageFile.value = null;
-    _logger.d("Imagen seleccionada limpiada");
+    if (childSettings.containsKey('predefinedAvatar')) {
+      childSettings.remove('predefinedAvatar');
+    }
+    _logger.d("Imagen y avatar predefinido limpiados");
+  }
+
+  /// Selecciona un avatar predefinido
+  void selectPredefinedAvatar(String avatarKey) {
+    // Limpiar imagen seleccionada si existe
+    imageFile.value = null;
+    // Establecer avatar predefinido
+    childSettings['predefinedAvatar'] = avatarKey;
+    _logger.d("Avatar predefinido seleccionado: $avatarKey");
   }
 
   /// Subir imagen a Firebase Storage

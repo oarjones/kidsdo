@@ -30,6 +30,7 @@ import 'package:kidsdo/presentation/controllers/auth_controller.dart';
 import 'package:kidsdo/presentation/controllers/language_controller.dart';
 import 'package:kidsdo/presentation/controllers/family_controller.dart';
 import 'package:kidsdo/presentation/controllers/child_profile_controller.dart';
+import 'package:kidsdo/presentation/controllers/child_access_controller.dart';
 
 //Logging
 import 'package:logger/logger.dart';
@@ -188,6 +189,16 @@ Future<void> init() async {
       familyController: Get.find<FamilyController>(),
       storage: Get.find<FirebaseStorage>(),
       imagePicker: Get.find<ImagePicker>(),
+      logger: Get.find<Logger>(),
+    ),
+  );
+
+  // ChildAccessController controller
+  Get.put<ChildAccessController>(
+    ChildAccessController(
+      familyChildRepository: Get.find<IFamilyChildRepository>(),
+      familyController: Get.find<FamilyController>(),
+      sharedPreferences: Get.find<SharedPreferences>(),
       logger: Get.find<Logger>(),
     ),
   );

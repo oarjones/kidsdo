@@ -228,4 +228,63 @@ final Map<String, String> esTranslations = {
   'child_profile_deleted_title': 'Perfil eliminado',
   'child_profile_deleted_message':
       'El perfil infantil ha sido eliminado correctamente',
+
+  // Interfaz infantil y temas
+  'select_avatar_option': 'Elige un avatar',
+  'theme_style': 'Estilo de tema',
+  'theme_color': 'Color del tema',
+  'interface_size': 'Tamaño de interfaz',
+  'theme_style_default': 'Predeterminado',
+  'theme_style_space': 'Espacio',
+  'theme_style_sea': 'Mar',
+  'theme_style_jungle': 'Selva',
+  'theme_style_princess': 'Princesa',
+  'interface_size_small': 'Pequeño',
+  'interface_size_medium': 'Mediano',
+  'interface_size_large': 'Grande',
+  'theme_preview': 'Vista previa',
+  'preview_greeting': 'Hola ',
+  'preview_subtitle': 'Estos son tus retos para hoy',
+  'preview_challenge1': 'Hacer la cama',
+  'preview_challenge2': 'Leer 15 minutos',
+  'preview_button': 'Añadir reto',
+  'child_name_preview': 'Nombre',
+
+  // Modo de acceso infantil
+  'who_is_using': '¿Quién está usando la app?',
+  'select_profile_message':
+      'Selecciona tu perfil para acceder a tus retos y recompensas',
+  'access_profile': 'Acceder',
+  'parent_mode': 'Modo padre',
+  'enter_parental_pin': 'Control parental',
+  'enter_parental_pin_message':
+      'Introduce tu PIN de 4 dígitos para acceder al modo padre',
+  'pin': 'PIN',
+  'incorrect_pin': 'PIN incorrecto',
+  'incorrect_pin_message':
+      'El PIN que has introducido es incorrecto. Inténtalo de nuevo.',
+  'no_child_profiles_access': 'No se encontraron perfiles',
+  'no_child_profiles_access_message':
+      'Pide a un padre que cree un perfil para ti',
+  'switch_profile': 'Cambiar perfil',
+  'parent_access': 'Acceso parental',
+
+  // Tablero infantil
+  'good_morning': 'Buenos días',
+  'good_afternoon': 'Buenas tardes',
+  'good_evening': 'Buenas noches',
+  'child_dashboard_subtitle': '¡Completa tus retos para ganar puntos!',
+  'your_points': 'Tus puntos',
+  'next_level': 'Nivel',
+  'your_challenges': 'Tus retos',
+  'your_rewards': 'Tus recompensas',
+  'view_all': 'Ver todos',
+  'daily_challenge': 'Diario',
+  'weekly_challenge': 'Semanal',
+  'challenge_example1': 'Cepillarse los dientes',
+  'challenge_example2': 'Hacer la cama',
+  'challenge_example3': 'Hacer los deberes',
+  'reward_example1': 'Helado',
+  'reward_example2': 'Tiempo de juego',
+  'menu_achievements': 'Logros',
 };
