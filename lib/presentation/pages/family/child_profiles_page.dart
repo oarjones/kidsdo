@@ -443,8 +443,10 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
               title: Text('access_child_mode'.tr),
               onTap: () {
                 Get.back();
-                // Acceder al modo infantil
-                Get.find<ChildAccessController>().selectChild(child).then((_) {
+                // Acceder al modo infantil - CORREGIDO
+                Get.find<ChildAccessController>()
+                    .activateChildProfile(child)
+                    .then((_) {
                   Get.toNamed(Routes.childDashboard);
                 });
               },
