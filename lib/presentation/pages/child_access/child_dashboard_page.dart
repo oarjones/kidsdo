@@ -743,9 +743,13 @@ class ChildDashboardPage extends GetView<ChildAccessController> {
     );
   }
 
+  // Actualizar el método _buildBottomNav en child_dashboard_page.dart
+// para mejorar el contraste y aumentar el tamaño de los iconos
+
   Widget _buildBottomNav(Color themeColor, int childAge) {
-    // Determinar tamaño de los iconos según la edad
-    double iconSize = childAge <= 5 ? 32.0 : 24.0;
+    // Determinar tamaños según la edad para mejorar la usabilidad
+    double normalIconSize = childAge <= 5 ? 32.0 : 28.0;
+    double activeIconSize = childAge <= 5 ? 36.0 : 30.0;
     double labelSize =
         childAge <= 5 ? AppDimensions.fontSm : AppDimensions.fontXs;
 
@@ -759,7 +763,10 @@ class ChildDashboardPage extends GetView<ChildAccessController> {
         );
       },
       selectedItemColor: themeColor,
-      unselectedItemColor: Colors.grey,
+      unselectedItemColor:
+          AppColors.navigationUnselected, // Color estandarizado
+      backgroundColor: Colors.white,
+      elevation: 16, // Mayor elevación para sombra más visible
       type: BottomNavigationBarType.fixed,
       selectedLabelStyle: TextStyle(
         fontSize: labelSize,
@@ -770,19 +777,23 @@ class ChildDashboardPage extends GetView<ChildAccessController> {
       ),
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home, size: iconSize),
+          icon: Icon(Icons.home, size: normalIconSize),
+          activeIcon: Icon(Icons.home, size: activeIconSize),
           label: TrKeys.menuHome.tr,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.assignment, size: iconSize),
+          icon: Icon(Icons.assignment, size: normalIconSize),
+          activeIcon: Icon(Icons.assignment, size: activeIconSize),
           label: TrKeys.menuChallenges.tr,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.card_giftcard, size: iconSize),
+          icon: Icon(Icons.card_giftcard, size: normalIconSize),
+          activeIcon: Icon(Icons.card_giftcard, size: activeIconSize),
           label: TrKeys.menuAwards.tr,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.emoji_events, size: iconSize),
+          icon: Icon(Icons.emoji_events, size: normalIconSize),
+          activeIcon: Icon(Icons.emoji_events, size: activeIconSize),
           label: TrKeys.menuAchievements.tr,
         ),
       ],

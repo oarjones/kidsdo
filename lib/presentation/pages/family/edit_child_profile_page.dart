@@ -34,95 +34,225 @@ class _EditChildProfilePageState extends State<EditChildProfilePage> {
     }
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: Text('edit_child_profile'.tr),
+  //     ),
+  //     body: Obx(() {
+  //       final selectedChild = controller.selectedChild.value;
+  //       if (selectedChild == null) {
+  //         return const Center(child: CircularProgressIndicator());
+  //       }
+
+  //       return SingleChildScrollView(
+  //         padding: const EdgeInsets.all(AppDimensions.lg),
+  //         child: Form(
+  //           key: _formKey,
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.stretch,
+  //             children: [
+  //               // Imagen del perfil
+  //               _buildAvatarPicker(),
+  //               const SizedBox(height: AppDimensions.xl),
+
+  //               // Nombre del niño
+  //               AuthTextField(
+  //                 controller: controller.nameController,
+  //                 hintText: TrKeys.childName.tr,
+  //                 prefixIcon: Icons.person_outline,
+  //                 textCapitalization: TextCapitalization.words,
+  //                 validator: _validateName,
+  //                 enabled:
+  //                     controller.status.value != ChildProfileStatus.loading,
+  //                 autoValidate: true,
+  //               ),
+  //               const SizedBox(height: AppDimensions.lg),
+
+  //               // Fecha de nacimiento
+  //               _buildBirthDatePicker(),
+  //               const SizedBox(height: AppDimensions.lg),
+
+  //               // Puntos y nivel
+  //               _buildPointsAndLevel(),
+  //               const SizedBox(height: AppDimensions.lg),
+
+  //               // Configuración de tema/colores
+  //               _buildThemeSelector(),
+  //               const SizedBox(height: AppDimensions.lg),
+
+  //               // Mensaje de error si existe
+  //               if (controller.errorMessage.isNotEmpty)
+  //                 Padding(
+  //                   padding: const EdgeInsets.only(bottom: AppDimensions.md),
+  //                   child: AuthMessage(
+  //                     message: controller.errorMessage.value,
+  //                     type: MessageType.error,
+  //                     onDismiss: () => controller.errorMessage.value = '',
+  //                   ),
+  //                 ),
+
+  //               const SizedBox(height: AppDimensions.lg),
+
+  //               // Botón para guardar cambios
+  //               AuthButton(
+  //                 text: TrKeys.save.tr,
+  //                 onPressed:
+  //                     controller.status.value != ChildProfileStatus.loading
+  //                         ? _submitForm
+  //                         : null,
+  //                 isLoading:
+  //                     controller.status.value == ChildProfileStatus.loading,
+  //                 type: AuthButtonType.primary,
+  //               ),
+
+  //               const SizedBox(height: AppDimensions.md),
+
+  //               // Botón para cancelar
+  //               AuthButton(
+  //                 text: TrKeys.cancel.tr,
+  //                 onPressed:
+  //                     controller.status.value != ChildProfileStatus.loading
+  //                         ? () => Get.back()
+  //                         : null,
+  //                 type: AuthButtonType.secondary,
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     }),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('edit_child_profile'.tr),
       ),
-      body: Obx(() {
-        final selectedChild = controller.selectedChild.value;
-        if (selectedChild == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      // SafeArea garantiza que el contenido no se corte por elementos del sistema
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Contenido del formulario en un área scrollable
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppDimensions.lg),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Imagen del perfil
+                      _buildAvatarPicker(),
+                      const SizedBox(height: AppDimensions.xl),
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(AppDimensions.lg),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Imagen del perfil
-                _buildAvatarPicker(),
-                const SizedBox(height: AppDimensions.xl),
+                      // Nombre del niño
+                      AuthTextField(
+                        controller: controller.nameController,
+                        hintText: TrKeys.childName.tr,
+                        prefixIcon: Icons.person_outline,
+                        textCapitalization: TextCapitalization.words,
+                        validator: _validateName,
+                        enabled: controller.status.value !=
+                            ChildProfileStatus.loading,
+                        autoValidate: true,
+                      ),
+                      const SizedBox(height: AppDimensions.lg),
 
-                // Nombre del niño
-                AuthTextField(
-                  controller: controller.nameController,
-                  hintText: TrKeys.childName.tr,
-                  prefixIcon: Icons.person_outline,
-                  textCapitalization: TextCapitalization.words,
-                  validator: _validateName,
-                  enabled:
-                      controller.status.value != ChildProfileStatus.loading,
-                  autoValidate: true,
+                      // Fecha de nacimiento
+                      _buildBirthDatePicker(),
+                      const SizedBox(height: AppDimensions.lg),
+
+                      // Puntos y nivel
+                      _buildPointsAndLevel(),
+                      const SizedBox(height: AppDimensions.lg),
+
+                      // Configuración de tema/colores
+                      _buildThemeSelector(),
+                      const SizedBox(height: AppDimensions.lg),
+
+                      // Mensaje de error si existe
+                      if (controller.errorMessage.isNotEmpty)
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(bottom: AppDimensions.md),
+                          child: AuthMessage(
+                            message: controller.errorMessage.value,
+                            type: MessageType.error,
+                            onDismiss: () => controller.errorMessage.value = '',
+                          ),
+                        ),
+
+                      const SizedBox(height: AppDimensions.lg),
+
+                      // // Botón para guardar cambios
+                      // AuthButton(
+                      //   text: TrKeys.save.tr,
+                      //   onPressed: controller.status.value !=
+                      //           ChildProfileStatus.loading
+                      //       ? _submitForm
+                      //       : null,
+                      //   isLoading: controller.status.value ==
+                      //       ChildProfileStatus.loading,
+                      //   type: AuthButtonType.primary,
+                      // ),
+
+                      // const SizedBox(height: AppDimensions.md),
+
+                      // // Botón para cancelar
+                      // AuthButton(
+                      //   text: TrKeys.cancel.tr,
+                      //   onPressed: controller.status.value !=
+                      //           ChildProfileStatus.loading
+                      //       ? () => Get.back()
+                      //       : null,
+                      //   type: AuthButtonType.secondary,
+                      // ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: AppDimensions.lg),
+              ),
+            ),
 
-                // Fecha de nacimiento
-                _buildBirthDatePicker(),
-                const SizedBox(height: AppDimensions.lg),
-
-                // Puntos y nivel
-                _buildPointsAndLevel(),
-                const SizedBox(height: AppDimensions.lg),
-
-                // Configuración de tema/colores
-                _buildThemeSelector(),
-                const SizedBox(height: AppDimensions.lg),
-
-                // Mensaje de error si existe
-                if (controller.errorMessage.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppDimensions.md),
-                    child: AuthMessage(
-                      message: controller.errorMessage.value,
-                      type: MessageType.error,
-                      onDismiss: () => controller.errorMessage.value = '',
-                    ),
+            // Botones fijos en la parte inferior, fuera del scroll
+            Padding(
+              padding: const EdgeInsets.all(AppDimensions.md),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Botón guardar
+                  AuthButton(
+                    text: TrKeys.save.tr,
+                    onPressed:
+                        controller.status.value != ChildProfileStatus.loading
+                            ? _submitForm
+                            : null,
+                    isLoading:
+                        controller.status.value == ChildProfileStatus.loading,
+                    type: AuthButtonType.primary,
                   ),
 
-                const SizedBox(height: AppDimensions.lg),
+                  const SizedBox(height: AppDimensions.md),
 
-                // Botón para guardar cambios
-                AuthButton(
-                  text: TrKeys.save.tr,
-                  onPressed:
-                      controller.status.value != ChildProfileStatus.loading
-                          ? _submitForm
-                          : null,
-                  isLoading:
-                      controller.status.value == ChildProfileStatus.loading,
-                  type: AuthButtonType.primary,
-                ),
-
-                const SizedBox(height: AppDimensions.md),
-
-                // Botón para cancelar
-                AuthButton(
-                  text: TrKeys.cancel.tr,
-                  onPressed:
-                      controller.status.value != ChildProfileStatus.loading
-                          ? () => Get.back()
-                          : null,
-                  type: AuthButtonType.secondary,
-                ),
-              ],
+                  // Botón cancelar
+                  AuthButton(
+                    text: TrKeys.cancel.tr,
+                    onPressed:
+                        controller.status.value != ChildProfileStatus.loading
+                            ? () => Get.back()
+                            : null,
+                    type: AuthButtonType.secondary,
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      }),
+          ],
+        ),
+      ),
     );
   }
 

@@ -69,9 +69,16 @@ class AppTheme {
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.white,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textLight,
-        elevation: 8,
+        selectedItemColor: AppColors.navigationSelected,
+        unselectedItemColor: AppColors.navigationUnselected,
+        selectedLabelStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 12,
+        ),
+        elevation: 12,
         type: BottomNavigationBarType.fixed,
       ),
     );

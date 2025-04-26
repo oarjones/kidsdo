@@ -377,6 +377,12 @@ class FamilyPage extends GetView<FamilyController> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.childBlue,
                         foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal:
+                              AppDimensions.lg, // Padding horizontal adecuado
+                          vertical:
+                              AppDimensions.md, // Padding vertical adecuado
+                        ),
                       ),
                     ),
 

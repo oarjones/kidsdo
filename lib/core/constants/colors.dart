@@ -41,4 +41,13 @@ class AppColors {
   static const childGreen = Color(0xFF43A047);
   static const childOrange = Color(0xFFEF6C00);
   static const childPink = Color(0xFFEC407A);
+
+  // Añadir estos colores para mejorar el contraste de la navegación
+  static const navigationSelected =
+      primary; // Usar el color primario para consistencia
+  static const navigationUnselected = Color(
+      0xFF757575); // Gris más oscuro para mejor contraste (antes era muy claro)
+  static const navigationBackground = Colors.white;
+  static const navigationBorder =
+      Color(0xFFE0E0E0); // Borde sutil para mejor definición
 }

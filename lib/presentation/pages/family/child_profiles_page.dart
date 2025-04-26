@@ -25,7 +25,7 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('child_profiles'.tr),
+        title: Text(TrKeys.childProfiles.tr),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -114,7 +114,7 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
             ),
             const SizedBox(height: AppDimensions.lg),
             Text(
-              'no_child_profiles'.tr,
+              TrKeys.noChildProfiles.tr,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: AppDimensions.fontLg,
@@ -123,7 +123,7 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
             ),
             const SizedBox(height: AppDimensions.md),
             Text(
-              'add_child_profiles_message'.tr,
+              TrKeys.addChildProfilesMessage.tr,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: AppDimensions.fontMd,
@@ -157,14 +157,14 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
           itemCount: controller.childProfiles.length,
           itemBuilder: (context, index) {
             final child = controller.childProfiles[index];
-            return _buildChildProfileCard(child);
+            return _buildChildProfileCard(child, context);
           },
         ),
       ),
     );
   }
 
-  Widget _buildChildProfileCard(FamilyChild child) {
+  Widget _buildChildProfileCard(FamilyChild child, BuildContext context) {
     // Determinar color basado en la configuración del perfil
     final Color themeColor = _getProfileColor(child.settings);
 
@@ -178,7 +178,7 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
         borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
       ),
       child: InkWell(
-        onTap: () => _showChildProfileOptions(child),
+        onTap: () => _showChildProfileOptions(child, context),
         borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
         child: Padding(
           padding: const EdgeInsets.all(AppDimensions.md),
@@ -214,7 +214,7 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
                       ),
                     ),
                     Text(
-                      '${child.age} ${'years_old'.tr}',
+                      '${child.age} ${TrKeys.yearsOld.tr}',
                       style: const TextStyle(
                         fontSize: AppDimensions.fontSm,
                         color: AppColors.textMedium,
@@ -275,7 +275,7 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
                               ),
                               const SizedBox(width: 2),
                               Text(
-                                '${'level'.tr} ${child.level}',
+                                '${TrKeys.level.tr} ${child.level}',
                                 style: TextStyle(
                                   fontSize: AppDimensions.fontXs,
                                   fontWeight: FontWeight.bold,
@@ -334,142 +334,169 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
     }
   }
 
-  void _showChildProfileOptions(FamilyChild child) {
+  void _showChildProfileOptions(FamilyChild child, BuildContext context) {
     Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: AppDimensions.lg,
-        ),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(AppDimensions.borderRadiusLg),
-            topRight: Radius.circular(AppDimensions.borderRadiusLg),
+      // Usamos SingleChildScrollView para asegurar que todo el contenido sea accesible
+      SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.only(
+            top: AppDimensions.lg,
+            bottom: AppDimensions.xl, // Padding inferior extra
+          ),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(AppDimensions.borderRadiusLg),
+              topRight: Radius.circular(AppDimensions.borderRadiusLg),
+            ),
+          ),
+          // Limitar altura máxima para no ocupar toda la pantalla
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.85,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Minimizar espacio usado
+              children: [
+                // Encabezado
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppDimensions.lg),
+                  child: Row(
+                    children: [
+                      child.avatarUrl != null
+                          ? CachedAvatar(
+                              url: child.avatarUrl,
+                              radius: 25,
+                            )
+                          : CircleAvatar(
+                              radius: 25,
+                              backgroundColor: _getProfileColor(child.settings)
+                                  .withAlpha(40),
+                              child: Icon(
+                                Icons.child_care,
+                                size: 25,
+                                color: _getProfileColor(child.settings),
+                              ),
+                            ),
+                      const SizedBox(width: AppDimensions.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              child.name,
+                              style: const TextStyle(
+                                fontSize: AppDimensions.fontLg,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '${child.age} ${TrKeys.yearsOld.tr}',
+                              style: const TextStyle(
+                                fontSize: AppDimensions.fontSm,
+                                color: AppColors.textMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Get.back(),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: AppDimensions.lg),
+
+                // Opciones
+                ListTile(
+                  leading: const Icon(Icons.edit, color: AppColors.primary),
+                  title: Text(TrKeys.editChildProfile.tr),
+                  onTap: () {
+                    Get.back();
+                    _editChildProfile(child);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.assignment, color: AppColors.info),
+                  title: Text(TrKeys.viewChildChallenges.tr),
+                  onTap: () {
+                    Get.back();
+                    // Implementar en el futuro
+                    Get.snackbar(
+                      TrKeys.comingSoon.tr,
+                      TrKeys.comingSoonMessage.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.card_giftcard,
+                      color: AppColors.tertiary),
+                  title: Text(TrKeys.viewChildRewards.tr),
+                  onTap: () {
+                    Get.back();
+                    // Implementar en el futuro
+                    Get.snackbar(
+                      TrKeys.comingSoon.tr,
+                      TrKeys.comingSoonMessage.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.switch_account,
+                      color: AppColors.childGreen),
+                  title: Text(TrKeys.accessChildMode.tr),
+                  onTap: () {
+                    Get.back();
+                    // Acceder al modo infantil - CORREGIDO
+                    Get.find<ChildAccessController>()
+                        .activateChildProfile(child)
+                        .then((_) {
+                      Get.toNamed(Routes.childDashboard);
+                    });
+                  },
+                ),
+
+                // Asegurar espacio adicional para el último elemento
+                const SizedBox(height: AppDimensions.sm),
+
+                // Botón eliminar con padding extra
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.md,
+                    vertical: AppDimensions.md,
+                  ),
+                  child: ListTile(
+                    leading: const Icon(Icons.delete, color: AppColors.error),
+                    title: Text(TrKeys.deleteChildProfile.tr),
+                    onTap: () {
+                      Get.back();
+                      _confirmDeleteProfile(child);
+                    },
+                  ),
+                ),
+
+                // Espacio final
+                const SizedBox(height: AppDimensions.md),
+              ],
+            ),
           ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Encabezado
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.lg),
-              child: Row(
-                children: [
-                  child.avatarUrl != null
-                      ? CachedAvatar(
-                          url: child.avatarUrl,
-                          radius: 25,
-                        )
-                      : CircleAvatar(
-                          radius: 25,
-                          backgroundColor:
-                              _getProfileColor(child.settings).withAlpha(40),
-                          child: Icon(
-                            Icons.child_care,
-                            size: 25,
-                            color: _getProfileColor(child.settings),
-                          ),
-                        ),
-                  const SizedBox(width: AppDimensions.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          child.name,
-                          style: const TextStyle(
-                            fontSize: AppDimensions.fontLg,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          '${child.age} ${'years_old'.tr}',
-                          style: const TextStyle(
-                            fontSize: AppDimensions.fontSm,
-                            color: AppColors.textMedium,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Get.back(),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: AppDimensions.lg),
-
-            // Opciones
-            ListTile(
-              leading: const Icon(Icons.edit, color: AppColors.primary),
-              title: Text('edit_child_profile'.tr),
-              onTap: () {
-                Get.back();
-                _editChildProfile(child);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.assignment, color: AppColors.info),
-              title: Text('view_child_challenges'.tr),
-              onTap: () {
-                Get.back();
-                // Implementar en el futuro
-                Get.snackbar(
-                  TrKeys.comingSoon.tr,
-                  TrKeys.comingSoonMessage.tr,
-                  snackPosition: SnackPosition.BOTTOM,
-                );
-              },
-            ),
-            ListTile(
-              leading:
-                  const Icon(Icons.card_giftcard, color: AppColors.tertiary),
-              title: Text('view_child_rewards'.tr),
-              onTap: () {
-                Get.back();
-                // Implementar en el futuro
-                Get.snackbar(
-                  TrKeys.comingSoon.tr,
-                  TrKeys.comingSoonMessage.tr,
-                  snackPosition: SnackPosition.BOTTOM,
-                );
-              },
-            ),
-            ListTile(
-              leading:
-                  const Icon(Icons.switch_account, color: AppColors.childGreen),
-              title: Text('access_child_mode'.tr),
-              onTap: () {
-                Get.back();
-                // Acceder al modo infantil - CORREGIDO
-                Get.find<ChildAccessController>()
-                    .activateChildProfile(child)
-                    .then((_) {
-                  Get.toNamed(Routes.childDashboard);
-                });
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete, color: AppColors.error),
-              title: Text('delete_child_profile'.tr),
-              onTap: () {
-                Get.back();
-                _confirmDeleteProfile(child);
-              },
-            ),
-          ],
-        ),
       ),
-      isScrollControlled: true,
+      isScrollControlled: true, // Permite que el bottomSheet sea más alto
+      isDismissible: true,
+      enableDrag: true,
     );
   }
 
   void _confirmDeleteProfile(FamilyChild child) {
     Get.dialog(
       AlertDialog(
-        title: Text('confirm_delete_profile'.tr),
+        title: Text(TrKeys.confirmDeleteProfile.tr),
         content: Text(
           'confirm_delete_profile_message'.trParams({'name': child.name}),
         ),

@@ -146,21 +146,39 @@ class HomePage extends GetView<AuthController> {
               );
           }
         },
+        selectedItemColor: AppColors.navigationSelected,
+        unselectedItemColor: AppColors.navigationUnselected,
+        backgroundColor: AppColors.navigationBackground,
+        elevation: 12, // Mayor elevación para más sombra
+        type: BottomNavigationBarType.fixed,
+        selectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 14, // Texto más grande para el ítem seleccionado
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 12,
+        ),
         items: [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
+            icon: const Icon(Icons.home,
+                size: 28), // Tamaño específico más grande
+            activeIcon: const Icon(Icons.home,
+                size: 30), // Aún más grande cuando está activo
             label: TrKeys.menuHome.tr,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.assignment),
+            icon: const Icon(Icons.assignment, size: 28),
+            activeIcon: const Icon(Icons.assignment, size: 30),
             label: TrKeys.menuChallenges.tr,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.card_giftcard),
+            icon: const Icon(Icons.card_giftcard, size: 28),
+            activeIcon: const Icon(Icons.card_giftcard, size: 30),
             label: TrKeys.menuAwards.tr,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
+            icon: const Icon(Icons.person, size: 28),
+            activeIcon: const Icon(Icons.person, size: 30),
             label: TrKeys.menuProfile.tr,
           ),
         ],

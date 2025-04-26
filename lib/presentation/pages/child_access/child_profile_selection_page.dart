@@ -166,9 +166,9 @@ class ChildProfileSelectionPage extends GetView<ChildAccessController> {
                 padding: const EdgeInsets.all(AppDimensions.lg),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.75,
+                  childAspectRatio: 0.65, // Ajustado para evitar overflow
                   crossAxisSpacing: AppDimensions.lg,
-                  mainAxisSpacing: AppDimensions.lg,
+                  mainAxisSpacing: AppDimensions.xl,
                 ),
                 itemCount: controller.availableChildren.length,
                 itemBuilder: (context, index) {
@@ -182,95 +182,259 @@ class ChildProfileSelectionPage extends GetView<ChildAccessController> {
 
         // Botón para volver al modo parental
         Positioned(
-          top: AppDimensions.md,
-          right: AppDimensions.md,
-          child: _buildParentModeButton(),
+          bottom: AppDimensions.xl,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: _buildParentModeButton(),
+          ),
         ),
       ],
     );
   }
 
+  // Widget _buildProfileCard(FamilyChild child) {
+  //   // Obtener color basado en la configuración
+  //   final Color themeColor = _getProfileColor(child.settings);
+
+  //   return Card(
+  //     elevation: AppDimensions.elevationMd,
+  //     shape: RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
+  //     ),
+  //     // Asegurar que el contenedor tenga un tamaño fijo para evitar overflow
+  //     child: SizedBox(
+  //       width: 180, // Ancho fijo
+  //       child: Column(
+  //         mainAxisSize:
+  //             MainAxisSize.min, // Este es importante para evitar overflow
+  //         children: [
+  //           Padding(
+  //             padding: const EdgeInsets.all(AppDimensions.md),
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 // Avatar
+  //                 Hero(
+  //                   tag: 'child_avatar_${child.id}',
+  //                   child: child.avatarUrl != null
+  //                       ? CachedAvatar(
+  //                           url: child.avatarUrl,
+  //                           radius: 50,
+  //                         )
+  //                       : CircleAvatar(
+  //                           radius: 50,
+  //                           backgroundColor: themeColor.withValues(alpha: 0.2),
+  //                           child: Icon(
+  //                             Icons.child_care,
+  //                             size: 50,
+  //                             color: themeColor,
+  //                           ),
+  //                         ),
+  //                 ),
+  //                 const SizedBox(height: AppDimensions.md),
+
+  //                 // Nombre
+  //                 Text(
+  //                   child.name,
+  //                   style: const TextStyle(
+  //                     fontSize: AppDimensions.fontLg,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                   textAlign: TextAlign.center,
+  //                   maxLines: 1,
+  //                   overflow: TextOverflow.ellipsis,
+  //                 ),
+
+  //                 // Edad
+  //                 Text(
+  //                   '${child.age} ${TrKeys.yearsOld.tr}',
+  //                   style: const TextStyle(
+  //                     fontSize: AppDimensions.fontSm,
+  //                     color: AppColors.textMedium,
+  //                   ),
+  //                 ),
+
+  //                 const SizedBox(height: AppDimensions.sm),
+  //               ],
+  //             ),
+  //           ),
+
+  //           // Botón de acceso - Modificado para evitar overflow
+  //           // Ahora usamos Material para dar estilo como un botón sin que cause overflow
+  //           Material(
+  //             color: themeColor,
+  //             borderRadius: const BorderRadius.only(
+  //               bottomLeft: Radius.circular(AppDimensions.borderRadiusLg),
+  //               bottomRight: Radius.circular(AppDimensions.borderRadiusLg),
+  //             ),
+  //             child: InkWell(
+  //               onTap: () => _selectProfile(child),
+  //               borderRadius: const BorderRadius.only(
+  //                 bottomLeft: Radius.circular(AppDimensions.borderRadiusLg),
+  //                 bottomRight: Radius.circular(AppDimensions.borderRadiusLg),
+  //               ),
+  //               child: Container(
+  //                 width: double.infinity,
+  //                 padding: const EdgeInsets.symmetric(
+  //                   vertical: AppDimensions.md,
+  //                   horizontal: AppDimensions.md,
+  //                 ),
+  //                 alignment: Alignment.center,
+  //                 child: Text(
+  //                   TrKeys.accessProfile.tr,
+  //                   style: const TextStyle(
+  //                     color: Colors.white,
+  //                     fontWeight: FontWeight.bold,
+  //                     fontSize: AppDimensions.fontMd,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildProfileCard(FamilyChild child) {
-    // Determinar color basado en la configuración del perfil
-    final Color themeColor = _getProfileColor(child.settings);
+    // Mantenemos la firma original sin BuildContext
+    final Color themeColor =
+        _getProfileColor(child.settings); // Asume que _getProfileColor existe
 
-    return Card(
-      elevation: AppDimensions.elevationMd,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
-      ),
-      child: InkWell(
-        onTap: () => _selectProfile(child),
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.md),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Avatar
-              Hero(
-                tag: 'child_avatar_${child.id}',
-                child: child.avatarUrl != null
-                    ? CachedAvatar(
-                        url: child.avatarUrl,
-                        radius: 50,
-                      )
-                    : CircleAvatar(
-                        radius: 50,
-                        backgroundColor: themeColor.withValues(alpha: 0.2),
-                        child: Icon(
-                          Icons.child_care,
-                          size: 50,
-                          color: themeColor,
-                        ),
-                      ),
-              ),
-              const SizedBox(height: AppDimensions.md),
-
-              // Nombre
-              Text(
-                child.name,
-                style: const TextStyle(
-                  fontSize: AppDimensions.fontLg,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-
-              // Edad
-              Text(
-                '${child.age} ${TrKeys.yearsOld.tr}',
-                style: const TextStyle(
-                  fontSize: AppDimensions.fontSm,
-                  color: AppColors.textMedium,
-                ),
-              ),
-
-              const SizedBox(height: AppDimensions.md),
-
-              // Botón de acceso
-              ElevatedButton(
-                onPressed: () => _selectProfile(child),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: themeColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(AppDimensions.borderRadiusMd),
-                  ),
-                  minimumSize: const Size(double.infinity, 36),
-                ),
-                child: Text(
-                  TrKeys.accessProfile.tr,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+    // Usar un contenedor SIN altura/anchura fija para adaptarse
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(
+            AppDimensions.borderRadiusLg), // Usa tus constantes
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-        ),
+        ],
+      ),
+      // Importante: Recorta el contenido que se salga del borde redondeado
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.stretch, // Asegura que los hijos llenen el ancho
+        children: [
+          // Sección Superior (Avatar y datos) - Ocupa el 70% del espacio vertical DISPONIBLE
+          Expanded(
+            flex: 7, // Proporción 7
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.md,
+                  vertical: AppDimensions.sm), // Usa tus constantes
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment
+                    .center, // Centra verticalmente el contenido
+                children: [
+                  // Avatar
+                  Hero(
+                    tag: 'child_avatar_${child.id}',
+                    child: child.avatarUrl != null
+                        ? CachedAvatar(
+                            // Usa tu widget CachedAvatar
+                            url: child.avatarUrl,
+                            radius: 45, // Puedes ajustar este valor
+                          )
+                        : CircleAvatar(
+                            radius: 45, // Puedes ajustar este valor
+                            backgroundColor:
+                                themeColor.withAlpha(51), // alpha 0.2
+                            child: Icon(
+                              Icons.child_care,
+                              size: 45, // Ajustar tamaño del icono
+                              color: themeColor,
+                            ),
+                          ),
+                  ),
+                  const SizedBox(
+                      height: AppDimensions.md), // Espacio (Usa tus constantes)
+
+                  // Nombre
+                  Text(
+                    child.name,
+                    style: const TextStyle(
+                      fontSize: AppDimensions.fontLg, // Usa tus constantes
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1, // Importante para evitar saltos de línea
+                    overflow:
+                        TextOverflow.ellipsis, // Corta el texto si es muy largo
+                  ),
+
+                  // Edad
+                  Text(
+                    '${child.age} ${TrKeys.yearsOld.tr}', // Usa tus claves de traducción
+                    style: const TextStyle(
+                      fontSize: AppDimensions.fontSm, // Usa tus constantes
+                      color: AppColors.textMedium, // Usa tus colores
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Sección Inferior (Botón) - Ocupa el 30% del espacio vertical DISPONIBLE
+          Expanded(
+            flex: 3, // Proporción 3
+            child: Material(
+              // Usar Material para el color y el efecto ripple
+              color: themeColor,
+              // Aplicar forma SÓLO a las esquinas inferiores
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(
+                      AppDimensions.borderRadiusLg), // Usa tus constantes
+                  bottomRight: Radius.circular(
+                      AppDimensions.borderRadiusLg), // Usa tus constantes
+                ),
+              ),
+              child: InkWell(
+                // InkWell para la interacción y el efecto ripple
+                onTap: () =>
+                    _selectProfile(child), // Asume que _selectProfile existe
+                // BorderRadius para que el ripple coincida con la forma del Material
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(
+                      AppDimensions.borderRadiusLg), // Usa tus constantes
+                  bottomRight: Radius.circular(
+                      AppDimensions.borderRadiusLg), // Usa tus constantes
+                ),
+                child: Center(
+                  // Centra el texto dentro del botón
+                  child: Padding(
+                    // Padding interno para el texto del botón
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppDimensions.sm,
+                        vertical: AppDimensions.xs), // Usa tus constantes
+                    child: Text(
+                      TrKeys.accessProfile.tr, // Usa tus claves de traducción
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppDimensions.fontMd, // Usa tus constantes
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -285,6 +449,13 @@ class ChildProfileSelectionPage extends GetView<ChildAccessController> {
         foregroundColor: AppColors.textDark,
         shadowColor: Colors.black26,
         elevation: 4,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.lg,
+          vertical: AppDimensions.md,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
+        ),
       ),
     );
   }
