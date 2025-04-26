@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:kidsdo/core/middleware/auth_middleware.dart';
+import 'package:kidsdo/presentation/pages/challenges/challenges_library_page.dart';
 import 'package:kidsdo/presentation/pages/settings/parental_control_page.dart';
 import 'package:kidsdo/presentation/pages/splash/splash_page.dart';
 import 'package:kidsdo/presentation/pages/auth/login_page.dart';
@@ -41,6 +42,9 @@ abstract class Routes {
   static const childChallenges = '/child-challenges';
   static const childRewards = '/child-rewards';
   static const childAchievements = '/child-achievements';
+
+  // Rutas para los retos
+  static const challengeLibrary = '/challenge-library';
 }
 
 class AppPages {
@@ -146,6 +150,12 @@ class AppPages {
     GetPage(
       name: Routes.parentalControl,
       page: () => const ParentalControlPage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.challengeLibrary,
+      page: () => const ChallengesLibraryPage(),
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
     ),

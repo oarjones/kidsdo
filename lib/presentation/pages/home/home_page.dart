@@ -145,6 +145,9 @@ class HomePage extends GetView<AuthController> {
           switch (index) {
             case 0: // Home
               break;
+            case 1: // Retos
+              Get.toNamed(Routes.challengeLibrary);
+              break;
             case 3: // Perfil
               Get.toNamed(Routes.profile);
               break;

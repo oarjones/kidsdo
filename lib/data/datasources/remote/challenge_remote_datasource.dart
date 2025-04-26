@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+
 import 'package:kidsdo/data/models/challenge_model.dart';
 import 'package:kidsdo/data/models/assigned_challenge_model.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
+import 'package:logger/logger.dart';
 
 abstract class IChallengeRemoteDataSource {
   /// Obtiene todos los retos para una familia
@@ -54,12 +57,18 @@ abstract class IChallengeRemoteDataSource {
     required int points,
     String? note,
   });
+
+  Future<void> migrateLocalChallengesToFirestore(
+      List<ChallengeModel> localChallenges);
 }
 
 class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
   final FirebaseFirestore _firestore;
   final String _challengesCollection = 'challenges';
   final String _assignedChallengesCollection = 'assignedChallenges';
+  final String _predefinedChallengesCollection = 'predefinedChallenges';
+
+  final Logger logger = Get.find<Logger>();
 
   ChallengeRemoteDataSource({required FirebaseFirestore firestore})
       : _firestore = firestore;
@@ -78,14 +87,73 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
 
   @override
   Future<List<ChallengeModel>> getPredefinedChallenges() async {
-    final querySnapshot = await _firestore
-        .collection(_challengesCollection)
-        .where('isTemplate', isEqualTo: true)
-        .get();
+    try {
+      final querySnapshot =
+          await _firestore.collection(_predefinedChallengesCollection).get();
 
-    return querySnapshot.docs
-        .map((doc) => ChallengeModel.fromFirestore(doc))
-        .toList();
+      return querySnapshot.docs
+          .map((doc) => ChallengeModel.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      // En caso de error, registrarlo y devolver lista vacía
+      // para que se use el respaldo local
+      logger.i('Error loading predefined challenges from Firestore: $e');
+      return [];
+    }
+  }
+
+  @override
+  Future<void> migrateLocalChallengesToFirestore(
+      List<ChallengeModel> localChallenges) async {
+    try {
+      // Verificar primero si ya hay retos en Firestore
+      final existingSnapshot = await _firestore
+          .collection(_predefinedChallengesCollection)
+          .limit(1)
+          .get();
+
+      // Si ya hay retos, no hacer nada
+      if (existingSnapshot.docs.isNotEmpty) {
+        return;
+      }
+
+      // Crear lotes para subir los datos (máximo 500 operaciones por lote)
+      const int batchSize = 500;
+      int currentIndex = 0;
+
+      while (currentIndex < localChallenges.length) {
+        final int endIndex = (currentIndex + batchSize < localChallenges.length)
+            ? currentIndex + batchSize
+            : localChallenges.length;
+
+        final batch = _firestore.batch();
+
+        for (int i = currentIndex; i < endIndex; i++) {
+          final challenge = localChallenges[i];
+          // Usar el ID existente o generar uno nuevo
+          final docId = challenge.id.isNotEmpty && challenge.id != 'null'
+              ? challenge.id
+              : _firestore.collection(_predefinedChallengesCollection).doc().id;
+
+          final docRef =
+              _firestore.collection(_predefinedChallengesCollection).doc(docId);
+          batch.set(docRef, challenge.toFirestore());
+        }
+
+        await batch.commit();
+        currentIndex = endIndex;
+      }
+
+      logger.i(
+          'Successfully migrated ${localChallenges.length} challenges to Firestore');
+    } catch (e) {
+      logger.i('Error migrating challenges to Firestore: $e');
+      throw FirebaseException(
+        plugin: 'firestore',
+        code: 'migration-failed',
+        message: 'Error migrating challenges to Firestore: $e',
+      );
+    }
   }
 
   @override

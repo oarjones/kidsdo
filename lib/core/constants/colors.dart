@@ -50,4 +50,15 @@ class AppColors {
   static const navigationBackground = Colors.white;
   static const navigationBorder =
       Color(0xFFE0E0E0); // Borde sutil para mejor definición
+
+  // Versiones claras de los colores principales (para fondos, chips, etc.)
+  static const primaryLight = Color(0xFFE8EAF6); // Indigo 50
+  static const secondaryLight = Color(0xFFE0F7FA); // Cyan 50
+  static const tertiaryLight = Color(0xFFFFF8E1); // Amber 50
+
+  // Versiones claras de colores funcionales
+  static const successLight = Color(0xFFE8F5E9); // Verde 50
+  static const warningLight = Color(0xFFFFF3E0); // Naranja 50
+  static const errorLight = Color(0xFFFFEBEE); // Rojo 50
+  static const infoLight = Color(0xFFE3F2FD); // Azul 50
 }

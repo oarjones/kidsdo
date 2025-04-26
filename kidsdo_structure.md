@@ -1,5 +1,5 @@
 # Estructura del Proyecto KidsDo 
-Generada: 26/04/2025 10:23:33,83 
+Generada: 26/04/2025 17:50:09,39 
  
 ## Archivos de Configuración 
 - pubspec.yaml 
@@ -16,6 +16,8 @@ Generada: 26/04/2025 10:23:33,83
 - **lib\core\constants/** 
   - colors.dart 
   - dimensions.dart 
+- **lib\core\data/** 
+  - predefined_challenges.dart 
 - **lib\core\errors/** 
   - failures.dart 
 - **lib\core\middleware/** 
@@ -38,10 +40,13 @@ Generada: 26/04/2025 10:23:33,83
 - **lib\data\datasources\local/** 
 - **lib\data\datasources\remote/** 
   - auth_remote_datasource.dart 
+  - challenge_remote_datasource.dart 
   - family_child_remote_datasource.dart 
   - family_remote_datasource.dart 
   - user_remote_datasource.dart 
 - **lib\data\models/** 
+  - assigned_challenge_model.dart 
+  - challenge_model.dart 
   - child_model.dart 
   - family_child_model.dart 
   - family_model.dart 
@@ -49,18 +54,22 @@ Generada: 26/04/2025 10:23:33,83
   - user_model.dart 
 - **lib\data\repositories/** 
   - auth_repository_impl.dart 
+  - challenge_repository_impl.dart 
   - family_child_repository_impl.dart 
   - family_repository_impl.dart 
   - user_repository_impl.dart 
 - **lib\domain/** 
 - **lib\domain\entities/** 
+  - assigned_challenge.dart 
   - base_user.dart 
+  - challenge.dart 
   - child.dart 
   - family.dart 
   - family_child.dart 
   - parent.dart 
 - **lib\domain\repositories/** 
   - auth_repository.dart 
+  - challenge_repository.dart 
   - family_child_repository.dart 
   - family_repository.dart 
   - user_repository.dart 
@@ -69,6 +78,7 @@ Generada: 26/04/2025 10:23:33,83
 - **lib\presentation\bloc/** 
 - **lib\presentation\controllers/** 
   - auth_controller.dart 
+  - challenge_controller.dart 
   - child_access_controller.dart 
   - child_profile_controller.dart 
   - family_controller.dart 

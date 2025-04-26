@@ -360,4 +360,92 @@ class TrKeys {
   static const parentUnlockTitle = 'parent_unlock_title';
   static const parentUnlockDescription = 'parent_unlock_description';
   static const parentUnlock = 'parent_unlock';
+
+  // Biblioteca de retos
+  static const challengeLibrary = 'challenge_library';
+  static const filterChallenges = 'filter_challenges';
+  static const searchChallenges = 'search_challenges';
+  static const importChallenges = 'import_challenges';
+  static const exportChallenges = 'export_challenges';
+  static const selectAll = 'select_all';
+  static const clearSelection = 'clear_selection';
+  static const allCategories = 'all_categories';
+  static const allFrequencies = 'all_frequencies';
+  static const ageRange = 'age_range';
+  static const years = 'years';
+  static const ageAppropriate = 'age_appropriate';
+  static const showOnlyAgeAppropriate = 'show_only_age_appropriate';
+  static const ageAppropriateExplanation = 'age_appropriate_explanation';
+  static const ageRangeExplanation = 'age_range_explanation';
+  static const childAge = 'child_age';
+  static const resetFilters = 'reset_filters';
+  static const applyFilters = 'apply_filters';
+  static const clearAllFilters = 'clear_all_filters';
+  static const challengeFound = 'challenge_found';
+  static const challengesFound = 'challenges_found';
+  static const noChallengesFound = 'no_challenges_found';
+  static const tryChangingFilters = 'try_changing_filters';
+  static const addToFamily = 'add_to_family';
+  static const details = 'details';
+  static const description = 'description';
+  static const challengeDetails = 'challenge_details';
+  static const originalPoints = 'original_points';
+  static const adaptedPoints = 'adapted_points';
+  static const import = 'import';
+  static const export = 'export';
+  static const importToFamily = 'import_to_family';
+  static const exportSelected = 'export_selected';
+  static const importSelectedConfirmation = 'import_selected_confirmation';
+  static const importSuccess = 'import_success';
+  static const challengesImported = 'challenges_imported';
+  static const exportSuccess = 'export_success';
+  static const challengesExported = 'challenges_exported';
+  static const exportFiltered = 'export_filtered';
+  static const exportAll = 'export_all';
+  static const numberOfChallenges = 'number_of_challenges';
+  static const exportResult = 'export_result';
+
+  static const copied = 'copied';
+  static const jsonCopied = 'json_copied';
+  static const close = 'close';
+  static const selected = 'selected';
+  static const select = 'select';
+  static const importInstructions = 'import_instructions';
+  static const pasteJsonHere = 'paste_json_here';
+  static const importErrorTitle = 'import_error_title';
+  static const importErrorMessage = 'import_error_message';
+  static const exportErrorTitle = 'export_error_title';
+  static const exportErrorMessage = 'export_error_message';
+
+  // Categorías de retos
+  static const categoryHygiene = 'category_hygiene';
+  static const categorySchool = 'category_school';
+  static const categoryOrder = 'category_order';
+  static const categoryResponsibility = 'category_responsibility';
+  static const categoryHelp = 'category_help';
+  static const categorySpecial = 'category_special';
+  static const categorySibling = 'category_sibling';
+
+  // Frecuencias de retos
+  static const frequencyDaily = 'frequency_daily';
+  static const frequencyWeekly = 'frequency_weekly';
+  static const frequencyMonthly = 'frequency_monthly';
+  static const frequencyQuarterly = 'frequency_quarterly';
+  static const frequencyOnce = 'frequency_once';
+
+  // Sincronización de retos
+  static const cloudDataSource = 'cloud_data_source';
+  static const localDataSource = 'local_data_source';
+  static const loadingDataSource = 'loading_data_source';
+  static const syncWithCloud = 'sync_with_cloud';
+  static const cloudSync = 'cloud_sync';
+  static const cloudSyncInfo = 'cloud_sync_info';
+  static const cloudSyncActive = 'cloud_sync_active';
+  static const syncInProgress = 'sync_in_progress';
+  static const syncSuccess = 'sync_success';
+  static const syncFailed = 'sync_failed';
+  static const templateSavedTitle = 'template_saved_title';
+  static const templateSavedMessage = 'template_saved_message';
+  static const templateSaveRequiresCloud = 'template_save_requires_cloud';
+  static const jsonExported = "json_exported";
 }
