@@ -5,6 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kidsdo/data/datasources/remote/challenge_remote_datasource.dart';
+import 'package:kidsdo/data/repositories/challenge_repository_impl.dart';
+import 'package:kidsdo/domain/repositories/challenge_repository.dart';
+import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
 import 'package:kidsdo/presentation/controllers/parental_control_controller.dart';
 import 'package:kidsdo/presentation/controllers/profile_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,6 +113,13 @@ Future<void> init() async {
     fenix: true,
   );
 
+  Get.lazyPut<IChallengeRemoteDataSource>(
+    () => ChallengeRemoteDataSource(
+      firestore: Get.find<FirebaseFirestore>(),
+    ),
+    fenix: true,
+  );
+
   // Repositories
   Get.lazyPut<IAuthRepository>(
     () => AuthRepositoryImpl(
@@ -136,6 +147,13 @@ Future<void> init() async {
   Get.lazyPut<IFamilyChildRepository>(
     () => FamilyChildRepositoryImpl(
       familyChildRemoteDataSource: Get.find<IFamilyChildRemoteDataSource>(),
+    ),
+    fenix: true,
+  );
+
+  Get.lazyPut<IChallengeRepository>(
+    () => ChallengeRepositoryImpl(
+      challengeRemoteDataSource: Get.find<IChallengeRemoteDataSource>(),
     ),
     fenix: true,
   );
@@ -211,6 +229,14 @@ Future<void> init() async {
       familyController: Get.find<FamilyController>(),
       sharedPreferences: Get.find<SharedPreferences>(),
       logger: Get.find<Logger>(),
+    ),
+  );
+
+  Get.put<ChallengeController>(
+    ChallengeController(
+      challengeRepository: Get.find<IChallengeRepository>(),
+      sessionController: Get.find<SessionController>(),
+      logger: logger,
     ),
   );
 }

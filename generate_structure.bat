@@ -1,65 +1,56 @@
 @echo off
 setlocal enabledelayedexpansion
 
-echo Generando estructura del proyecto KidsDo...
-echo.
+echo Generando estructura jerárquica de lib...
 
 REM Crear el archivo de salida
-set OUTPUT_FILE=project_structure.txt
+set OUTPUT_FILE=kidsdo_structure.md
 
 REM Limpiar archivo si existe
 if exist %OUTPUT_FILE% del %OUTPUT_FILE%
 
-echo Estructura del proyecto KidsDo - Generada el %date% %time% > %OUTPUT_FILE%
+echo # Estructura del Proyecto KidsDo > %OUTPUT_FILE%
+echo Generada: %date% %time% >> %OUTPUT_FILE%
 echo. >> %OUTPUT_FILE%
 
-REM Directorios a excluir
-set "EXCLUDES=.dart_tool build .idea .gradle .git node_modules ios\Pods android\.gradle"
-
-REM Escribir estructura recursiva al archivo
-echo Escribiendo estructura de directorios...
-
-echo. >> %OUTPUT_FILE%
-echo # ESTRUCTURA DE DIRECTORIOS >> %OUTPUT_FILE%
+REM Añadir pubspec.yaml en la raíz
+echo ## Archivos de Configuración >> %OUTPUT_FILE%
+echo - pubspec.yaml >> %OUTPUT_FILE%
 echo. >> %OUTPUT_FILE%
 
-for /f "tokens=*" %%d in ('dir /ad /b /s') do (
-    set "exclude=false"
-    
-    for %%e in (%EXCLUDES%) do (
-        echo %%d | findstr /i /c:"%%e" > nul
-        if not errorlevel 1 set "exclude=true"
-    )
-    
-    if "!exclude!"=="false" (
-        set "relpath=%%d"
-        set "relpath=!relpath:%CD%=!"
-        if "!relpath!" NEQ "" echo !relpath! >> %OUTPUT_FILE%
-    )
+REM Generar estructura jerárquica solo de lib
+echo ## Estructura de lib >> %OUTPUT_FILE%
+echo. >> %OUTPUT_FILE%
+
+REM Generar la estructura de forma recursiva
+set "mainFolder=lib"
+call :processFolder "%mainFolder%" 0
+
+goto :eof
+
+:processFolder
+REM Parámetros: ruta relativa del directorio, nivel de indentación
+set "folderPath=%~1"
+set "indent=%~2"
+
+REM Generar indentación
+set "spacing="
+for /L %%i in (1,1,%indent%) do set "spacing=!spacing!  "
+
+REM Mostrar la carpeta actual
+echo !spacing!- **%folderPath:~-255%/** >> %OUTPUT_FILE%
+
+REM Listar archivos .dart en esta carpeta
+for %%F in ("%folderPath%\*.dart") do (
+    echo !spacing!  - %%~nxF >> %OUTPUT_FILE%
 )
 
-echo. >> %OUTPUT_FILE%
-echo # LISTADO DE ARCHIVOS >> %OUTPUT_FILE%
-echo. >> %OUTPUT_FILE%
-
-REM Listar archivos .dart (puedes ajustar los tipos de archivos)
-for /f "tokens=*" %%f in ('dir /s /b *.dart *.yaml *.gradle *.xml *.json *.md') do (
-    set "exclude=false"
-    
-    for %%e in (%EXCLUDES%) do (
-        echo %%f | findstr /i /c:"%%e" > nul
-        if not errorlevel 1 set "exclude=true"
-    )
-    
-    if "!exclude!"=="false" (
-        set "relpath=%%f"
-        set "relpath=!relpath:%CD%=!"
-        if "!relpath!" NEQ "" echo !relpath! >> %OUTPUT_FILE%
-    )
+REM Procesar subcarpetas
+for /D %%D in ("%folderPath%\*") do (
+    set "subFolder=%%~nxD"
+    call :processFolder "%folderPath%\!subFolder!" %indent%+1
 )
 
-echo.
-echo Estructura generada en %OUTPUT_FILE%
-echo.
+exit /b
 
 endlocal
