@@ -279,4 +279,85 @@ final Map<String, String> enTranslations = {
   'reward_example1': 'Ice cream',
   'reward_example2': 'Game time',
   'menu_achievements': 'Achievements',
+
+  // Parental Control
+  'parental_control': 'Parental Control',
+  'parental_pin_section_title': 'Parental PIN',
+  'use_parental_pin': 'Use PIN for parent access',
+  'use_parental_pin_description': 'Require a PIN when accessing parent mode',
+
+  'recovery_email': 'Recovery email',
+  'recovery_email_hint': 'Enter an email for PIN recovery',
+  'time_restrictions_section_title': 'Time Restrictions',
+  'use_time_restrictions': 'Use time restrictions',
+  'use_time_restrictions_description':
+      'Limit child mode access to specific hours',
+  'start_time': 'Start time',
+  'end_time': 'End time',
+  'max_session_time': 'Max session time',
+  'max_session_time_description': 'Maximum time allowed per child session',
+  'profile_block_section_title': 'Profile Blocking',
+  'profile_block_description': 'Block or unblock specific children profiles',
+  'profile_blocked': 'Profile blocked',
+  'profile_unblocked': 'Profile accessible',
+  'content_restrictions_section_title': 'Content Restrictions',
+  'restrict_premium_content': 'Restrict premium content',
+  'restrict_premium_content_description':
+      'Block access to premium features without approval',
+  'more_content_restrictions': 'More content restrictions',
+  'set_parental_pin': 'Set Parental PIN',
+  'set_parental_pin_description':
+      'Create a 4-digit PIN to protect parent mode access',
+  'change_parental_pin': 'Change Parental PIN',
+  'change_parental_pin_description':
+      'Update your 4-digit PIN for parent access',
+  'current_pin': 'Current PIN',
+  'new_pin': 'New PIN',
+  'confirm_pin': 'Confirm PIN',
+  'invalid_pin_format_title': 'Invalid PIN format',
+  'invalid_pin_format_message': 'PIN must be exactly 4 digits',
+  'pin_mismatch_title': 'PIN mismatch',
+  'pin_mismatch_message': 'New PIN and confirmation do not match',
+  'pin_changed_title': 'PIN changed',
+  'pin_changed_message': 'Your parental control PIN has been updated',
+  'pin_change_error_title': 'Error changing PIN',
+  'parental_pin_incorrect': 'The current PIN is incorrect',
+  'parental_pin_incorrect_attempts':
+      'Incorrect PIN. @attempts attempts remaining',
+  'parental_control_locked_title': 'Access temporarily locked',
+  'parental_control_temporarily_locked':
+      'Access is locked for @minutes minutes due to too many failed attempts',
+  'settings_saved_title': 'Settings saved',
+  'settings_saved_message': 'Parental control settings have been saved',
+  'settings_save_error_title': 'Error saving settings',
+  'error_loading_profiles': 'Error loading child profiles',
+  'no_children_profiles': 'No child profiles found',
+
+  // Time restrictions
+  'time_restriction_title': 'Access Restricted',
+  'time_restriction_suggestion': 'Try again later',
+  'time_restriction_suggestion_detail':
+      'You can use the app again during the allowed hours',
+  'go_to_home': 'Go to Home',
+  'parental_control_time_restricted':
+      'Access allowed only between @start and @end',
+  'session_time_info_title': 'Session Time',
+  'session_time_info_message': 'You have @minutes minutes left in this session',
+  'session_time_warning_title': 'Time Warning',
+  'session_time_warning_message':
+      'You have @minutes minutes left in your session',
+  'session_time_exceeded_title': 'Time Limit Reached',
+  'session_time_exceeded_message': 'Your session time has ended',
+  'time_restriction_default_message': 'This app is not available at this time',
+
+  // Blocked profiles
+  'profile_blocked_title': 'Profile Blocked',
+  'profile_blocked_message':
+      'This profile has been blocked by parental controls',
+  'child_profile_blocked': 'This profile is blocked by parental controls',
+  'temporary_block_title': 'Temporarily Blocked',
+  'access_blocked_title': 'Access Blocked',
+  'parent_unlock_title': 'Parent Unlock',
+  'parent_unlock_description': 'Enter parent PIN to unlock access',
+  'parent_unlock': 'Parent Unlock',
 };

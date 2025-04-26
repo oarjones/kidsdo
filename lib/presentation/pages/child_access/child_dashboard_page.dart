@@ -8,6 +8,7 @@ import 'package:kidsdo/presentation/controllers/child_access_controller.dart';
 import 'package:kidsdo/presentation/widgets/child/age_adapted_container.dart';
 import 'package:kidsdo/presentation/widgets/common/cached_avatar.dart';
 import 'package:kidsdo/routes.dart';
+import 'package:kidsdo/presentation/widgets/auth/parental_pin_dialog.dart';
 
 class ChildDashboardPage extends GetView<ChildAccessController> {
   const ChildDashboardPage({Key? key}) : super(key: key);
@@ -29,38 +30,121 @@ class ChildDashboardPage extends GetView<ChildAccessController> {
         );
       }
 
+      // Verificar restricciones de tiempo
+      if (controller.timeRestricted.value) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Get.offNamed(Routes.childProfileSelection);
+        });
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+
+      // Verificar tiempo máximo de sesión
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.checkSessionTimeLimit();
+      });
+
       // Determinar el color del tema según la configuración del perfil
       final Color themeColor = _getThemeColor(activeChild.settings);
 
       return Scaffold(
         appBar: _buildAppBar(activeChild, themeColor),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(AppDimensions.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Saludo personalizado
-                _buildGreeting(activeChild, themeColor),
-                const SizedBox(height: AppDimensions.lg),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(AppDimensions.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Saludo personalizado
+                    _buildGreeting(activeChild, themeColor),
+                    const SizedBox(height: AppDimensions.lg),
 
-                // Progreso y puntos
-                _buildPointsProgress(activeChild, themeColor),
-                const SizedBox(height: AppDimensions.lg),
+                    // Progreso y puntos
+                    _buildPointsProgress(activeChild, themeColor),
+                    const SizedBox(height: AppDimensions.lg),
 
-                // Sección de retos
-                _buildChallengesSection(activeChild, themeColor),
-                const SizedBox(height: AppDimensions.lg),
+                    // Sección de retos
+                    _buildChallengesSection(activeChild, themeColor),
+                    const SizedBox(height: AppDimensions.lg),
 
-                // Sección de recompensas
-                _buildRewardsSection(activeChild, themeColor),
-              ],
+                    // Sección de recompensas
+                    _buildRewardsSection(activeChild, themeColor),
+                  ],
+                ),
+              ),
             ),
-          ),
+
+            // Indicador de tiempo restante de sesión
+            if (controller.sessionStartTime.value != null)
+              Positioned(
+                bottom: 16,
+                right: 16,
+                child: _buildSessionTimeIndicator(themeColor),
+              ),
+          ],
         ),
         bottomNavigationBar: _buildBottomNav(themeColor, activeChild.age),
       );
     });
+  }
+
+  // Nuevo widget para mostrar el tiempo restante de sesión
+  Widget _buildSessionTimeIndicator(Color themeColor) {
+    final remainingTime = controller.getRemainingSessionTime();
+    final isRunningLow = remainingTime <= 5; // Menos de 5 minutos
+
+    return Material(
+      elevation: AppDimensions.elevationMd,
+      borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
+      color: isRunningLow
+          ? Colors.red.withValues(alpha: 200)
+          : themeColor.withValues(alpha: 180),
+      child: InkWell(
+        onTap: () {
+          Get.snackbar(
+            'session_time_info_title'.tr,
+            'session_time_info_message'
+                .trParams({'minutes': remainingTime.toString()}),
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: themeColor.withValues(alpha: 40),
+            colorText: themeColor,
+          );
+        },
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.md,
+            vertical: AppDimensions.sm,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.timer,
+                color: Colors.white,
+                size: isRunningLow ? 20 : 18,
+              ),
+              const SizedBox(width: AppDimensions.xs),
+              Text(
+                '$remainingTime min',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight:
+                      isRunningLow ? FontWeight.bold : FontWeight.normal,
+                  fontSize: isRunningLow
+                      ? AppDimensions.fontMd
+                      : AppDimensions.fontSm,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   PreferredSizeWidget _buildAppBar(FamilyChild child, Color themeColor) {
@@ -818,63 +902,15 @@ class ChildDashboardPage extends GetView<ChildAccessController> {
 
   // Muestra el diálogo para introducir el PIN de control parental
   void _showParentPinDialog() {
-    final TextEditingController pinController = TextEditingController();
-
-    Get.dialog(
-      AlertDialog(
-        title: Text(TrKeys.enterParentalPin.tr),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              TrKeys.enterParentalPinMessage.tr,
-              style: const TextStyle(
-                fontSize: AppDimensions.fontSm,
-                color: AppColors.textMedium,
-              ),
-            ),
-            const SizedBox(height: AppDimensions.md),
-            TextField(
-              controller: pinController,
-              keyboardType: TextInputType.number,
-              maxLength: 4,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: TrKeys.pin.tr,
-                hintText: '****',
-                border: const OutlineInputBorder(),
-              ),
-              autofocus: true,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(TrKeys.cancel.tr),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.verifyParentalPin(pinController.text)) {
-                controller.exitChildMode();
-                Get.back();
-                Get.offNamed(Routes.home);
-              } else {
-                Get.back();
-                Get.snackbar(
-                  TrKeys.incorrectPin.tr,
-                  TrKeys.incorrectPinMessage.tr,
-                  snackPosition: SnackPosition.BOTTOM,
-                  backgroundColor: AppColors.error.withValues(alpha: 0.1),
-                  colorText: AppColors.error,
-                );
-              }
-            },
-            child: Text(TrKeys.ok.tr),
-          ),
-        ],
-      ),
-    );
+    ParentalPinDialog.show(
+      customTitle: TrKeys.parentAccess.tr,
+      customSubtitle: TrKeys.enterParentalPinMessage.tr,
+    ).then((success) {
+      if (success) {
+        controller.exitChildMode();
+        Get.offNamed(Routes.home);
+      }
+    });
   }
 
   // Obtiene el color del tema basado en las configuraciones

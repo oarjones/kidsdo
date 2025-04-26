@@ -284,4 +284,80 @@ class TrKeys {
   static const rewardExample1 = 'reward_example1';
   static const rewardExample2 = 'reward_example2';
   static const menuAchievements = 'menu_achievements';
+
+  // Claves para Control Parental
+  static const parentalControl = 'parental_control';
+  static const parentalPinSectionTitle = 'parental_pin_section_title';
+  static const useParentalPin = 'use_parental_pin';
+  static const useParentalPinDescription = 'use_parental_pin_description';
+  static const changeParentalPin = 'change_parental_pin';
+  static const recoveryEmail = 'recovery_email';
+  static const recoveryEmailHint = 'recovery_email_hint';
+  static const timeRestrictionsTitle = 'time_restrictions_section_title';
+  static const useTimeRestrictions = 'use_time_restrictions';
+  static const useTimeRestrictionsDescription =
+      'use_time_restrictions_description';
+  static const startTime = 'start_time';
+  static const endTime = 'end_time';
+  static const maxSessionTime = 'max_session_time';
+  static const maxSessionTimeDescription = 'max_session_time_description';
+  static const profileBlockTitle = 'profile_block_section_title';
+  static const profileBlockDescription = 'profile_block_description';
+  static const profileBlocked = 'profile_blocked';
+  static const profileUnblocked = 'profile_unblocked';
+  static const contentRestrictionsTitle = 'content_restrictions_section_title';
+  static const restrictPremiumContent = 'restrict_premium_content';
+  static const restrictPremiumContentDesc =
+      'restrict_premium_content_description';
+  static const moreContentRestrictions = 'more_content_restrictions';
+  static const setParentalPin = 'set_parental_pin';
+  static const setParentalPinDescription = 'set_parental_pin_description';
+  static const changeParentalPinDesc = 'change_parental_pin_description';
+  static const currentPin = 'current_pin';
+  static const newPin = 'new_pin';
+  static const confirmPin = 'confirm_pin';
+  static const invalidPinFormatTitle = 'invalid_pin_format_title';
+  static const invalidPinFormatMessage = 'invalid_pin_format_message';
+  static const pinMismatchTitle = 'pin_mismatch_title';
+  static const pinMismatchMessage = 'pin_mismatch_message';
+  static const pinChangedTitle = 'pin_changed_title';
+  static const pinChangedMessage = 'pin_changed_message';
+  static const pinChangeErrorTitle = 'pin_change_error_title';
+  static const parentalPinIncorrect = 'parental_pin_incorrect';
+  static const parentalPinIncorrectAttempts = 'parental_pin_incorrect_attempts';
+  static const parentalControlLockedTitle = 'parental_control_locked_title';
+  static const parentalControlTemporarilyLocked =
+      'parental_control_temporarily_locked';
+  static const settingsSavedTitle = 'settings_saved_title';
+  static const settingsSavedMessage = 'settings_saved_message';
+  static const settingsSaveErrorTitle = 'settings_save_error_title';
+  static const errorLoadingProfiles = 'error_loading_profiles';
+  static const noChildrenProfiles = 'no_children_profiles';
+
+  // Restricciones de tiempo
+  static const timeRestrictionTitle = 'time_restriction_title';
+  static const timeRestrictionSuggestion = 'time_restriction_suggestion';
+  static const timeRestrictionSuggestionDetail =
+      'time_restriction_suggestion_detail';
+  static const goToHome = 'go_to_home';
+  static const parentalControlTimeRestricted =
+      'parental_control_time_restricted';
+  static const sessionTimeInfoTitle = 'session_time_info_title';
+  static const sessionTimeInfoMessage = 'session_time_info_message';
+  static const sessionTimeWarningTitle = 'session_time_warning_title';
+  static const sessionTimeWarningMessage = 'session_time_warning_message';
+  static const sessionTimeExceededTitle = 'session_time_exceeded_title';
+  static const sessionTimeExceededMessage = 'session_time_exceeded_message';
+  static const timeRestrictionDefaultMessage =
+      'time_restriction_default_message';
+
+  // Perfiles bloqueados
+  static const profileBlockedTitle = 'profile_blocked_title';
+  static const profileBlockedMessage = 'profile_blocked_message';
+  static const childProfileBlocked = 'child_profile_blocked';
+  static const temporaryBlockTitle = 'temporary_block_title';
+  static const accessBlockedTitle = 'access_blocked_title';
+  static const parentUnlockTitle = 'parent_unlock_title';
+  static const parentUnlockDescription = 'parent_unlock_description';
+  static const parentUnlock = 'parent_unlock';
 }

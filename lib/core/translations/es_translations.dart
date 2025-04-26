@@ -287,4 +287,88 @@ final Map<String, String> esTranslations = {
   'reward_example1': 'Helado',
   'reward_example2': 'Tiempo de juego',
   'menu_achievements': 'Logros',
+
+  // Control Parental
+  'parental_control': 'Control Parental',
+  'parental_pin_section_title': 'PIN Parental',
+  'use_parental_pin': 'Usar PIN para acceso parental',
+  'use_parental_pin_description': 'Requerir un PIN al acceder al modo padre',
+
+  'recovery_email': 'Correo de recuperación',
+  'recovery_email_hint': 'Introduce un correo para recuperar el PIN',
+  'time_restrictions_section_title': 'Restricciones de Tiempo',
+  'use_time_restrictions': 'Usar restricciones de tiempo',
+  'use_time_restrictions_description':
+      'Limitar el acceso al modo infantil a horas específicas',
+  'start_time': 'Hora de inicio',
+  'end_time': 'Hora de fin',
+  'max_session_time': 'Tiempo máximo de sesión',
+  'max_session_time_description': 'Tiempo máximo permitido por sesión infantil',
+  'profile_block_section_title': 'Bloqueo de Perfiles',
+  'profile_block_description':
+      'Bloquear o desbloquear perfiles infantiles específicos',
+  'profile_blocked': 'Perfil bloqueado',
+  'profile_unblocked': 'Perfil accesible',
+  'content_restrictions_section_title': 'Restricciones de Contenido',
+  'restrict_premium_content': 'Restringir contenido premium',
+  'restrict_premium_content_description':
+      'Bloquear acceso a funciones premium sin aprobación',
+  'more_content_restrictions': 'Más restricciones de contenido',
+  'set_parental_pin': 'Establecer PIN Parental',
+  'set_parental_pin_description':
+      'Crea un PIN de 4 dígitos para proteger el acceso al modo padre',
+  'change_parental_pin': 'Cambiar PIN Parental',
+  'change_parental_pin_description':
+      'Actualiza tu PIN de 4 dígitos para el acceso parental',
+  'current_pin': 'PIN actual',
+  'new_pin': 'Nuevo PIN',
+  'confirm_pin': 'Confirmar PIN',
+  'invalid_pin_format_title': 'Formato de PIN inválido',
+  'invalid_pin_format_message': 'El PIN debe tener exactamente 4 dígitos',
+  'pin_mismatch_title': 'Los PIN no coinciden',
+  'pin_mismatch_message': 'El nuevo PIN y la confirmación no coinciden',
+  'pin_changed_title': 'PIN cambiado',
+  'pin_changed_message': 'Tu PIN de control parental ha sido actualizado',
+  'pin_change_error_title': 'Error al cambiar PIN',
+  'parental_pin_incorrect': 'El PIN actual es incorrecto',
+  'parental_pin_incorrect_attempts':
+      'PIN incorrecto. @attempts intentos restantes',
+  'parental_control_locked_title': 'Acceso bloqueado temporalmente',
+  'parental_control_temporarily_locked':
+      'El acceso está bloqueado durante @minutes minutos debido a demasiados intentos fallidos',
+  'settings_saved_title': 'Configuración guardada',
+  'settings_saved_message':
+      'La configuración de control parental ha sido guardada',
+  'settings_save_error_title': 'Error al guardar configuración',
+  'error_loading_profiles': 'Error al cargar perfiles infantiles',
+  'no_children_profiles': 'No se encontraron perfiles infantiles',
+
+  // Restricciones de tiempo
+  'time_restriction_title': 'Acceso Restringido',
+  'time_restriction_suggestion': 'Inténtalo más tarde',
+  'time_restriction_suggestion_detail':
+      'Podrás usar la aplicación de nuevo durante las horas permitidas',
+  'go_to_home': 'Ir al Inicio',
+  'parental_control_time_restricted':
+      'Acceso permitido solo entre @start y @end',
+  'session_time_info_title': 'Tiempo de Sesión',
+  'session_time_info_message': 'Te quedan @minutes minutos en esta sesión',
+  'session_time_warning_title': 'Advertencia de Tiempo',
+  'session_time_warning_message': 'Te quedan @minutes minutos en tu sesión',
+  'session_time_exceeded_title': 'Límite de Tiempo Alcanzado',
+  'session_time_exceeded_message': 'Tu tiempo de sesión ha terminado',
+  'time_restriction_default_message':
+      'Esta aplicación no está disponible en este momento',
+
+  // Perfiles bloqueados
+  'profile_blocked_title': 'Perfil Bloqueado',
+  'profile_blocked_message':
+      'Este perfil ha sido bloqueado por el control parental',
+  'child_profile_blocked': 'Este perfil está bloqueado por el control parental',
+  'temporary_block_title': 'Bloqueado Temporalmente',
+  'access_blocked_title': 'Acceso Bloqueado',
+  'parent_unlock_title': 'Desbloqueo Parental',
+  'parent_unlock_description':
+      'Introduce el PIN de padre para desbloquear el acceso',
+  'parent_unlock': 'Desbloqueo Parental',
 };

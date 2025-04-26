@@ -7,6 +7,7 @@ import 'package:kidsdo/domain/entities/family_child.dart';
 import 'package:kidsdo/presentation/controllers/child_access_controller.dart';
 import 'package:kidsdo/presentation/widgets/common/cached_avatar.dart';
 import 'package:kidsdo/routes.dart';
+import 'package:kidsdo/presentation/widgets/auth/parental_pin_dialog.dart';
 
 class ChildProfileSelectionPage extends GetView<ChildAccessController> {
   const ChildProfileSelectionPage({Key? key}) : super(key: key);
@@ -462,62 +463,14 @@ class ChildProfileSelectionPage extends GetView<ChildAccessController> {
 
   // Muestra el diálogo para introducir el PIN de control parental
   void _showParentPinDialog() {
-    final TextEditingController pinController = TextEditingController();
-
-    Get.dialog(
-      AlertDialog(
-        title: Text(TrKeys.enterParentalPin.tr),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              TrKeys.enterParentalPinMessage.tr,
-              style: const TextStyle(
-                fontSize: AppDimensions.fontSm,
-                color: AppColors.textMedium,
-              ),
-            ),
-            const SizedBox(height: AppDimensions.md),
-            TextField(
-              controller: pinController,
-              keyboardType: TextInputType.number,
-              maxLength: 4,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: TrKeys.pin.tr,
-                hintText: '****',
-                border: const OutlineInputBorder(),
-              ),
-              autofocus: true,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(TrKeys.cancel.tr),
-          ),
-          TextButton(
-            onPressed: () {
-              if (controller.verifyParentalPin(pinController.text)) {
-                Get.back();
-                Get.offNamed(Routes.home);
-              } else {
-                Get.back();
-                Get.snackbar(
-                  TrKeys.incorrectPin.tr,
-                  TrKeys.incorrectPinMessage.tr,
-                  snackPosition: SnackPosition.BOTTOM,
-                  backgroundColor: AppColors.error.withValues(alpha: 0.1),
-                  colorText: AppColors.error,
-                );
-              }
-            },
-            child: Text(TrKeys.ok.tr),
-          ),
-        ],
-      ),
-    );
+    ParentalPinDialog.show(
+      customTitle: TrKeys.parentAccess.tr,
+      customSubtitle: TrKeys.enterParentalPinMessage.tr,
+    ).then((success) {
+      if (success) {
+        Get.offNamed(Routes.home);
+      }
+    });
   }
 
   // Selecciona un perfil infantil y navega a su dashboard

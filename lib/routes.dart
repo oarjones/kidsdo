@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:kidsdo/core/middleware/auth_middleware.dart';
+import 'package:kidsdo/presentation/pages/settings/parental_control_page.dart';
 import 'package:kidsdo/presentation/pages/splash/splash_page.dart';
 import 'package:kidsdo/presentation/pages/auth/login_page.dart';
 import 'package:kidsdo/presentation/pages/auth/register_page.dart';
@@ -32,6 +33,7 @@ abstract class Routes {
   static const createFamily = '/create-family';
   static const joinFamily = '/join-family';
   static const inviteCode = '/invite-code';
+  static const parentalControl = '/parental-control';
 
   // Rutas para acceso infantil
   static const childProfileSelection = '/child-profile-selection';
@@ -138,6 +140,14 @@ class AppPages {
       name: Routes.childDashboard,
       page: () => const ChildDashboardPage(),
       transition: Transition.fadeIn,
+    ),
+
+    // Ruta para el control parental
+    GetPage(
+      name: Routes.parentalControl,
+      page: () => const ParentalControlPage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
     ),
   ];
 }

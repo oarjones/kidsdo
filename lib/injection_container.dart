@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kidsdo/presentation/controllers/parental_control_controller.dart';
 import 'package:kidsdo/presentation/controllers/profile_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -193,10 +194,20 @@ Future<void> init() async {
     ),
   );
 
+  // ParentalControlController controller
+  Get.put<ParentalControlController>(
+    ParentalControlController(
+      sharedPreferences: Get.find<SharedPreferences>(),
+      logger: Get.find<Logger>(),
+    ),
+    permanent: true,
+  );
+
   // ChildAccessController controller
   Get.put<ChildAccessController>(
     ChildAccessController(
       familyChildRepository: Get.find<IFamilyChildRepository>(),
+      parentalControlController: Get.find<ParentalControlController>(),
       familyController: Get.find<FamilyController>(),
       sharedPreferences: Get.find<SharedPreferences>(),
       logger: Get.find<Logger>(),
