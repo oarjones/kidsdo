@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Controlador para gestionar el idioma de la aplicación
@@ -66,6 +67,11 @@ class LanguageController extends GetxController {
 
     // Notificar a los widgets que usan GetBuilder
     update();
+
+    // Notificar específicamente al ChallengeController si existe
+    if (Get.isRegistered<ChallengeController>()) {
+      Get.find<ChallengeController>().onLanguageChanged();
+    }
   }
 
   /// Cambia al idioma español

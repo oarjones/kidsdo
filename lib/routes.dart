@@ -3,6 +3,7 @@ import 'package:kidsdo/core/middleware/auth_middleware.dart';
 import 'package:kidsdo/presentation/pages/challenges/active_challenges_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/assign_challenge_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/challenges_library_page.dart';
+import 'package:kidsdo/presentation/pages/challenges/challenges_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/create_edit_challenge_page.dart';
 import 'package:kidsdo/presentation/pages/settings/parental_control_page.dart';
 import 'package:kidsdo/presentation/pages/splash/splash_page.dart';
@@ -38,6 +39,7 @@ abstract class Routes {
   static const joinFamily = '/join-family';
   static const inviteCode = '/invite-code';
   static const parentalControl = '/parental-control';
+  static const challenges = '/challenges';
 
   // Rutas para acceso infantil
   static const childProfileSelection = '/child-profile-selection';
@@ -162,6 +164,12 @@ class AppPages {
     ),
 
     // Rutas para gestión de retos
+    GetPage(
+      name: Routes.challenges,
+      page: () => const ChallengesPage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
     GetPage(
       name: Routes.challengeLibrary,
       page: () => const ChallengesLibraryPage(),

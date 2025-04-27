@@ -520,4 +520,20 @@ class TrKeys {
 
   static const refresh = 'refresh';
   static const active = 'active';
+
+  static const challengesPageSubtitle =
+      'challenges_page_subtitle'; //      'Manage and visualize challenges to promote good habits',
+  static const activeChallengesLabel =
+      'active_challenges_label'; // 'Active challenges',
+  static const exploreChallengeLibrary =
+      'explore_challenge_library'; // 'Explore the predefined challenge library',
+  static const createCustomChallenges =
+      'create_custom_challenges'; // 'Create custom challenges',
+  static const activeChallengesStat =
+      'active_challenges_stat'; // 'Active challenges',
+  static const completedChallengesStat =
+      'completed_challenges_stat'; // 'Completed challenges',
+  static const libraryChallengesStat =
+      'library_challenges_stat'; // 'Library challenges',
+  static const challengesAsignedVisualEval = 'challenges_asigned_visual_eval';
 }

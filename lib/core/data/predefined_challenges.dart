@@ -1,14 +1,17 @@
 import 'package:kidsdo/domain/entities/challenge.dart';
+import 'package:kidsdo/data/models/challenge_model.dart'; // Asegúrate de que esta ruta es correcta
+import 'package:get/get.dart';
 
 /// Biblioteca de retos predefinidos por categoría
 class PredefinedChallenges {
   /// Retos de higiene personal
   static final List<Challenge> hygieneList = [
-    Challenge(
+    ChallengeModel(
       id: 'hygiene_teeth_morning',
-      title: 'Cepillarse los dientes por la mañana',
-      description:
-          'Cepillarse los dientes después del desayuno durante al menos 2 minutos',
+      title: 'challenge_hygiene_teeth_morning_title'.tr,
+      description: 'challenge_hygiene_teeth_morning_description'.tr,
+      titleKey: 'challenge_hygiene_teeth_morning_title',
+      descriptionKey: 'challenge_hygiene_teeth_morning_description',
       category: ChallengeCategory.hygiene,
       points: 10,
       frequency: ChallengeFrequency.daily,
@@ -18,11 +21,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'tooth_brush',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'hygiene_teeth_night',
-      title: 'Cepillarse los dientes por la noche',
-      description:
-          'Cepillarse los dientes antes de acostarse durante al menos 2 minutos',
+      title: 'challenge_hygiene_teeth_night_title'.tr,
+      description: 'challenge_hygiene_teeth_night_description'.tr,
+      titleKey: 'challenge_hygiene_teeth_night_title',
+      descriptionKey: 'challenge_hygiene_teeth_night_description',
       category: ChallengeCategory.hygiene,
       points: 10,
       frequency: ChallengeFrequency.daily,
@@ -32,11 +36,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'tooth_brush',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'hygiene_bath',
-      title: 'Bañarse sin ayuda',
-      description:
-          'Bañarse o ducharse sin ayuda, lavando todo el cuerpo correctamente',
+      title: 'challenge_hygiene_bath_title'.tr,
+      description: 'challenge_hygiene_bath_description'.tr,
+      titleKey: 'challenge_hygiene_bath_title',
+      descriptionKey: 'challenge_hygiene_bath_description',
       category: ChallengeCategory.hygiene,
       points: 15,
       frequency: ChallengeFrequency.daily,
@@ -46,11 +51,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'shower',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'hygiene_hands',
-      title: 'Lavarse las manos',
-      description:
-          'Lavarse las manos con jabón antes de las comidas y después del baño',
+      title: 'challenge_hygiene_hands_title'.tr,
+      description: 'challenge_hygiene_hands_description'.tr,
+      titleKey: 'challenge_hygiene_hands_title',
+      descriptionKey: 'challenge_hygiene_hands_description',
       category: ChallengeCategory.hygiene,
       points: 5,
       frequency: ChallengeFrequency.daily,
@@ -60,10 +66,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'soap',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'hygiene_hair',
-      title: 'Peinarse el cabello',
-      description: 'Cepillarse o peinarse el cabello después de bañarse',
+      title: 'challenge_hygiene_hair_title'.tr,
+      description: 'challenge_hygiene_hair_description'.tr,
+      titleKey: 'challenge_hygiene_hair_title',
+      descriptionKey: 'challenge_hygiene_hair_description',
       category: ChallengeCategory.hygiene,
       points: 5,
       frequency: ChallengeFrequency.daily,
@@ -77,11 +85,12 @@ class PredefinedChallenges {
 
   /// Retos escolares
   static final List<Challenge> schoolList = [
-    Challenge(
+    ChallengeModel(
       id: 'school_homework',
-      title: 'Hacer los deberes escolares',
-      description:
-          'Completar todas las tareas escolares del día sin necesidad de recordatorios',
+      title: 'challenge_school_homework_title'.tr,
+      description: 'challenge_school_homework_description'.tr,
+      titleKey: 'challenge_school_homework_title',
+      descriptionKey: 'challenge_school_homework_description',
       category: ChallengeCategory.school,
       points: 20,
       frequency: ChallengeFrequency.daily,
@@ -91,10 +100,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'book',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'school_reading',
-      title: 'Lectura diaria',
-      description: 'Leer durante al menos 15 minutos al día',
+      title: 'challenge_school_reading_title'.tr,
+      description: 'challenge_school_reading_description'.tr,
+      titleKey: 'challenge_school_reading_title',
+      descriptionKey: 'challenge_school_reading_description',
       category: ChallengeCategory.school,
       points: 15,
       frequency: ChallengeFrequency.daily,
@@ -104,11 +115,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'book_open',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'school_backpack',
-      title: 'Preparar mochila escolar',
-      description:
-          'Preparar la mochila con todos los materiales necesarios para el día siguiente',
+      title: 'challenge_school_backpack_title'.tr,
+      description: 'challenge_school_backpack_description'.tr,
+      titleKey: 'challenge_school_backpack_title',
+      descriptionKey: 'challenge_school_backpack_description',
       category: ChallengeCategory.school,
       points: 10,
       frequency: ChallengeFrequency.daily,
@@ -118,11 +130,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'backpack',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'school_good_grade',
-      title: 'Buena calificación',
-      description:
-          'Obtener una calificación de 8 o superior en un examen o trabajo',
+      title: 'challenge_school_good_grade_title'.tr,
+      description: 'challenge_school_good_grade_description'.tr,
+      titleKey: 'challenge_school_good_grade_title',
+      descriptionKey: 'challenge_school_good_grade_description',
       category: ChallengeCategory.school,
       points: 30,
       frequency: ChallengeFrequency.once,
@@ -136,10 +149,12 @@ class PredefinedChallenges {
 
   /// Retos de orden
   static final List<Challenge> orderList = [
-    Challenge(
+    ChallengeModel(
       id: 'order_bed',
-      title: 'Hacer la cama',
-      description: 'Hacer la cama correctamente cada mañana al levantarse',
+      title: 'challenge_order_bed_title'.tr,
+      description: 'challenge_order_bed_description'.tr,
+      titleKey: 'challenge_order_bed_title',
+      descriptionKey: 'challenge_order_bed_description',
       category: ChallengeCategory.order,
       points: 10,
       frequency: ChallengeFrequency.daily,
@@ -149,10 +164,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'bed',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'order_toys',
-      title: 'Recoger los juguetes',
-      description: 'Recoger y guardar todos los juguetes al terminar de jugar',
+      title: 'challenge_order_toys_title'.tr,
+      description: 'challenge_order_toys_description'.tr,
+      titleKey: 'challenge_order_toys_title',
+      descriptionKey: 'challenge_order_toys_description',
       category: ChallengeCategory.order,
       points: 10,
       frequency: ChallengeFrequency.daily,
@@ -162,11 +179,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'toys',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'order_room',
-      title: 'Ordenar la habitación',
-      description:
-          'Mantener la habitación ordenada y limpia durante toda la semana',
+      title: 'challenge_order_room_title'.tr,
+      description: 'challenge_order_room_description'.tr,
+      titleKey: 'challenge_order_room_title',
+      descriptionKey: 'challenge_order_room_description',
       category: ChallengeCategory.order,
       points: 25,
       frequency: ChallengeFrequency.weekly,
@@ -176,11 +194,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'room',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'order_clothes',
-      title: 'Ordenar la ropa',
-      description:
-          'Guardar la ropa limpia en el armario y poner la sucia en el cesto',
+      title: 'challenge_order_clothes_title'.tr,
+      description: 'challenge_order_clothes_description'.tr,
+      titleKey: 'challenge_order_clothes_title',
+      descriptionKey: 'challenge_order_clothes_description',
       category: ChallengeCategory.order,
       points: 10,
       frequency: ChallengeFrequency.daily,
@@ -194,11 +213,12 @@ class PredefinedChallenges {
 
   /// Retos de responsabilidad
   static final List<Challenge> responsibilityList = [
-    Challenge(
+    ChallengeModel(
       id: 'responsibility_schedule',
-      title: 'Cumplir con los horarios',
-      description:
-          'Respetar los horarios establecidos para comidas, tareas y hora de dormir',
+      title: 'challenge_responsibility_schedule_title'.tr,
+      description: 'challenge_responsibility_schedule_description'.tr,
+      titleKey: 'challenge_responsibility_schedule_title',
+      descriptionKey: 'challenge_responsibility_schedule_description',
       category: ChallengeCategory.responsibility,
       points: 15,
       frequency: ChallengeFrequency.daily,
@@ -208,11 +228,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'clock',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'responsibility_alarm',
-      title: 'Levantarse con el despertador',
-      description:
-          'Levantarse a la primera alarma sin necesidad de recordatorios adicionales',
+      title: 'challenge_responsibility_alarm_title'.tr,
+      description: 'challenge_responsibility_alarm_description'.tr,
+      titleKey: 'challenge_responsibility_alarm_title',
+      descriptionKey: 'challenge_responsibility_alarm_description',
       category: ChallengeCategory.responsibility,
       points: 10,
       frequency: ChallengeFrequency.daily,
@@ -222,11 +243,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'alarm',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'responsibility_pet',
-      title: 'Cuidado de mascota',
-      description:
-          'Alimentar, limpiar y cuidar de la mascota sin necesidad de recordatorios',
+      title: 'challenge_responsibility_pet_title'.tr,
+      description: 'challenge_responsibility_pet_description'.tr,
+      titleKey: 'challenge_responsibility_pet_title',
+      descriptionKey: 'challenge_responsibility_pet_description',
       category: ChallengeCategory.responsibility,
       points: 15,
       frequency: ChallengeFrequency.daily,
@@ -236,10 +258,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'pet',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'responsibility_plant',
-      title: 'Cuidado de planta',
-      description: 'Regar y cuidar las plantas asignadas según necesiten',
+      title: 'challenge_responsibility_plant_title'.tr,
+      description: 'challenge_responsibility_plant_description'.tr,
+      titleKey: 'challenge_responsibility_plant_title',
+      descriptionKey: 'challenge_responsibility_plant_description',
       category: ChallengeCategory.responsibility,
       points: 10,
       frequency: ChallengeFrequency.weekly,
@@ -253,11 +277,12 @@ class PredefinedChallenges {
 
   /// Retos de ayuda doméstica
   static final List<Challenge> helpList = [
-    Challenge(
+    ChallengeModel(
       id: 'help_table',
-      title: 'Poner la mesa',
-      description:
-          'Poner la mesa correctamente para toda la familia antes de la comida',
+      title: 'challenge_help_table_title'.tr,
+      description: 'challenge_help_table_description'.tr,
+      titleKey: 'challenge_help_table_title',
+      descriptionKey: 'challenge_help_table_description',
       category: ChallengeCategory.help,
       points: 10,
       frequency: ChallengeFrequency.daily,
@@ -267,10 +292,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'cutlery',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'help_dishes',
-      title: 'Ayudar con los platos',
-      description: 'Llevar los platos sucios a la cocina y ayudar a limpiarlos',
+      title: 'challenge_help_dishes_title'.tr,
+      description: 'challenge_help_dishes_description'.tr,
+      titleKey: 'challenge_help_dishes_title',
+      descriptionKey: 'challenge_help_dishes_description',
       category: ChallengeCategory.help,
       points: 10,
       frequency: ChallengeFrequency.daily,
@@ -280,10 +307,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'dishes',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'help_trash',
-      title: 'Sacar la basura',
-      description: 'Recoger y sacar la basura cuando sea necesario',
+      title: 'challenge_help_trash_title'.tr,
+      description: 'challenge_help_trash_description'.tr,
+      titleKey: 'challenge_help_trash_title',
+      descriptionKey: 'challenge_help_trash_description',
       category: ChallengeCategory.help,
       points: 10,
       frequency: ChallengeFrequency.weekly,
@@ -293,10 +322,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'trash',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'help_groceries',
-      title: 'Ayudar con la compra',
-      description: 'Ayudar a guardar la compra en su lugar correspondiente',
+      title: 'challenge_help_groceries_title'.tr,
+      description: 'challenge_help_groceries_description'.tr,
+      titleKey: 'challenge_help_groceries_title',
+      descriptionKey: 'challenge_help_groceries_description',
       category: ChallengeCategory.help,
       points: 15,
       frequency: ChallengeFrequency.weekly,
@@ -310,11 +341,12 @@ class PredefinedChallenges {
 
   /// Retos para eventos especiales
   static final List<Challenge> specialList = [
-    Challenge(
+    ChallengeModel(
       id: 'special_garden',
-      title: 'Ayudar en el jardín',
-      description:
-          'Ayudar con las tareas de jardinería como regar, quitar malas hierbas o plantar',
+      title: 'challenge_special_garden_title'.tr,
+      description: 'challenge_special_garden_description'.tr,
+      titleKey: 'challenge_special_garden_title',
+      descriptionKey: 'challenge_special_garden_description',
       category: ChallengeCategory.special,
       points: 20,
       frequency: ChallengeFrequency.weekly,
@@ -324,11 +356,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'garden',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'special_recycle',
-      title: 'Reciclar correctamente',
-      description:
-          'Separar correctamente los residuos en sus contenedores correspondientes',
+      title: 'challenge_special_recycle_title'.tr,
+      description: 'challenge_special_recycle_description'.tr,
+      titleKey: 'challenge_special_recycle_title',
+      descriptionKey: 'challenge_special_recycle_description',
       category: ChallengeCategory.special,
       points: 15,
       frequency: ChallengeFrequency.weekly,
@@ -338,11 +371,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'recycle',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'special_holiday',
-      title: 'Preparación festiva',
-      description:
-          'Ayudar con la decoración y preparativos para festividades o celebraciones',
+      title: 'challenge_special_holiday_title'.tr,
+      description: 'challenge_special_holiday_description'.tr,
+      titleKey: 'challenge_special_holiday_title',
+      descriptionKey: 'challenge_special_holiday_description',
       category: ChallengeCategory.special,
       points: 25,
       frequency: ChallengeFrequency.once,
@@ -356,11 +390,12 @@ class PredefinedChallenges {
 
   /// Retos para hermanos
   static final List<Challenge> siblingList = [
-    Challenge(
+    ChallengeModel(
       id: 'sibling_share',
-      title: 'Compartir juguetes',
-      description:
-          'Compartir juguetes y pertenencias con hermanos sin discutir',
+      title: 'challenge_sibling_share_title'.tr,
+      description: 'challenge_sibling_share_description'.tr,
+      titleKey: 'challenge_sibling_share_title',
+      descriptionKey: 'challenge_sibling_share_description',
       category: ChallengeCategory.sibling,
       points: 15,
       frequency: ChallengeFrequency.daily,
@@ -370,10 +405,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'share',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'sibling_play',
-      title: 'Jugar juntos',
-      description: 'Jugar juntos durante 30 minutos sin conflictos',
+      title: 'challenge_sibling_play_title'.tr,
+      description: 'challenge_sibling_play_description'.tr,
+      titleKey: 'challenge_sibling_play_title',
+      descriptionKey: 'challenge_sibling_play_description',
       category: ChallengeCategory.sibling,
       points: 15,
       frequency: ChallengeFrequency.daily,
@@ -383,10 +420,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'play',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'sibling_help',
-      title: 'Ayudar al hermano/a',
-      description: 'Ayudar al hermano/a menor con alguna tarea o actividad',
+      title: 'challenge_sibling_help_title'.tr,
+      description: 'challenge_sibling_help_description'.tr,
+      titleKey: 'challenge_sibling_help_title',
+      descriptionKey: 'challenge_sibling_help_description',
       category: ChallengeCategory.sibling,
       points: 20,
       frequency: ChallengeFrequency.daily,
@@ -396,11 +435,12 @@ class PredefinedChallenges {
       createdAt: DateTime.now(),
       icon: 'help',
     ),
-    Challenge(
+    ChallengeModel(
       id: 'sibling_conflict',
-      title: 'Resolver conflictos',
-      description:
-          'Resolver un conflicto con hermanos sin intervención de adultos',
+      title: 'challenge_sibling_conflict_title'.tr,
+      description: 'challenge_sibling_conflict_description'.tr,
+      titleKey: 'challenge_sibling_conflict_title',
+      descriptionKey: 'challenge_sibling_conflict_description',
       category: ChallengeCategory.sibling,
       points: 25,
       frequency: ChallengeFrequency.once,

@@ -465,4 +465,184 @@ final Map<String, String> esTranslations = {
 
   'refresh': 'Actualizar',
   'active': 'Activo',
+
+  // Crear/Editar Retos
+  'create_edit_challenge_title': 'Crear o Editar Reto',
+  'enter_challenge_title': 'Ingresa el título del reto',
+  'enter_challenge_description': 'Ingresa una descripción para el reto',
+  'select_category': 'Selecciona categoría',
+  'select_frequency': 'Selecciona frecuencia',
+  'assign_to_child': 'Asignar a niño',
+  'select_child': 'Selecciona niño',
+  'enter_points': 'Ingresa puntos',
+  'select_age_range': 'Selecciona rango de edad',
+  'min_age': 'Edad mínima',
+  'max_age': 'Edad máxima',
+  'save_as_template': 'Guardar como plantilla',
+  'save_as_template_desc': 'Guardar este reto como plantilla para uso futuro',
+  'select_icon': 'Seleccionar icono',
+  'challenge_created_title': 'Reto creado',
+  'challenge_created_message': 'El reto ha sido creado con éxito',
+  'challenge_updated_title': 'Reto actualizado',
+  'challenge_updated_message': 'El reto ha sido actualizado con éxito',
+  'challenge_deleted_title': 'Reto eliminado',
+  'challenge_deleted_message': 'El reto ha sido eliminado con éxito',
+
+// Asignar Retos
+  'assign_challenge_title': 'Asignar Reto',
+  'select_start_date': 'Seleccionar fecha de inicio',
+  'select_end_date': 'Seleccionar fecha de fin',
+  'select_evaluation_frequency': 'Seleccionar frecuencia de evaluación',
+  'daily_evaluation': 'Evaluación diaria',
+  'weekly_evaluation': 'Evaluación semanal',
+  'assign_challenge': 'Asignar reto',
+  'challenge_assigned_title': 'Reto asignado',
+  'challenge_assigned_message': 'El reto ha sido asignado con éxito',
+  'no_children_available': 'No hay niños disponibles',
+  'no_children_available_message': 'No hay niños para asignar retos',
+  'create_child_profile_first': 'Crea un perfil de niño primero',
+
+// Panel de Retos Activos
+  'active_challenges': 'Retos Activos',
+  'active_challenges_empty': 'No hay retos activos',
+  'active_challenges_empty_message':
+      '¡No hay retos activos. Crea uno para empezar!',
+  'filter_by_child': 'Filtrar por niño',
+  'filter_by_status': 'Filtrar por estado',
+  'evaluate_challenge': 'Evaluar reto',
+  'evaluate_challenge_title': 'Evaluar Reto',
+  'completed': 'Completado',
+  'failed': 'Fallido',
+  'pending': 'Pendiente',
+  'add_note': 'Añadir nota',
+  'evaluation_note': 'Nota de evaluación',
+  'assigned_to': 'Asignado a',
+  'due_date': 'Fecha límite',
+  'created_on': 'Creado el',
+  'last_evaluation': 'Última evaluación',
+  'no_evaluations_yet': 'Aún no hay evaluaciones',
+  'delete_assigned_challenge_title': 'Eliminar reto asignado',
+  'delete_assigned_challenge_message':
+      '¿Estás seguro de que deseas eliminar este reto asignado?',
+  'today': 'Hoy',
+  'tomorrow': 'Mañana',
+  'yesterday': 'Ayer',
+  'days': 'días',
+  'days_ago': 'días atrás',
+  'days_left': 'días restantes',
+  'no_assigned_challenges': 'No hay retos asignados',
+  'no_assigned_challenges_message': 'Aún no hay retos asignados a este niño',
+
+  // --- Retos Predefinidos ---
+
+// Higiene
+  'challenge_hygiene_teeth_morning_title':
+      'Cepillarse los dientes por la mañana',
+  'challenge_hygiene_teeth_morning_description':
+      'Cepillarse los dientes después del desayuno durante al menos 2 minutos',
+  'challenge_hygiene_teeth_night_title': 'Cepillarse los dientes por la noche',
+  'challenge_hygiene_teeth_night_description':
+      'Cepillarse los dientes antes de acostarse durante al menos 2 minutos',
+  'challenge_hygiene_bath_title': 'Bañarse sin ayuda',
+  'challenge_hygiene_bath_description':
+      'Bañarse o ducharse sin ayuda, lavando todo el cuerpo correctamente',
+  'challenge_hygiene_hands_title': 'Lavarse las manos',
+  'challenge_hygiene_hands_description':
+      'Lavarse las manos con jabón antes de las comidas y después del baño',
+  'challenge_hygiene_hair_title': 'Peinarse el cabello',
+  'challenge_hygiene_hair_description':
+      'Cepillarse o peinarse el cabello después de bañarse',
+
+// Escolares
+  'challenge_school_homework_title': 'Hacer los deberes escolares',
+  'challenge_school_homework_description':
+      'Completar todas las tareas escolares del día sin necesidad de recordatorios',
+  'challenge_school_reading_title': 'Lectura diaria',
+  'challenge_school_reading_description':
+      'Leer durante al menos 15 minutos al día',
+  'challenge_school_backpack_title': 'Preparar mochila escolar',
+  'challenge_school_backpack_description':
+      'Preparar la mochila con todos los materiales necesarios para el día siguiente',
+  'challenge_school_good_grade_title': 'Buena calificación',
+  'challenge_school_good_grade_description':
+      'Obtener una calificación de 8 o superior en un examen o trabajo',
+
+// Orden
+  'challenge_order_bed_title': 'Hacer la cama',
+  'challenge_order_bed_description':
+      'Hacer la cama correctamente cada mañana al levantarse',
+  'challenge_order_toys_title': 'Recoger los juguetes',
+  'challenge_order_toys_description':
+      'Recoger y guardar todos los juguetes al terminar de jugar',
+  'challenge_order_room_title': 'Ordenar la habitación',
+  'challenge_order_room_description':
+      'Mantener la habitación ordenada y limpia durante toda la semana',
+  'challenge_order_clothes_title': 'Ordenar la ropa',
+  'challenge_order_clothes_description':
+      'Guardar la ropa limpia en el armario y poner la sucia en el cesto',
+
+// Responsabilidad
+  'challenge_responsibility_schedule_title': 'Cumplir con los horarios',
+  'challenge_responsibility_schedule_description':
+      'Respetar los horarios establecidos para comidas, tareas y hora de dormir',
+  'challenge_responsibility_alarm_title': 'Levantarse con el despertador',
+  'challenge_responsibility_alarm_description':
+      'Levantarse a la primera alarma sin necesidad de recordatorios adicionales',
+  'challenge_responsibility_pet_title': 'Cuidado de mascota',
+  'challenge_responsibility_pet_description':
+      'Alimentar, limpiar y cuidar de la mascota sin necesidad de recordatorios',
+  'challenge_responsibility_plant_title': 'Cuidado de planta',
+  'challenge_responsibility_plant_description':
+      'Regar y cuidar las plantas asignadas según necesiten',
+
+// Ayuda doméstica
+  'challenge_help_table_title': 'Poner la mesa',
+  'challenge_help_table_description':
+      'Poner la mesa correctamente para toda la familia antes de la comida',
+  'challenge_help_dishes_title': 'Ayudar con los platos',
+  'challenge_help_dishes_description':
+      'Llevar los platos sucios a la cocina y ayudar a limpiarlos',
+  'challenge_help_trash_title': 'Sacar la basura',
+  'challenge_help_trash_description':
+      'Recoger y sacar la basura cuando sea necesario',
+  'challenge_help_groceries_title': 'Ayudar con la compra',
+  'challenge_help_groceries_description':
+      'Ayudar a guardar la compra en su lugar correspondiente',
+
+// Eventos especiales
+  'challenge_special_garden_title': 'Ayudar en el jardín',
+  'challenge_special_garden_description':
+      'Ayudar con las tareas de jardinería como regar, quitar malas hierbas o plantar',
+  'challenge_special_recycle_title': 'Reciclar correctamente',
+  'challenge_special_recycle_description':
+      'Separar correctamente los residuos en sus contenedores correspondientes',
+  'challenge_special_holiday_title': 'Preparación festiva',
+  'challenge_special_holiday_description':
+      'Ayudar con la decoración y preparativos para festividades o celebraciones',
+
+// Hermanos
+  'challenge_sibling_share_title': 'Compartir juguetes',
+  'challenge_sibling_share_description':
+      'Compartir juguetes y pertenencias con hermanos sin discutir',
+  'challenge_sibling_play_title': 'Jugar juntos',
+  'challenge_sibling_play_description':
+      'Jugar juntos durante 30 minutos sin conflictos',
+  'challenge_sibling_help_title': 'Ayudar al hermano/a',
+  'challenge_sibling_help_description':
+      'Ayudar al hermano/a menor con alguna tarea o actividad',
+  'challenge_sibling_conflict_title': 'Resolver conflictos',
+  'challenge_sibling_conflict_description':
+      'Resolver un conflicto con hermanos sin intervención de adultos',
+
+// --- Fin Retos Predefinidos ---
+
+  'challenges_page_subtitle':
+      'Gestiona y visualiza los retos para motivar buenos hábitos',
+  'active_challenges_label': 'Retos activos',
+  'explore_challenge_library': 'Explora la biblioteca de retos predefinidos',
+  'create_custom_challenges': 'Crea retos personalizados',
+  'active_challenges_stat': 'Retos activos',
+  'completed_challenges_stat': 'Retos completados',
+  'library_challenges_stat': 'Retos en biblioteca',
+  'challenges_asigned_visual_eval': 'Visualiza y evalúa los retos asignados',
 };

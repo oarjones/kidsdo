@@ -97,65 +97,7 @@ class HomePage extends GetView<AuthController> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Sección de retos
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            TrKeys.challenges.tr,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-
-                          // Botón de retos activos
-                          ElevatedButton.icon(
-                            onPressed: () =>
-                                Get.toNamed(Routes.activeChallenges),
-                            icon: const Icon(Icons.assignment),
-                            label: Text(TrKeys.activeChallenges.tr),
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(double.infinity, 48),
-                              backgroundColor: AppColors.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-
-                          // Botón de biblioteca de retos
-                          ElevatedButton.icon(
-                            onPressed: () =>
-                                Get.toNamed(Routes.challengeLibrary),
-                            icon: const Icon(Icons.menu_book),
-                            label: Text(TrKeys.challengeLibrary.tr),
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(double.infinity, 48),
-                              backgroundColor: AppColors.secondary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-
-                          // Botón de crear reto
-                          ElevatedButton.icon(
-                            onPressed: () =>
-                                Get.toNamed(Routes.createChallenge),
-                            icon: const Icon(Icons.add_circle_outline),
-                            label: Text(TrKeys.createChallenge.tr),
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(double.infinity, 48),
-                              backgroundColor: Colors.green,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Removido la sección de retos
 
                     const SizedBox(height: 12),
                     ElevatedButton.icon(
@@ -193,7 +135,7 @@ class HomePage extends GetView<AuthController> {
             case 0: // Home
               break;
             case 1: // Retos
-              Get.toNamed(Routes.challengeLibrary);
+              Get.toNamed(Routes.challenges);
               break;
             case 3: // Perfil
               Get.toNamed(Routes.profile);

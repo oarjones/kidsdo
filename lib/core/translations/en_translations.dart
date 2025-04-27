@@ -454,4 +454,183 @@ final Map<String, String> enTranslations = {
   'json_exported': 'JSON exported successfully',
   'refresh': 'Refresh',
   'active': 'Active',
+
+  // Create/Edit Challenges
+  'create_edit_challenge_title': 'Create or Edit Challenge',
+  'enter_challenge_title': 'Enter challenge title',
+  'enter_challenge_description': 'Enter a description for the challenge',
+  'select_category': 'Select category',
+  'select_frequency': 'Select frequency',
+  'assign_to_child': 'Assign to child',
+  'select_child': 'Select child',
+  'enter_points': 'Enter points',
+  'select_age_range': 'Select age range',
+  'min_age': 'Minimum age',
+  'max_age': 'Maximum age',
+  'save_as_template': 'Save as template',
+  'save_as_template_desc': 'Save this challenge as a template for future use',
+  'select_icon': 'Select icon',
+  'challenge_created_title': 'Challenge created',
+  'challenge_created_message': 'The challenge has been created successfully',
+  'challenge_updated_title': 'Challenge updated',
+  'challenge_updated_message': 'The challenge has been updated successfully',
+  'challenge_deleted_title': 'Challenge deleted',
+  'challenge_deleted_message': 'The challenge has been deleted successfully',
+
+// Assign Challenges
+  'assign_challenge_title': 'Assign Challenge',
+  'select_start_date': 'Select start date',
+  'select_end_date': 'Select end date',
+  'select_evaluation_frequency': 'Select evaluation frequency',
+  'daily_evaluation': 'Daily evaluation',
+  'weekly_evaluation': 'Weekly evaluation',
+  'assign_challenge': 'Assign challenge',
+  'challenge_assigned_title': 'Challenge assigned',
+  'challenge_assigned_message': 'The challenge has been assigned successfully',
+  'no_children_available': 'No children available',
+  'no_children_available_message':
+      'There are no children to assign challenges to',
+  'create_child_profile_first': 'Create a child profile first',
+
+// Active Challenges Panel
+  'active_challenges': 'Active Challenges',
+  'active_challenges_empty': 'No active challenges',
+  'active_challenges_empty_message':
+      'There are no active challenges. Create one to get started!',
+  'filter_by_child': 'Filter by child',
+  'filter_by_status': 'Filter by status',
+  'evaluate_challenge': 'Evaluate challenge',
+  'evaluate_challenge_title': 'Evaluate Challenge',
+  'completed': 'Completed',
+  'failed': 'Failed',
+  'pending': 'Pending',
+  'add_note': 'Add note',
+  'evaluation_note': 'Evaluation note',
+  'assigned_to': 'Assigned to',
+  'due_date': 'Due date',
+  'created_on': 'Created on',
+  'last_evaluation': 'Last evaluation',
+  'no_evaluations_yet': 'No evaluations yet',
+  'delete_assigned_challenge_title': 'Delete assigned challenge',
+  'delete_assigned_challenge_message':
+      'Are you sure you want to delete this assigned challenge?',
+  'today': 'Today',
+  'tomorrow': 'Tomorrow',
+  'yesterday': 'Yesterday',
+  'days': 'days',
+  'days_ago': 'days ago',
+  'days_left': 'days left',
+  'no_assigned_challenges': 'No assigned challenges',
+  'no_assigned_challenges_message':
+      'There are no challenges assigned to this child yet',
+
+  // --- Predefined Challenges ---
+
+// Hygiene
+  'challenge_hygiene_teeth_morning_title': 'Brush teeth in the morning',
+  'challenge_hygiene_teeth_morning_description':
+      'Brush teeth after breakfast for at least 2 minutes',
+  'challenge_hygiene_teeth_night_title': 'Brush teeth at night',
+  'challenge_hygiene_teeth_night_description':
+      'Brush teeth before going to bed for at least 2 minutes',
+  'challenge_hygiene_bath_title': 'Take a bath without help',
+  'challenge_hygiene_bath_description':
+      'Take a shower or bath without help, washing your entire body properly',
+  'challenge_hygiene_hands_title': 'Wash hands',
+  'challenge_hygiene_hands_description':
+      'Wash hands with soap before meals and after using the bathroom',
+  'challenge_hygiene_hair_title': 'Comb hair',
+  'challenge_hygiene_hair_description': 'Brush or comb hair after bathing',
+
+// School
+  'challenge_school_homework_title': 'Do homework',
+  'challenge_school_homework_description':
+      'Complete all school assignments for the day without reminders',
+  'challenge_school_reading_title': 'Daily reading',
+  'challenge_school_reading_description': 'Read for at least 15 minutes a day',
+  'challenge_school_backpack_title': 'Prepare school backpack',
+  'challenge_school_backpack_description':
+      'Prepare the backpack with all necessary materials for the next day',
+  'challenge_school_good_grade_title': 'Good grade',
+  'challenge_school_good_grade_description':
+      'Get a grade of 8 or higher on a test or assignment',
+
+// Order
+  'challenge_order_bed_title': 'Make the bed',
+  'challenge_order_bed_description':
+      'Make the bed properly every morning upon waking up',
+  'challenge_order_toys_title': 'Pick up toys',
+  'challenge_order_toys_description':
+      'Pick up and put away all toys after playing',
+  'challenge_order_room_title': 'Tidy the room',
+  'challenge_order_room_description':
+      'Keep the room tidy and clean throughout the week',
+  'challenge_order_clothes_title': 'Organize clothes',
+  'challenge_order_clothes_description':
+      'Put clean clothes in the closet and dirty ones in the hamper',
+
+// Responsibility
+  'challenge_responsibility_schedule_title': 'Follow the schedule',
+  'challenge_responsibility_schedule_description':
+      'Respect the established schedules for meals, tasks, and bedtime',
+  'challenge_responsibility_alarm_title': 'Wake up with the alarm',
+  'challenge_responsibility_alarm_description':
+      'Wake up at the first alarm without needing extra reminders',
+  'challenge_responsibility_pet_title': 'Pet care',
+  'challenge_responsibility_pet_description':
+      'Feed, clean, and care for the pet without reminders',
+  'challenge_responsibility_plant_title': 'Plant care',
+  'challenge_responsibility_plant_description':
+      'Water and care for assigned plants as needed',
+
+// Help
+  'challenge_help_table_title': 'Set the table',
+  'challenge_help_table_description':
+      'Set the table correctly for the whole family before the meal',
+  'challenge_help_dishes_title': 'Help with the dishes',
+  'challenge_help_dishes_description':
+      'Take dirty dishes to the kitchen and help clean them',
+  'challenge_help_trash_title': 'Take out the trash',
+  'challenge_help_trash_description':
+      'Collect and take out the trash when necessary',
+  'challenge_help_groceries_title': 'Help with groceries',
+  'challenge_help_groceries_description':
+      'Help put away groceries in their proper place',
+
+// Special
+  'challenge_special_garden_title': 'Help in the garden',
+  'challenge_special_garden_description':
+      'Help with gardening tasks like watering, weeding, or planting',
+  'challenge_special_recycle_title': 'Recycle correctly',
+  'challenge_special_recycle_description':
+      'Properly separate waste into the correct bins',
+  'challenge_special_holiday_title': 'Holiday preparation',
+  'challenge_special_holiday_description':
+      'Help with decorations and preparations for holidays or celebrations',
+
+// Sibling
+  'challenge_sibling_share_title': 'Share toys',
+  'challenge_sibling_share_description':
+      'Share toys and belongings with siblings without arguing',
+  'challenge_sibling_play_title': 'Play together',
+  'challenge_sibling_play_description':
+      'Play together for 30 minutes without conflicts',
+  'challenge_sibling_help_title': 'Help sibling',
+  'challenge_sibling_help_description':
+      'Help a younger sibling with a task or activity',
+  'challenge_sibling_conflict_title': 'Resolve conflicts',
+  'challenge_sibling_conflict_description':
+      'Resolve a conflict with siblings without adult intervention',
+
+// --- End Predefined Challenges ---
+
+  'challenges_page_subtitle':
+      'Manage and visualize challenges to promote good habits',
+  'active_challenges_label': 'Active challenges',
+  'explore_challenge_library': 'Explore the predefined challenge library',
+  'create_custom_challenges': 'Create custom challenges',
+  'active_challenges_stat': 'Active challenges',
+  'completed_challenges_stat': 'Completed challenges',
+  'library_challenges_stat': 'Library challenges',
+  'challenges_asigned_visual_eval': 'View and evaluate assigned challenges',
 };

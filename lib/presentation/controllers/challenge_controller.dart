@@ -104,6 +104,68 @@ class ChallengeController extends GetxController {
         _sessionController = sessionController,
         _logger = logger ?? Get.find<Logger>();
 
+  /// Método que se llamará cuando cambie el idioma
+  void onLanguageChanged() {
+    _updateChallengeTranslations();
+  }
+
+  /// Actualiza las traducciones de los retos cuando cambia el idioma
+  void _updateChallengeTranslations() {
+    // Actualizar los retos predefinidos
+    for (int i = 0; i < predefinedChallenges.length; i++) {
+      final challenge = predefinedChallenges[i];
+      if (challenge is ChallengeModel && challenge.titleKey != null) {
+        // Crear una copia actualizada del reto con las traducciones actualizadas
+        final updatedChallenge = ChallengeModel(
+          id: challenge.id,
+          title: challenge.titleKey!.tr,
+          description: challenge.descriptionKey?.tr ?? challenge.description,
+          category: challenge.category,
+          points: challenge.points,
+          frequency: challenge.frequency,
+          ageRange: challenge.ageRange,
+          isTemplate: challenge.isTemplate,
+          createdBy: challenge.createdBy,
+          createdAt: challenge.createdAt,
+          familyId: challenge.familyId,
+          icon: challenge.icon,
+          titleKey: challenge.titleKey,
+          descriptionKey: challenge.descriptionKey,
+        );
+
+        // Reemplazar el reto en la lista
+        predefinedChallenges[i] = updatedChallenge;
+      }
+    }
+
+    // Actualizar los retos filtrados
+    applyFilters();
+
+    // Actualizar el reto seleccionado si existe
+    if (selectedChallenge.value != null &&
+        selectedChallenge.value is ChallengeModel &&
+        (selectedChallenge.value as ChallengeModel).titleKey != null) {
+      final selectedChallengeModel = selectedChallenge.value as ChallengeModel;
+      selectedChallenge.value = ChallengeModel(
+        id: selectedChallengeModel.id,
+        title: selectedChallengeModel.titleKey!.tr,
+        description: selectedChallengeModel.descriptionKey?.tr ??
+            selectedChallengeModel.description,
+        category: selectedChallengeModel.category,
+        points: selectedChallengeModel.points,
+        frequency: selectedChallengeModel.frequency,
+        ageRange: selectedChallengeModel.ageRange,
+        isTemplate: selectedChallengeModel.isTemplate,
+        createdBy: selectedChallengeModel.createdBy,
+        createdAt: selectedChallengeModel.createdAt,
+        familyId: selectedChallengeModel.familyId,
+        icon: selectedChallengeModel.icon,
+        titleKey: selectedChallengeModel.titleKey,
+        descriptionKey: selectedChallengeModel.descriptionKey,
+      );
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -243,7 +305,31 @@ class ChallengeController extends GetxController {
             _migrateAndLoadChallenges();
           } else {
             _logger.i("Loaded ${challenges.length} challenges from Firestore");
-            predefinedChallenges.assignAll(challenges);
+            // Asegurarse de que las traducciones se aplican correctamente
+            final translatedChallenges = challenges.map((challenge) {
+              if (challenge is ChallengeModel && challenge.titleKey != null) {
+                return ChallengeModel(
+                  id: challenge.id,
+                  title: challenge.titleKey!.tr,
+                  description:
+                      challenge.descriptionKey?.tr ?? challenge.description,
+                  category: challenge.category,
+                  points: challenge.points,
+                  frequency: challenge.frequency,
+                  ageRange: challenge.ageRange,
+                  isTemplate: challenge.isTemplate,
+                  createdBy: challenge.createdBy,
+                  createdAt: challenge.createdAt,
+                  familyId: challenge.familyId,
+                  icon: challenge.icon,
+                  titleKey: challenge.titleKey,
+                  descriptionKey: challenge.descriptionKey,
+                );
+              }
+              return challenge;
+            }).toList();
+
+            predefinedChallenges.assignAll(translatedChallenges);
             dataSource.value = 'firestore';
             status.value = ChallengeStatus.success;
           }
@@ -260,9 +346,33 @@ class ChallengeController extends GetxController {
 
   void _loadLocalPredefinedChallenges() {
     _logger.i("Loading local predefined challenges");
-    // Cargar retos del archivo local
+    // Cargar retos desde el archivo local
     final localChallenges = PredefinedChallenges.getAll();
-    predefinedChallenges.assignAll(localChallenges);
+
+    // Asegurarse de aplicar las traducciones correctamente
+    final translatedChallenges = localChallenges.map((challenge) {
+      if (challenge is ChallengeModel && challenge.titleKey != null) {
+        return ChallengeModel(
+          id: challenge.id,
+          title: challenge.titleKey!.tr,
+          description: challenge.descriptionKey?.tr ?? challenge.description,
+          category: challenge.category,
+          points: challenge.points,
+          frequency: challenge.frequency,
+          ageRange: challenge.ageRange,
+          isTemplate: challenge.isTemplate,
+          createdBy: challenge.createdBy,
+          createdAt: challenge.createdAt,
+          familyId: challenge.familyId,
+          icon: challenge.icon,
+          titleKey: challenge.titleKey,
+          descriptionKey: challenge.descriptionKey,
+        );
+      }
+      return challenge;
+    }).toList();
+
+    predefinedChallenges.assignAll(translatedChallenges);
     useLocalChallenges.value = true;
     _logger.i("Loaded ${localChallenges.length} challenges from local data");
   }
