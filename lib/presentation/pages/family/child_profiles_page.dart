@@ -34,56 +34,59 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
           ),
         ],
       ),
-      body: Obx(() {
-        // Mostrar carga
-        if (controller.isLoadingProfiles.value &&
-            controller.childProfiles.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
+      // Añadido SafeArea aquí
+      body: SafeArea(
+        child: Obx(() {
+          // Mostrar carga
+          if (controller.isLoadingProfiles.value &&
+              controller.childProfiles.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        // Mostrar error si hay
-        if (controller.errorMessage.isNotEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.lg),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: AppColors.error,
-                  ),
-                  const SizedBox(height: AppDimensions.md),
-                  Text(
-                    controller.errorMessage.value,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
+          // Mostrar error si hay
+          if (controller.errorMessage.isNotEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(AppDimensions.lg),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
                       color: AppColors.error,
                     ),
-                  ),
-                  const SizedBox(height: AppDimensions.lg),
-                  ElevatedButton.icon(
-                    onPressed: controller.loadChildProfiles,
-                    icon: const Icon(Icons.refresh),
-                    label: Text(TrKeys.retry.tr),
-                  ),
-                ],
+                    const SizedBox(height: AppDimensions.md),
+                    Text(
+                      controller.errorMessage.value,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: AppColors.error,
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.lg),
+                    ElevatedButton.icon(
+                      onPressed: controller.loadChildProfiles,
+                      icon: const Icon(Icons.refresh),
+                      label: Text(TrKeys.retry.tr),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }
+            );
+          }
 
-        // No hay perfiles infantiles
-        if (controller.childProfiles.isEmpty) {
-          return _buildEmptyState();
-        }
+          // No hay perfiles infantiles
+          if (controller.childProfiles.isEmpty) {
+            return _buildEmptyState();
+          }
 
-        // Mostrar lista de perfiles
-        return _buildChildProfiles();
-      }),
+          // Mostrar lista de perfiles (contenido principal)
+          return _buildChildProfiles();
+        }),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(Routes.createChild),
         tooltip: TrKeys.addChild.tr,
@@ -91,6 +94,85 @@ class ChildProfilesPage extends GetView<ChildProfileController> {
       ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   // Cargar perfiles infantiles al entrar a la página
+  //   if (!controller.isLoadingProfiles.value &&
+  //       controller.childProfiles.isEmpty) {
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       controller.loadChildProfiles();
+  //     });
+  //   }
+
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: Text(TrKeys.childProfiles.tr),
+  //       actions: [
+  //         IconButton(
+  //           icon: const Icon(Icons.add),
+  //           tooltip: TrKeys.addChild.tr,
+  //           onPressed: () => Get.toNamed(Routes.createChild),
+  //         ),
+  //       ],
+  //     ),
+  //     body: Obx(() {
+  //       // Mostrar carga
+  //       if (controller.isLoadingProfiles.value &&
+  //           controller.childProfiles.isEmpty) {
+  //         return const Center(
+  //           child: CircularProgressIndicator(),
+  //         );
+  //       }
+
+  //       // Mostrar error si hay
+  //       if (controller.errorMessage.isNotEmpty) {
+  //         return Center(
+  //           child: Padding(
+  //             padding: const EdgeInsets.all(AppDimensions.lg),
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 const Icon(
+  //                   Icons.error_outline,
+  //                   size: 64,
+  //                   color: AppColors.error,
+  //                 ),
+  //                 const SizedBox(height: AppDimensions.md),
+  //                 Text(
+  //                   controller.errorMessage.value,
+  //                   textAlign: TextAlign.center,
+  //                   style: const TextStyle(
+  //                     color: AppColors.error,
+  //                   ),
+  //                 ),
+  //                 const SizedBox(height: AppDimensions.lg),
+  //                 ElevatedButton.icon(
+  //                   onPressed: controller.loadChildProfiles,
+  //                   icon: const Icon(Icons.refresh),
+  //                   label: Text(TrKeys.retry.tr),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       }
+
+  //       // No hay perfiles infantiles
+  //       if (controller.childProfiles.isEmpty) {
+  //         return _buildEmptyState();
+  //       }
+
+  //       // Mostrar lista de perfiles
+  //       return _buildChildProfiles();
+  //     }),
+  //     floatingActionButton: FloatingActionButton(
+  //       onPressed: () => Get.toNamed(Routes.createChild),
+  //       tooltip: TrKeys.addChild.tr,
+  //       child: const Icon(Icons.add),
+  //     ),
+  //   );
+  // }
 
   Widget _buildEmptyState() {
     return Center(

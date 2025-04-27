@@ -47,51 +47,133 @@ class ChildDashboardPage extends GetView<ChildAccessController> {
         controller.checkSessionTimeLimit();
       });
 
-      // Determinar el color del tema según la configuración del perfil
       final Color themeColor = _getThemeColor(activeChild.settings);
 
       return Scaffold(
         appBar: _buildAppBar(activeChild, themeColor),
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Saludo personalizado
-                    _buildGreeting(activeChild, themeColor),
-                    const SizedBox(height: AppDimensions.lg),
+        // Añadido SafeArea aquí
+        body: SafeArea(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppDimensions.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Saludo personalizado
+                      _buildGreeting(activeChild, themeColor),
+                      const SizedBox(height: AppDimensions.lg),
 
-                    // Progreso y puntos
-                    _buildPointsProgress(activeChild, themeColor),
-                    const SizedBox(height: AppDimensions.lg),
+                      // Progreso y puntos
+                      _buildPointsProgress(activeChild, themeColor),
+                      const SizedBox(height: AppDimensions.lg),
 
-                    // Sección de retos
-                    _buildChallengesSection(activeChild, themeColor),
-                    const SizedBox(height: AppDimensions.lg),
+                      // Sección de retos
+                      _buildChallengesSection(activeChild, themeColor),
+                      const SizedBox(height: AppDimensions.lg),
 
-                    // Sección de recompensas
-                    _buildRewardsSection(activeChild, themeColor),
-                  ],
+                      // Sección de recompensas
+                      _buildRewardsSection(activeChild, themeColor),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // Indicador de tiempo restante de sesión
-            if (controller.sessionStartTime.value != null)
-              Positioned(
-                bottom: 16,
-                right: 16,
-                child: _buildSessionTimeIndicator(themeColor),
-              ),
-          ],
+              // Indicador de tiempo restante de sesión
+              if (controller.sessionStartTime.value != null)
+                Positioned(
+                  bottom: 16,
+                  right: 16,
+                  child: _buildSessionTimeIndicator(themeColor),
+                ),
+            ],
+          ),
         ),
         bottomNavigationBar: _buildBottomNav(themeColor, activeChild.age),
       );
     });
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Obx(() {
+  //     // Verificar que hay un perfil activo
+  //     final FamilyChild? activeChild = controller.activeChildProfile.value;
+  //     if (activeChild == null) {
+  //       // Si no hay perfil activo, redirigir a la selección de perfil
+  //       WidgetsBinding.instance.addPostFrameCallback((_) {
+  //         Get.offNamed(Routes.childProfileSelection);
+  //       });
+  //       return const Scaffold(
+  //         body: Center(
+  //           child: CircularProgressIndicator(),
+  //         ),
+  //       );
+  //     }
+
+  //     // Verificar restricciones de tiempo
+  //     if (controller.timeRestricted.value) {
+  //       WidgetsBinding.instance.addPostFrameCallback((_) {
+  //         Get.offNamed(Routes.childProfileSelection);
+  //       });
+  //       return const Scaffold(
+  //         body: Center(
+  //           child: CircularProgressIndicator(),
+  //         ),
+  //       );
+  //     }
+
+  //     // Verificar tiempo máximo de sesión
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       controller.checkSessionTimeLimit();
+  //     });
+
+  //     // Determinar el color del tema según la configuración del perfil
+  //     final Color themeColor = _getThemeColor(activeChild.settings);
+
+  //     return Scaffold(
+  //       appBar: _buildAppBar(activeChild, themeColor),
+  //       body: Stack(
+  //         children: [
+  //           SingleChildScrollView(
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(AppDimensions.md),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   // Saludo personalizado
+  //                   _buildGreeting(activeChild, themeColor),
+  //                   const SizedBox(height: AppDimensions.lg),
+
+  //                   // Progreso y puntos
+  //                   _buildPointsProgress(activeChild, themeColor),
+  //                   const SizedBox(height: AppDimensions.lg),
+
+  //                   // Sección de retos
+  //                   _buildChallengesSection(activeChild, themeColor),
+  //                   const SizedBox(height: AppDimensions.lg),
+
+  //                   // Sección de recompensas
+  //                   _buildRewardsSection(activeChild, themeColor),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+
+  //           // Indicador de tiempo restante de sesión
+  //           if (controller.sessionStartTime.value != null)
+  //             Positioned(
+  //               bottom: 16,
+  //               right: 16,
+  //               child: _buildSessionTimeIndicator(themeColor),
+  //             ),
+  //         ],
+  //       ),
+  //       bottomNavigationBar: _buildBottomNav(themeColor, activeChild.age),
+  //     );
+  //   });
+  // }
 
   // Nuevo widget para mostrar el tiempo restante de sesión
   Widget _buildSessionTimeIndicator(Color themeColor) {

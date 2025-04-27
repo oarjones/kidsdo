@@ -23,23 +23,26 @@ class FamilyPage extends GetView<FamilyController> {
       appBar: AppBar(
         title: Text(TrKeys.family.tr),
       ),
-      body: Obx(() {
-        if (controller.status.value == FamilyStatus.loading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      // Añadido SafeArea aquí
+      body: SafeArea(
+        child: Obx(() {
+          if (controller.status.value == FamilyStatus.loading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (controller.status.value == FamilyStatus.error) {
-          return _buildErrorState();
-        }
+          if (controller.status.value == FamilyStatus.error) {
+            return _buildErrorState();
+          }
 
-        // Si el usuario no pertenece a una familia, mostrar opciones para crear o unirse
-        if (controller.currentFamily.value == null) {
-          return _buildNoFamilyState();
-        }
+          // Si el usuario no pertenece a una familia, mostrar opciones para crear o unirse
+          if (controller.currentFamily.value == null) {
+            return _buildNoFamilyState();
+          }
 
-        // Si el usuario pertenece a una familia, mostrar detalles de la familia
-        return _buildFamilyDetails();
-      }),
+          // Si el usuario pertenece a una familia, mostrar detalles de la familia
+          return _buildFamilyDetails();
+        }),
+      ),
       floatingActionButton: Obx(() {
         // Solo mostrar el botón de acción flotante si hay una familia
         if (controller.currentFamily.value != null) {
@@ -53,6 +56,48 @@ class FamilyPage extends GetView<FamilyController> {
       }),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   // Asegurarse de que la familia actual se carga
+  //   if (controller.status.value == FamilyStatus.initial) {
+  //     controller.loadCurrentFamily();
+  //   }
+
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: Text(TrKeys.family.tr),
+  //     ),
+  //     body: Obx(() {
+  //       if (controller.status.value == FamilyStatus.loading) {
+  //         return const Center(child: CircularProgressIndicator());
+  //       }
+
+  //       if (controller.status.value == FamilyStatus.error) {
+  //         return _buildErrorState();
+  //       }
+
+  //       // Si el usuario no pertenece a una familia, mostrar opciones para crear o unirse
+  //       if (controller.currentFamily.value == null) {
+  //         return _buildNoFamilyState();
+  //       }
+
+  //       // Si el usuario pertenece a una familia, mostrar detalles de la familia
+  //       return _buildFamilyDetails();
+  //     }),
+  //     floatingActionButton: Obx(() {
+  //       // Solo mostrar el botón de acción flotante si hay una familia
+  //       if (controller.currentFamily.value != null) {
+  //         return FloatingActionButton(
+  //           onPressed: () => Get.toNamed(Routes.childProfiles),
+  //           tooltip: 'child_profiles'.tr,
+  //           child: const Icon(Icons.child_care),
+  //         );
+  //       }
+  //       return const SizedBox.shrink();
+  //     }),
+  //   );
+  // }
 
   Widget _buildErrorState() {
     return Center(

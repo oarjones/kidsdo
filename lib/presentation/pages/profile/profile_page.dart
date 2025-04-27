@@ -23,143 +23,296 @@ class ProfilePage extends GetView<ProfileController> {
           ),
         ],
       ),
-      body: Obx(
-        () {
-          if (controller.status.value == ProfileStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      // Añadido SafeArea aquí
+      body: SafeArea(
+        child: Obx(
+          () {
+            if (controller.status.value == ProfileStatus.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (controller.status.value == ProfileStatus.error) {
-            return Center(
+            if (controller.status.value == ProfileStatus.error) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      controller.errorMessage.value,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppColors.error),
+                    ),
+                    const SizedBox(height: AppDimensions.md),
+                    ElevatedButton(
+                      onPressed: controller.loadProfile,
+                      child: Text(TrKeys.retry.tr),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            final profile = controller.profile.value;
+            if (profile == null) {
+              return Center(
+                child: Text(TrKeys.noProfileData.tr),
+              );
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(AppDimensions.lg),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  // Avatar
+                  _buildAvatar(profile.avatarUrl),
+
+                  const SizedBox(height: AppDimensions.lg),
+
+                  // Nombre del usuario
                   Text(
-                    controller.errorMessage.value,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.error),
+                    profile.displayName,
+                    style: const TextStyle(
+                      fontSize: AppDimensions.fontHeading,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  const SizedBox(height: AppDimensions.md),
-                  ElevatedButton(
-                    onPressed: controller.loadProfile,
-                    child: Text(TrKeys.retry.tr),
+
+                  const SizedBox(height: AppDimensions.sm),
+
+                  // Email
+                  Text(
+                    profile.email ?? '',
+                    style: const TextStyle(
+                      fontSize: AppDimensions.fontMd,
+                      color: AppColors.textMedium,
+                    ),
+                  ),
+
+                  const Divider(height: AppDimensions.xxl),
+
+                  // Información adicional
+                  _buildInfoItem(
+                    icon: Icons.people,
+                    title: TrKeys.children.tr,
+                    value: '${profile.childrenIds.length}',
+                    color: AppColors.childBlue,
+                  ),
+
+                  _buildInfoItem(
+                    icon: Icons.family_restroom,
+                    title: TrKeys.family.tr,
+                    value: profile.familyId != null
+                        ? TrKeys.familyCreated.tr
+                        : TrKeys.noFamily.tr,
+                    color: AppColors.childGreen,
+                  ),
+
+                  _buildInfoItem(
+                    icon: Icons.calendar_today,
+                    title: TrKeys.accountCreated.tr,
+                    value: _formatDate(profile.createdAt),
+                    color: AppColors.childPurple,
+                  ),
+
+                  const SizedBox(height: AppDimensions.xl),
+
+                  // Opciones adicionales
+                  _buildOptionItem(
+                    icon: Icons.notifications_outlined,
+                    title: TrKeys.notifications.tr,
+                    onTap: () {
+                      // Implementación futura
+                      Get.snackbar(
+                        TrKeys.comingSoon.tr,
+                        TrKeys.comingSoonMessage.tr,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    },
+                  ),
+
+                  _buildOptionItem(
+                    icon: Icons.security_outlined,
+                    title: TrKeys.privacy.tr,
+                    onTap: () {
+                      // Implementación futura
+                      Get.snackbar(
+                        TrKeys.comingSoon.tr,
+                        TrKeys.comingSoonMessage.tr,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    },
+                  ),
+
+                  _buildOptionItem(
+                    icon: Icons.help_outline,
+                    title: TrKeys.help.tr,
+                    onTap: () {
+                      // Implementación futura
+                      Get.snackbar(
+                        TrKeys.comingSoon.tr,
+                        TrKeys.comingSoonMessage.tr,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    },
                   ),
                 ],
               ),
             );
-          }
-
-          final profile = controller.profile.value;
-          if (profile == null) {
-            return Center(
-              child: Text(TrKeys.noProfileData.tr),
-            );
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppDimensions.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Avatar
-                _buildAvatar(profile.avatarUrl),
-
-                const SizedBox(height: AppDimensions.lg),
-
-                // Nombre del usuario
-                Text(
-                  profile.displayName,
-                  style: const TextStyle(
-                    fontSize: AppDimensions.fontHeading,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: AppDimensions.sm),
-
-                // Email
-                Text(
-                  profile.email ?? '',
-                  style: const TextStyle(
-                    fontSize: AppDimensions.fontMd,
-                    color: AppColors.textMedium,
-                  ),
-                ),
-
-                const Divider(height: AppDimensions.xxl),
-
-                // Información adicional
-                _buildInfoItem(
-                  icon: Icons.people,
-                  title: TrKeys.children.tr,
-                  value: '${profile.childrenIds.length}',
-                  color: AppColors.childBlue,
-                ),
-
-                _buildInfoItem(
-                  icon: Icons.family_restroom,
-                  title: TrKeys.family.tr,
-                  value: profile.familyId != null
-                      ? TrKeys.familyCreated.tr
-                      : TrKeys.noFamily.tr,
-                  color: AppColors.childGreen,
-                ),
-
-                _buildInfoItem(
-                  icon: Icons.calendar_today,
-                  title: TrKeys.accountCreated.tr,
-                  value: _formatDate(profile.createdAt),
-                  color: AppColors.childPurple,
-                ),
-
-                const SizedBox(height: AppDimensions.xl),
-
-                // Opciones adicionales
-                _buildOptionItem(
-                  icon: Icons.notifications_outlined,
-                  title: TrKeys.notifications.tr,
-                  onTap: () {
-                    // Implementación futura
-                    Get.snackbar(
-                      TrKeys.comingSoon.tr,
-                      TrKeys.comingSoonMessage.tr,
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-                  },
-                ),
-
-                _buildOptionItem(
-                  icon: Icons.security_outlined,
-                  title: TrKeys.privacy.tr,
-                  onTap: () {
-                    // Implementación futura
-                    Get.snackbar(
-                      TrKeys.comingSoon.tr,
-                      TrKeys.comingSoonMessage.tr,
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-                  },
-                ),
-
-                _buildOptionItem(
-                  icon: Icons.help_outline,
-                  title: TrKeys.help.tr,
-                  onTap: () {
-                    // Implementación futura
-                    Get.snackbar(
-                      TrKeys.comingSoon.tr,
-                      TrKeys.comingSoonMessage.tr,
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
-                  },
-                ),
-              ],
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: Text(TrKeys.profile.tr),
+  //       actions: [
+  //         IconButton(
+  //           icon: const Icon(Icons.edit),
+  //           onPressed: () => Get.toNamed(Routes.editProfile),
+  //         ),
+  //       ],
+  //     ),
+  //     body: Obx(
+  //       () {
+  //         if (controller.status.value == ProfileStatus.loading) {
+  //           return const Center(child: CircularProgressIndicator());
+  //         }
+
+  //         if (controller.status.value == ProfileStatus.error) {
+  //           return Center(
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 Text(
+  //                   controller.errorMessage.value,
+  //                   textAlign: TextAlign.center,
+  //                   style: const TextStyle(color: AppColors.error),
+  //                 ),
+  //                 const SizedBox(height: AppDimensions.md),
+  //                 ElevatedButton(
+  //                   onPressed: controller.loadProfile,
+  //                   child: Text(TrKeys.retry.tr),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         }
+
+  //         final profile = controller.profile.value;
+  //         if (profile == null) {
+  //           return Center(
+  //             child: Text(TrKeys.noProfileData.tr),
+  //           );
+  //         }
+
+  //         return SingleChildScrollView(
+  //           padding: const EdgeInsets.all(AppDimensions.lg),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             children: [
+  //               // Avatar
+  //               _buildAvatar(profile.avatarUrl),
+
+  //               const SizedBox(height: AppDimensions.lg),
+
+  //               // Nombre del usuario
+  //               Text(
+  //                 profile.displayName,
+  //                 style: const TextStyle(
+  //                   fontSize: AppDimensions.fontHeading,
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+
+  //               const SizedBox(height: AppDimensions.sm),
+
+  //               // Email
+  //               Text(
+  //                 profile.email ?? '',
+  //                 style: const TextStyle(
+  //                   fontSize: AppDimensions.fontMd,
+  //                   color: AppColors.textMedium,
+  //                 ),
+  //               ),
+
+  //               const Divider(height: AppDimensions.xxl),
+
+  //               // Información adicional
+  //               _buildInfoItem(
+  //                 icon: Icons.people,
+  //                 title: TrKeys.children.tr,
+  //                 value: '${profile.childrenIds.length}',
+  //                 color: AppColors.childBlue,
+  //               ),
+
+  //               _buildInfoItem(
+  //                 icon: Icons.family_restroom,
+  //                 title: TrKeys.family.tr,
+  //                 value: profile.familyId != null
+  //                     ? TrKeys.familyCreated.tr
+  //                     : TrKeys.noFamily.tr,
+  //                 color: AppColors.childGreen,
+  //               ),
+
+  //               _buildInfoItem(
+  //                 icon: Icons.calendar_today,
+  //                 title: TrKeys.accountCreated.tr,
+  //                 value: _formatDate(profile.createdAt),
+  //                 color: AppColors.childPurple,
+  //               ),
+
+  //               const SizedBox(height: AppDimensions.xl),
+
+  //               // Opciones adicionales
+  //               _buildOptionItem(
+  //                 icon: Icons.notifications_outlined,
+  //                 title: TrKeys.notifications.tr,
+  //                 onTap: () {
+  //                   // Implementación futura
+  //                   Get.snackbar(
+  //                     TrKeys.comingSoon.tr,
+  //                     TrKeys.comingSoonMessage.tr,
+  //                     snackPosition: SnackPosition.BOTTOM,
+  //                   );
+  //                 },
+  //               ),
+
+  //               _buildOptionItem(
+  //                 icon: Icons.security_outlined,
+  //                 title: TrKeys.privacy.tr,
+  //                 onTap: () {
+  //                   // Implementación futura
+  //                   Get.snackbar(
+  //                     TrKeys.comingSoon.tr,
+  //                     TrKeys.comingSoonMessage.tr,
+  //                     snackPosition: SnackPosition.BOTTOM,
+  //                   );
+  //                 },
+  //               ),
+
+  //               _buildOptionItem(
+  //                 icon: Icons.help_outline,
+  //                 title: TrKeys.help.tr,
+  //                 onTap: () {
+  //                   // Implementación futura
+  //                   Get.snackbar(
+  //                     TrKeys.comingSoon.tr,
+  //                     TrKeys.comingSoonMessage.tr,
+  //                     snackPosition: SnackPosition.BOTTOM,
+  //                   );
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   Widget _buildAvatar(String? avatarUrl) {
     return CachedAvatar(

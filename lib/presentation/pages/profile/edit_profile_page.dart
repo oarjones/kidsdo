@@ -27,86 +27,178 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         title: Text(TrKeys.editProfile.tr),
       ),
-      body: Obx(
-        () {
-          if (controller.status.value == ProfileStatus.loading &&
-              controller.profile.value == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      // Añadido SafeArea aquí
+      body: SafeArea(
+        child: Obx(
+          () {
+            if (controller.status.value == ProfileStatus.loading &&
+                controller.profile.value == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppDimensions.lg),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Avatar con opciones para cambiar
-                  _buildAvatarPicker(),
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(AppDimensions.lg),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Avatar con opciones para cambiar
+                    _buildAvatarPicker(),
 
-                  const SizedBox(height: AppDimensions.xl),
+                    const SizedBox(height: AppDimensions.xl),
 
-                  // Nombre
-                  AuthTextField(
-                    controller: controller.nameController,
-                    hintText: TrKeys.name.tr,
-                    prefixIcon: Icons.person_outline,
-                    textCapitalization: TextCapitalization.words,
-                    validator: FormValidators.name,
-                    enabled: controller.status.value != ProfileStatus.loading,
-                  ),
-
-                  const SizedBox(height: AppDimensions.md),
-
-                  // Email (no editable, solo informativo)
-                  AbsorbPointer(
-                    child: AuthTextField(
-                      controller: TextEditingController(
-                        text: controller.profile.value?.email ?? '',
-                      ),
-                      hintText: TrKeys.email.tr,
-                      prefixIcon: Icons.email_outlined,
-                      enabled: false,
+                    // Nombre
+                    AuthTextField(
+                      controller: controller.nameController,
+                      hintText: TrKeys.name.tr,
+                      prefixIcon: Icons.person_outline,
+                      textCapitalization: TextCapitalization.words,
+                      validator: FormValidators.name,
+                      enabled: controller.status.value != ProfileStatus.loading,
                     ),
-                  ),
 
-                  // Mensaje de error
-                  if (controller.errorMessage.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: AppDimensions.lg,
-                        bottom: AppDimensions.sm,
-                      ),
-                      child: AuthMessage(
-                        message: controller.errorMessage.value,
-                        type: MessageType.error,
-                        onDismiss: () => controller.errorMessage.value = '',
+                    const SizedBox(height: AppDimensions.md),
+
+                    // Email (no editable, solo informativo)
+                    AbsorbPointer(
+                      child: AuthTextField(
+                        controller: TextEditingController(
+                          text: controller.profile.value?.email ?? '',
+                        ),
+                        hintText: TrKeys.email.tr,
+                        prefixIcon: Icons.email_outlined,
+                        enabled: false,
                       ),
                     ),
 
-                  const SizedBox(height: AppDimensions.xl),
+                    // Mensaje de error
+                    if (controller.errorMessage.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: AppDimensions.lg,
+                          bottom: AppDimensions.sm,
+                        ),
+                        child: AuthMessage(
+                          message: controller.errorMessage.value,
+                          type: MessageType.error,
+                          onDismiss: () => controller.errorMessage.value = '',
+                        ),
+                      ),
 
-                  // Botón de guardar
-                  AuthButton(
-                    text: TrKeys.save.tr,
-                    onPressed: controller.status.value != ProfileStatus.loading
-                        ? () {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              controller.updateProfile();
+                    const SizedBox(height: AppDimensions.xl),
+
+                    // Botón de guardar
+                    AuthButton(
+                      text: TrKeys.save.tr,
+                      onPressed: controller.status.value !=
+                              ProfileStatus.loading
+                          ? () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                controller.updateProfile();
+                              }
                             }
-                          }
-                        : null,
-                    isLoading: controller.status.value == ProfileStatus.loading,
-                    type: AuthButtonType.primary,
-                  ),
-                ],
+                          : null,
+                      isLoading:
+                          controller.status.value == ProfileStatus.loading,
+                      type: AuthButtonType.primary,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: Text(TrKeys.editProfile.tr),
+  //     ),
+  //     body: Obx(
+  //       () {
+  //         if (controller.status.value == ProfileStatus.loading &&
+  //             controller.profile.value == null) {
+  //           return const Center(child: CircularProgressIndicator());
+  //         }
+
+  //         return SingleChildScrollView(
+  //           padding: const EdgeInsets.all(AppDimensions.lg),
+  //           child: Form(
+  //             key: _formKey,
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.center,
+  //               children: [
+  //                 // Avatar con opciones para cambiar
+  //                 _buildAvatarPicker(),
+
+  //                 const SizedBox(height: AppDimensions.xl),
+
+  //                 // Nombre
+  //                 AuthTextField(
+  //                   controller: controller.nameController,
+  //                   hintText: TrKeys.name.tr,
+  //                   prefixIcon: Icons.person_outline,
+  //                   textCapitalization: TextCapitalization.words,
+  //                   validator: FormValidators.name,
+  //                   enabled: controller.status.value != ProfileStatus.loading,
+  //                 ),
+
+  //                 const SizedBox(height: AppDimensions.md),
+
+  //                 // Email (no editable, solo informativo)
+  //                 AbsorbPointer(
+  //                   child: AuthTextField(
+  //                     controller: TextEditingController(
+  //                       text: controller.profile.value?.email ?? '',
+  //                     ),
+  //                     hintText: TrKeys.email.tr,
+  //                     prefixIcon: Icons.email_outlined,
+  //                     enabled: false,
+  //                   ),
+  //                 ),
+
+  //                 // Mensaje de error
+  //                 if (controller.errorMessage.isNotEmpty)
+  //                   Padding(
+  //                     padding: const EdgeInsets.only(
+  //                       top: AppDimensions.lg,
+  //                       bottom: AppDimensions.sm,
+  //                     ),
+  //                     child: AuthMessage(
+  //                       message: controller.errorMessage.value,
+  //                       type: MessageType.error,
+  //                       onDismiss: () => controller.errorMessage.value = '',
+  //                     ),
+  //                   ),
+
+  //                 const SizedBox(height: AppDimensions.xl),
+
+  //                 // Botón de guardar
+  //                 AuthButton(
+  //                   text: TrKeys.save.tr,
+  //                   onPressed: controller.status.value != ProfileStatus.loading
+  //                       ? () {
+  //                           if (_formKey.currentState?.validate() ?? false) {
+  //                             controller.updateProfile();
+  //                           }
+  //                         }
+  //                       : null,
+  //                   isLoading: controller.status.value == ProfileStatus.loading,
+  //                   type: AuthButtonType.primary,
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   Widget _buildAvatarPicker() {
     final profile = controller.profile.value;

@@ -17,105 +17,216 @@ class ChallengesPage extends GetView<ChallengeController> {
         title: Text(TrKeys.challenges.tr),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(AppDimensions.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Sección de título con animación
-            Text(
-              TrKeys.challenges.tr,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+      // Añadido SafeArea aquí
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppDimensions.lg),
+          child: Column(
+            // ... (resto del Column sin cambios)
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Sección de título con animación
+              Text(
+                TrKeys.challenges.tr,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: AppDimensions.md),
-            Text(
-              TrKeys.challengesPageSubtitle.tr,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey.shade600,
+              const SizedBox(height: AppDimensions.md),
+              Text(
+                TrKeys.challengesPageSubtitle.tr,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey.shade600,
+                ),
               ),
-            ),
-            const SizedBox(height: AppDimensions.xl),
+              const SizedBox(height: AppDimensions.xl),
 
-            // Botones grandes
-            _buildFeatureCard(
-              title: TrKeys.activeChallenges.tr,
-              description: TrKeys.challengesAsignedVisualEval.tr,
-              icon: Icons.assignment,
-              color: AppColors.primary,
-              onTap: () => Get.toNamed(Routes.activeChallenges),
-            ),
+              // Botones grandes
+              _buildFeatureCard(
+                title: TrKeys.activeChallenges.tr,
+                description: TrKeys.challengesAsignedVisualEval.tr,
+                icon: Icons.assignment,
+                color: AppColors.primary,
+                onTap: () => Get.toNamed(Routes.activeChallenges),
+              ),
 
-            const SizedBox(height: AppDimensions.lg),
+              const SizedBox(height: AppDimensions.lg),
 
-            _buildFeatureCard(
-              title: TrKeys.challengeLibrary.tr,
-              description: TrKeys.exploreChallengeLibrary.tr,
-              icon: Icons.menu_book,
-              color: AppColors.secondary,
-              onTap: () => Get.toNamed(Routes.challengeLibrary),
-            ),
+              _buildFeatureCard(
+                title: TrKeys.challengeLibrary.tr,
+                description: TrKeys.exploreChallengeLibrary.tr,
+                icon: Icons.menu_book,
+                color: AppColors.secondary,
+                onTap: () => Get.toNamed(Routes.challengeLibrary),
+              ),
 
-            const SizedBox(height: AppDimensions.lg),
+              const SizedBox(height: AppDimensions.lg),
 
-            _buildFeatureCard(
-              title: TrKeys.createChallenge.tr,
-              description: TrKeys.createCustomChallenges.tr,
-              icon: Icons.add_circle_outline,
-              color: Colors.green,
-              onTap: () => Get.toNamed(Routes.createChallenge),
-            ),
+              _buildFeatureCard(
+                title: TrKeys.createChallenge.tr,
+                description: TrKeys.createCustomChallenges.tr,
+                icon: Icons.add_circle_outline,
+                color: Colors.green,
+                onTap: () => Get.toNamed(Routes.createChallenge),
+              ),
 
-            const Spacer(),
+              const Spacer(),
 
-            // Estadísticas
-            Obx(() => Container(
-                  padding: const EdgeInsets.all(AppDimensions.md),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 20),
-                    borderRadius:
-                        BorderRadius.circular(AppDimensions.borderRadiusMd),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildStatistic(
-                        label: TrKeys.activeChallengesLabel.tr,
-                        value: controller.assignedChallenges
-                            .where((c) =>
-                                c.status == AssignedChallengeStatus.active)
-                            .length
-                            .toString(),
-                        icon: Icons.hourglass_top,
-                        color: Colors.blue,
-                      ),
-                      _buildStatistic(
-                        label: TrKeys.completedChallengesStat.tr,
-                        value: controller.assignedChallenges
-                            .where((c) =>
-                                c.status == AssignedChallengeStatus.completed)
-                            .length
-                            .toString(),
-                        icon: Icons.check_circle,
-                        color: Colors.green,
-                      ),
-                      _buildStatistic(
-                        label: TrKeys.libraryChallengesStat.tr,
-                        value: controller.familyChallenges.length.toString(),
-                        icon: Icons.menu_book,
-                        color: AppColors.secondary,
-                      ),
-                    ],
-                  ),
-                )),
-          ],
+              // Estadísticas
+              Obx(() => Container(
+                    padding: const EdgeInsets.all(AppDimensions.md),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 20),
+                      borderRadius:
+                          BorderRadius.circular(AppDimensions.borderRadiusMd),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildStatistic(
+                          label: TrKeys.activeChallengesLabel.tr,
+                          value: controller.assignedChallenges
+                              .where((c) =>
+                                  c.status == AssignedChallengeStatus.active)
+                              .length
+                              .toString(),
+                          icon: Icons.hourglass_top,
+                          color: Colors.blue,
+                        ),
+                        _buildStatistic(
+                          label: TrKeys.completedChallengesStat.tr,
+                          value: controller.assignedChallenges
+                              .where((c) =>
+                                  c.status == AssignedChallengeStatus.completed)
+                              .length
+                              .toString(),
+                          icon: Icons.check_circle,
+                          color: Colors.green,
+                        ),
+                        _buildStatistic(
+                          label: TrKeys.libraryChallengesStat.tr,
+                          value: controller.familyChallenges.length.toString(),
+                          icon: Icons.menu_book,
+                          color: AppColors.secondary,
+                        ),
+                      ],
+                    ),
+                  )),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       title: Text(TrKeys.challenges.tr),
+  //       centerTitle: true,
+  //     ),
+  //     body: Padding(
+  //       padding: const EdgeInsets.all(AppDimensions.lg),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           // Sección de título con animación
+  //           Text(
+  //             TrKeys.challenges.tr,
+  //             style: const TextStyle(
+  //               fontSize: 24,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           const SizedBox(height: AppDimensions.md),
+  //           Text(
+  //             TrKeys.challengesPageSubtitle.tr,
+  //             style: TextStyle(
+  //               fontSize: 16,
+  //               color: Colors.grey.shade600,
+  //             ),
+  //           ),
+  //           const SizedBox(height: AppDimensions.xl),
+
+  //           // Botones grandes
+  //           _buildFeatureCard(
+  //             title: TrKeys.activeChallenges.tr,
+  //             description: TrKeys.challengesAsignedVisualEval.tr,
+  //             icon: Icons.assignment,
+  //             color: AppColors.primary,
+  //             onTap: () => Get.toNamed(Routes.activeChallenges),
+  //           ),
+
+  //           const SizedBox(height: AppDimensions.lg),
+
+  //           _buildFeatureCard(
+  //             title: TrKeys.challengeLibrary.tr,
+  //             description: TrKeys.exploreChallengeLibrary.tr,
+  //             icon: Icons.menu_book,
+  //             color: AppColors.secondary,
+  //             onTap: () => Get.toNamed(Routes.challengeLibrary),
+  //           ),
+
+  //           const SizedBox(height: AppDimensions.lg),
+
+  //           _buildFeatureCard(
+  //             title: TrKeys.createChallenge.tr,
+  //             description: TrKeys.createCustomChallenges.tr,
+  //             icon: Icons.add_circle_outline,
+  //             color: Colors.green,
+  //             onTap: () => Get.toNamed(Routes.createChallenge),
+  //           ),
+
+  //           const Spacer(),
+
+  //           // Estadísticas
+  //           Obx(() => Container(
+  //                 padding: const EdgeInsets.all(AppDimensions.md),
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.grey.withValues(alpha: 20),
+  //                   borderRadius:
+  //                       BorderRadius.circular(AppDimensions.borderRadiusMd),
+  //                 ),
+  //                 child: Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //                   children: [
+  //                     _buildStatistic(
+  //                       label: TrKeys.activeChallengesLabel.tr,
+  //                       value: controller.assignedChallenges
+  //                           .where((c) =>
+  //                               c.status == AssignedChallengeStatus.active)
+  //                           .length
+  //                           .toString(),
+  //                       icon: Icons.hourglass_top,
+  //                       color: Colors.blue,
+  //                     ),
+  //                     _buildStatistic(
+  //                       label: TrKeys.completedChallengesStat.tr,
+  //                       value: controller.assignedChallenges
+  //                           .where((c) =>
+  //                               c.status == AssignedChallengeStatus.completed)
+  //                           .length
+  //                           .toString(),
+  //                       icon: Icons.check_circle,
+  //                       color: Colors.green,
+  //                     ),
+  //                     _buildStatistic(
+  //                       label: TrKeys.libraryChallengesStat.tr,
+  //                       value: controller.familyChallenges.length.toString(),
+  //                       icon: Icons.menu_book,
+  //                       color: AppColors.secondary,
+  //                     ),
+  //                   ],
+  //                 ),
+  //               )),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildFeatureCard({
     required String title,
