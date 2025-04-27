@@ -6,6 +6,7 @@ import 'package:kidsdo/domain/entities/challenge.dart';
 import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
 import 'package:kidsdo/presentation/widgets/challenges/challenge_card.dart';
 import 'package:kidsdo/presentation/widgets/challenges/challenge_filter_drawer.dart';
+import 'package:kidsdo/routes.dart';
 
 class ChallengesLibraryPage extends GetView<ChallengeController> {
   const ChallengesLibraryPage({Key? key}) : super(key: key);
@@ -870,39 +871,93 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
             const SizedBox(height: 32),
 
             // Botones de acción
-            Row(
+            Column(
               children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    icon: const Icon(Icons.add_circle_outline),
-                    label: Text(TrKeys.addToFamily.tr),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      controller.convertTemplateToFamilyChallenge(challenge);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.add_circle_outline),
+                        label: Text(TrKeys.addToFamily.tr),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          controller
+                              .convertTemplateToFamilyChallenge(challenge);
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        icon: Obx(() => Icon(
+                            controller.isChallengeSelected(challenge.id)
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank)),
+                        label: Obx(() => Text(
+                            controller.isChallengeSelected(challenge.id)
+                                ? TrKeys.selected.tr
+                                : TrKeys.select.tr)),
+                        onPressed: () {
+                          controller.toggleChallengeSelection(challenge.id);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: Obx(() => Icon(
-                        controller.isChallengeSelected(challenge.id)
-                            ? Icons.check_box
-                            : Icons.check_box_outline_blank)),
-                    label: Obx(() => Text(
-                        controller.isChallengeSelected(challenge.id)
-                            ? TrKeys.selected.tr
-                            : TrKeys.select.tr)),
-                    onPressed: () {
-                      controller.toggleChallengeSelection(challenge.id);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                  ),
+                const SizedBox(height: 16),
+
+                // Nueva fila con botones para editar y asignar
+                Row(
+                  children: [
+                    // Botón para editar (solo si no es template o si es un reto de la familia)
+                    if (!challenge.isTemplate || challenge.familyId != null)
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.edit),
+                          label: Text(TrKeys.edit.tr),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            // Seleccionar este reto en el controlador
+                            controller.selectChallengeForEdit(challenge);
+                            // Navegar a la página de edición
+                            Get.toNamed(Routes.editChallenge);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+
+                    // Espacio entre botones si ambos están visibles
+                    if (!challenge.isTemplate || challenge.familyId != null)
+                      const SizedBox(width: 16),
+
+                    // Botón para asignar (solo si es un reto de la familia)
+                    if (challenge.familyId != null)
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.assignment_ind),
+                          label: Text(TrKeys.assignToChild.tr),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            // Seleccionar este reto en el controlador
+                            controller.selectedChallenge.value = challenge;
+                            // Navegar a la página de asignación
+                            Get.toNamed(Routes.assignChallenge);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            backgroundColor: AppColors.secondary,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),

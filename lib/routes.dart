@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 import 'package:kidsdo/core/middleware/auth_middleware.dart';
+import 'package:kidsdo/presentation/pages/challenges/active_challenges_page.dart';
+import 'package:kidsdo/presentation/pages/challenges/assign_challenge_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/challenges_library_page.dart';
+import 'package:kidsdo/presentation/pages/challenges/create_edit_challenge_page.dart';
 import 'package:kidsdo/presentation/pages/settings/parental_control_page.dart';
 import 'package:kidsdo/presentation/pages/splash/splash_page.dart';
 import 'package:kidsdo/presentation/pages/auth/login_page.dart';
@@ -45,6 +48,10 @@ abstract class Routes {
 
   // Rutas para los retos
   static const challengeLibrary = '/challenge-library';
+  static const createChallenge = '/create-challenge';
+  static const editChallenge = '/edit-challenge';
+  static const assignChallenge = '/assign-challenge';
+  static const activeChallenges = '/active-challenges';
 }
 
 class AppPages {
@@ -153,9 +160,35 @@ class AppPages {
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
     ),
+
+    // Rutas para gestión de retos
     GetPage(
       name: Routes.challengeLibrary,
       page: () => const ChallengesLibraryPage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.createChallenge,
+      page: () => const CreateEditChallengePage(isEditing: false),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.editChallenge,
+      page: () => const CreateEditChallengePage(isEditing: true),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.assignChallenge,
+      page: () => const AssignChallengePage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.activeChallenges,
+      page: () => const ActiveChallengesPage(),
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
     ),

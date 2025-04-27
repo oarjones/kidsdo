@@ -448,4 +448,76 @@ class TrKeys {
   static const templateSavedMessage = 'template_saved_message';
   static const templateSaveRequiresCloud = 'template_save_requires_cloud';
   static const jsonExported = "json_exported";
+
+  // Crear/Editar Retos
+  static const createEditChallengeTitle = 'create_edit_challenge_title';
+// static const createChallenge = 'create_challenge';
+// static const editChallenge = 'edit_challenge';
+// static const challengeTitle = 'challenge_title';
+  static const enterChallengeTitle = 'enter_challenge_title';
+  static const enterChallengeDescription = 'enter_challenge_description';
+  static const selectCategory = 'select_category';
+  static const selectFrequency = 'select_frequency';
+  static const assignToChild = 'assign_to_child';
+  static const selectChild = 'select_child';
+  static const enterPoints = 'enter_points';
+  static const selectAgeRange = 'select_age_range';
+  static const minAge = 'min_age';
+  static const maxAge = 'max_age';
+  static const saveAsTemplate = 'save_as_template';
+  static const saveAsTemplateDesc = 'save_as_template_desc';
+  static const selectIcon = 'select_icon';
+  static const challengeCreatedTitle = 'challenge_created_title';
+  static const challengeCreatedMessage = 'challenge_created_message';
+  static const challengeUpdatedTitle = 'challenge_updated_title';
+  static const challengeUpdatedMessage = 'challenge_updated_message';
+  static const challengeDeletedTitle = 'challenge_deleted_title';
+  static const challengeDeletedMessage = 'challenge_deleted_message';
+
+// Asignar Retos
+  static const assignChallengeTitle = 'assign_challenge_title';
+  static const selectStartDate = 'select_start_date';
+  static const selectEndDate = 'select_end_date';
+  static const selectEvaluationFrequency = 'select_evaluation_frequency';
+  static const dailyEvaluation = 'daily_evaluation';
+  static const weeklyEvaluation = 'weekly_evaluation';
+  static const assignChallenge = 'assign_challenge';
+  static const challengeAssignedTitle = 'challenge_assigned_title';
+  static const challengeAssignedMessage = 'challenge_assigned_message';
+  static const noChildrenAvailable = 'no_children_available';
+  static const noChildrenAvailableMessage = 'no_children_available_message';
+  static const createChildProfileFirst = 'create_child_profile_first';
+
+// Panel de Control de Retos
+  static const activeChallenges = 'active_challenges';
+  static const activeChallengesEmpty = 'active_challenges_empty';
+  static const activeChallengesEmptyMessage = 'active_challenges_empty_message';
+  static const filterByChild = 'filter_by_child';
+  static const filterByStatus = 'filter_by_status';
+  static const evaluateChallenge = 'evaluate_challenge';
+  static const evaluateChallengeTitle = 'evaluate_challenge_title';
+  static const completed = 'completed';
+  static const failed = 'failed';
+  static const pending = 'pending';
+  static const addNote = 'add_note';
+  static const evaluationNote = 'evaluation_note';
+  static const assignedTo = 'assigned_to';
+  static const dueDate = 'due_date';
+  static const createdOn = 'created_on';
+  static const lastEvaluation = 'last_evaluation';
+  static const noEvaluationsYet = 'no_evaluations_yet';
+  static const deleteAssignedChallengeTitle = 'delete_assigned_challenge_title';
+  static const deleteAssignedChallengeMessage =
+      'delete_assigned_challenge_message';
+  static const today = 'today';
+  static const tomorrow = 'tomorrow';
+  static const yesterday = 'yesterday';
+  static const days = 'days';
+  static const daysAgo = 'days_ago';
+  static const daysLeft = 'days_left';
+  static const noAssignedChallenges = 'no_assigned_challenges';
+  static const noAssignedChallengesMessage = 'no_assigned_challenges_message';
+
+  static const refresh = 'refresh';
+  static const active = 'active';
 }

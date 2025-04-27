@@ -452,4 +452,6 @@ final Map<String, String> enTranslations = {
   'template_save_requires_cloud':
       'You need to be synced with the cloud to save templates',
   'json_exported': 'JSON exported successfully',
+  'refresh': 'Refresh',
+  'active': 'Active',
 };

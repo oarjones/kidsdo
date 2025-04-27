@@ -462,4 +462,7 @@ final Map<String, String> esTranslations = {
   'template_save_requires_cloud':
       'Necesitas estar sincronizado con la nube para guardar plantillas',
   'json_exported': 'JSON exportado exitosamente',
+
+  'refresh': 'Actualizar',
+  'active': 'Activo',
 };

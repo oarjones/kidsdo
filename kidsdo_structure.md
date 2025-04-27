@@ -1,5 +1,5 @@
 # Estructura del Proyecto KidsDo 
-Generada: 26/04/2025 17:50:09,39 
+Generada: 26/04/2025 20:58:38,88 
  
 ## Archivos de Configuración 
 - pubspec.yaml 
@@ -93,6 +93,7 @@ Generada: 26/04/2025 17:50:09,39
   - register_page.dart 
   - reset_password_page.dart 
 - **lib\presentation\pages\challenges/** 
+  - challenges_library_page.dart 
 - **lib\presentation\pages\child_access/** 
   - child_dashboard_page.dart 
   - child_profile_selection_page.dart 
@@ -124,6 +125,9 @@ Generada: 26/04/2025 17:50:09,39
   - parental_pin_dialog.dart 
   - pin_code_widget.dart 
 - **lib\presentation\widgets\challenges/** 
+  - challenges.dart 
+  - challenge_card.dart 
+  - challenge_filter_drawer.dart 
 - **lib\presentation\widgets\child/** 
   - age_adapted_container.dart 
   - avatar_picker.dart 
