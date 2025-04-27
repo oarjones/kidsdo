@@ -62,105 +62,107 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Sección de filtros
-          _buildFilterSection(),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Sección de filtros
+            _buildFilterSection(),
 
-          // Lista de retos asignados
-          Expanded(
-            child: Obx(() {
-              if (challengeController.isLoadingAssignedChallenges.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
+            // Lista de retos asignados
+            Expanded(
+              child: Obx(() {
+                if (challengeController.isLoadingAssignedChallenges.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              final filteredChallenges = _getFilteredChallenges();
+                final filteredChallenges = _getFilteredChallenges();
 
-              if (filteredChallenges.isEmpty) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppDimensions.lg),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.assignment_outlined,
-                          size: 64,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(height: AppDimensions.md),
-                        Text(
-                          selectedChildId != null || selectedStatus != null
-                              ? TrKeys.noAssignedChallenges.tr
-                              : TrKeys.activeChallengesEmpty.tr,
-                          style: const TextStyle(
-                            fontSize: AppDimensions.fontLg,
-                            fontWeight: FontWeight.bold,
+                if (filteredChallenges.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppDimensions.lg),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.assignment_outlined,
+                            size: 64,
+                            color: Colors.grey,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: AppDimensions.sm),
-                        Text(
-                          selectedChildId != null || selectedStatus != null
-                              ? TrKeys.noAssignedChallengesMessage.tr
-                              : TrKeys.activeChallengesEmptyMessage.tr,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
+                          const SizedBox(height: AppDimensions.md),
+                          Text(
+                            selectedChildId != null || selectedStatus != null
+                                ? TrKeys.noAssignedChallenges.tr
+                                : TrKeys.activeChallengesEmpty.tr,
+                            style: const TextStyle(
+                              fontSize: AppDimensions.fontLg,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: AppDimensions.lg),
-                        if (selectedChildId != null || selectedStatus != null)
-                          ElevatedButton.icon(
-                            onPressed: _clearFilters,
-                            icon: const Icon(Icons.filter_list_off),
-                            label: Text(TrKeys.clearAllFilters.tr),
-                          )
-                        else
-                          ElevatedButton.icon(
-                            onPressed: () {
-                              // Navegar a la biblioteca de retos
-                              Get.toNamed('/challenge-library');
-                            },
-                            icon: const Icon(Icons.add),
-                            label: Text(TrKeys.createChallenge.tr),
+                          const SizedBox(height: AppDimensions.sm),
+                          Text(
+                            selectedChildId != null || selectedStatus != null
+                                ? TrKeys.noAssignedChallengesMessage.tr
+                                : TrKeys.activeChallengesEmptyMessage.tr,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                      ],
+                          const SizedBox(height: AppDimensions.lg),
+                          if (selectedChildId != null || selectedStatus != null)
+                            ElevatedButton.icon(
+                              onPressed: _clearFilters,
+                              icon: const Icon(Icons.filter_list_off),
+                              label: Text(TrKeys.clearAllFilters.tr),
+                            )
+                          else
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                // Navegar a la biblioteca de retos
+                                Get.toNamed('/challenge-library');
+                              },
+                              icon: const Icon(Icons.add),
+                              label: Text(TrKeys.createChallenge.tr),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }
-
-              return ListView.builder(
-                padding: const EdgeInsets.all(AppDimensions.md),
-                itemCount: filteredChallenges.length,
-                itemBuilder: (context, index) {
-                  final assignedChallenge = filteredChallenges[index];
-
-                  // Encontrar el reto correspondiente
-                  final challenge =
-                      _findChallengeById(assignedChallenge.challengeId);
-                  if (challenge == null) {
-                    return const SizedBox.shrink();
-                  }
-
-                  // Encontrar el niño correspondiente
-                  final child = _findChildById(assignedChallenge.childId);
-
-                  return AssignedChallengeCard(
-                    assignedChallenge: assignedChallenge,
-                    challenge: challenge,
-                    child: child,
-                    onTap: () => _showChallengeDetails(
-                        assignedChallenge, challenge, child),
-                    onEvaluate: () => _showEvaluationDialog(
-                        assignedChallenge, challenge, child),
                   );
-                },
-              );
-            }),
-          ),
-        ],
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(AppDimensions.md),
+                  itemCount: filteredChallenges.length,
+                  itemBuilder: (context, index) {
+                    final assignedChallenge = filteredChallenges[index];
+
+                    // Encontrar el reto correspondiente
+                    final challenge =
+                        _findChallengeById(assignedChallenge.challengeId);
+                    if (challenge == null) {
+                      return const SizedBox.shrink();
+                    }
+
+                    // Encontrar el niño correspondiente
+                    final child = _findChildById(assignedChallenge.childId);
+
+                    return AssignedChallengeCard(
+                      assignedChallenge: assignedChallenge,
+                      challenge: challenge,
+                      child: child,
+                      onTap: () => _showChallengeDetails(
+                          assignedChallenge, challenge, child),
+                      onEvaluate: () => _showEvaluationDialog(
+                          assignedChallenge, challenge, child),
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

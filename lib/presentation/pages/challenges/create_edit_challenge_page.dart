@@ -47,64 +47,66 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
             ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppDimensions.lg),
-        child: Form(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.lg),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Título
-              Text(
-                TrKeys.challengeTitle.tr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppDimensions.fontMd,
-                ),
-              ),
-              const SizedBox(height: AppDimensions.sm),
-              TextFormField(
-                controller: controller.titleController,
-                decoration: InputDecoration(
-                  hintText: TrKeys.enterChallengeTitle.tr,
-                  border: const OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.grey.withValues(alpha: 20),
-                ),
-                maxLength: 50,
-                textCapitalization: TextCapitalization.sentences,
-              ),
-              const SizedBox(height: AppDimensions.md),
-
-              // Descripción
-              Text(
-                TrKeys.description.tr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppDimensions.fontMd,
-                ),
-              ),
-              const SizedBox(height: AppDimensions.sm),
-              TextFormField(
-                controller: controller.descriptionController,
-                decoration: InputDecoration(
-                  hintText: TrKeys.enterChallengeDescription.tr,
-                  border: const OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.grey.withValues(alpha: 20),
-                ),
-                maxLength: 200,
-                maxLines: 3,
-                textCapitalization: TextCapitalization.sentences,
-              ),
-              const SizedBox(height: AppDimensions.md),
-
-              // Categoría y Frecuencia en fila
-              Row(
-                children: [
-                  Expanded(
+              // Contenido con scroll
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Form(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(height: AppDimensions.md),
+
+                        // Título
+                        Text(
+                          TrKeys.challengeTitle.tr,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: AppDimensions.fontMd,
+                          ),
+                        ),
+                        const SizedBox(height: AppDimensions.sm),
+                        TextFormField(
+                          controller: controller.titleController,
+                          decoration: InputDecoration(
+                            hintText: TrKeys.enterChallengeTitle.tr,
+                            border: const OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.grey.withValues(alpha: 20),
+                          ),
+                          maxLength: 50,
+                          textCapitalization: TextCapitalization.sentences,
+                        ),
+                        const SizedBox(height: AppDimensions.md),
+
+                        // Descripción
+                        Text(
+                          TrKeys.description.tr,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: AppDimensions.fontMd,
+                          ),
+                        ),
+                        const SizedBox(height: AppDimensions.sm),
+                        TextFormField(
+                          controller: controller.descriptionController,
+                          decoration: InputDecoration(
+                            hintText: TrKeys.enterChallengeDescription.tr,
+                            border: const OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.grey.withValues(alpha: 20),
+                          ),
+                          maxLength: 200,
+                          maxLines: 3,
+                          textCapitalization: TextCapitalization.sentences,
+                        ),
+                        const SizedBox(height: AppDimensions.md),
+
+                        // Categoría (ahora en columna en lugar de fila)
                         Text(
                           TrKeys.category.tr,
                           style: const TextStyle(
@@ -132,14 +134,9 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                                 fillColor: Color(0xFFF5F5F5),
                               ),
                             )),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: AppDimensions.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                        const SizedBox(height: AppDimensions.md),
+
+                        // Frecuencia (ahora debajo de categoría)
                         Text(
                           TrKeys.frequency.tr,
                           style: const TextStyle(
@@ -167,175 +164,182 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                                 fillColor: Color(0xFFF5F5F5),
                               ),
                             )),
+                        const SizedBox(height: AppDimensions.lg),
+
+                        // Puntos
+                        Text(
+                          TrKeys.points.tr,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: AppDimensions.fontMd,
+                          ),
+                        ),
+                        const SizedBox(height: AppDimensions.sm),
+                        TextFormField(
+                          controller: controller.pointsController,
+                          decoration: InputDecoration(
+                            hintText: TrKeys.enterPoints.tr,
+                            border: const OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.grey.withValues(alpha: 20),
+                            prefixIcon: const Icon(Icons.star_outline),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: AppDimensions.lg),
+
+                        // Rango de edad
+                        Text(
+                          TrKeys.ageRange.tr,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: AppDimensions.fontMd,
+                          ),
+                        ),
+                        const SizedBox(height: AppDimensions.sm),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                initialValue: controller.selectedAgeRange['min']
+                                    .toString(),
+                                decoration: InputDecoration(
+                                  labelText: TrKeys.minAge.tr,
+                                  border: const OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.grey.withValues(alpha: 20),
+                                ),
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  final minAge = int.tryParse(value) ?? 3;
+                                  controller.selectedAgeRange['min'] = minAge;
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: AppDimensions.md),
+                            Expanded(
+                              child: TextFormField(
+                                initialValue: controller.selectedAgeRange['max']
+                                    .toString(),
+                                decoration: InputDecoration(
+                                  labelText: TrKeys.maxAge.tr,
+                                  border: const OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.grey.withValues(alpha: 20),
+                                ),
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  final maxAge = int.tryParse(value) ?? 12;
+                                  controller.selectedAgeRange['max'] = maxAge;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppDimensions.lg),
+
+                        // Selector de Icono
+                        Text(
+                          TrKeys.selectIcon.tr,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: AppDimensions.fontMd,
+                          ),
+                        ),
+                        const SizedBox(height: AppDimensions.sm),
+                        ChallengeIconSelector(
+                          selectedIcon: controller.selectedIcon.value,
+                          onSelectIcon: (icon) {
+                            controller.selectedIcon.value = icon;
+                          },
+                        ),
+                        const SizedBox(height: AppDimensions.lg),
+
+                        // Guardar como plantilla
+                        Obx(() => SwitchListTile(
+                              title: Text(TrKeys.saveAsTemplate.tr),
+                              subtitle: Text(TrKeys.saveAsTemplateDesc.tr),
+                              value: controller.isTemplateChallenge.value,
+                              onChanged: (value) {
+                                controller.isTemplateChallenge.value = value;
+                              },
+                              activeColor: AppColors.primary,
+                              contentPadding: EdgeInsets.zero,
+                            )),
+
+                        const SizedBox(height: AppDimensions.xl),
+
+                        // Mensaje de error
+                        Obx(() => controller.errorMessage.value.isNotEmpty
+                            ? Container(
+                                padding: const EdgeInsets.all(AppDimensions.md),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withValues(alpha: 50),
+                                  borderRadius: BorderRadius.circular(
+                                      AppDimensions.borderRadiusMd),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.error_outline,
+                                        color: Colors.red),
+                                    const SizedBox(width: AppDimensions.sm),
+                                    Expanded(
+                                      child: Text(
+                                        controller.errorMessage.value,
+                                        style:
+                                            const TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : const SizedBox.shrink()),
+
+                        // Añadir espacio adicional al final para evitar que el contenido sea cortado
+                        const SizedBox(height: AppDimensions.xl),
                       ],
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: AppDimensions.lg),
-
-              // Puntos
-              Text(
-                TrKeys.points.tr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppDimensions.fontMd,
                 ),
               ),
-              const SizedBox(height: AppDimensions.sm),
-              TextFormField(
-                controller: controller.pointsController,
-                decoration: InputDecoration(
-                  hintText: TrKeys.enterPoints.tr,
-                  border: const OutlineInputBorder(),
-                  filled: true,
-                  fillColor: Colors.grey.withValues(alpha: 20),
-                  prefixIcon: const Icon(Icons.star_outline),
+
+              // Botón de guardar (fuera del scroll, siempre visible al final)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppDimensions.md),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Obx(() => ElevatedButton(
+                        onPressed: controller.isCreatingChallenge.value ||
+                                controller.isUpdatingChallenge.value
+                            ? null
+                            : () {
+                                if (isEditing) {
+                                  controller.updateChallenge();
+                                } else {
+                                  controller.createChallenge();
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: AppDimensions.md),
+                        ),
+                        child: controller.isCreatingChallenge.value ||
+                                controller.isUpdatingChallenge.value
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : Text(
+                                isEditing
+                                    ? TrKeys.save.tr
+                                    : TrKeys.createChallenge.tr,
+                                style: const TextStyle(
+                                    fontSize: AppDimensions.fontMd),
+                              ),
+                      )),
                 ),
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: AppDimensions.lg),
-
-              // Rango de edad
-              Text(
-                TrKeys.ageRange.tr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppDimensions.fontMd,
-                ),
-              ),
-              const SizedBox(height: AppDimensions.sm),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      initialValue:
-                          controller.selectedAgeRange['min'].toString(),
-                      decoration: InputDecoration(
-                        labelText: TrKeys.minAge.tr,
-                        border: const OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.grey.withValues(alpha: 20),
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        final minAge = int.tryParse(value) ?? 3;
-                        controller.selectedAgeRange['min'] = minAge;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: AppDimensions.md),
-                  Expanded(
-                    child: TextFormField(
-                      initialValue:
-                          controller.selectedAgeRange['max'].toString(),
-                      decoration: InputDecoration(
-                        labelText: TrKeys.maxAge.tr,
-                        border: const OutlineInputBorder(),
-                        filled: true,
-                        fillColor: Colors.grey.withValues(alpha: 20),
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        final maxAge = int.tryParse(value) ?? 12;
-                        controller.selectedAgeRange['max'] = maxAge;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppDimensions.lg),
-
-              // Selector de Icono
-              Text(
-                TrKeys.selectIcon.tr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppDimensions.fontMd,
-                ),
-              ),
-              const SizedBox(height: AppDimensions.sm),
-              ChallengeIconSelector(
-                selectedIcon: controller.selectedIcon.value,
-                onSelectIcon: (icon) {
-                  controller.selectedIcon.value = icon;
-                },
-              ),
-              const SizedBox(height: AppDimensions.lg),
-
-              // Guardar como plantilla
-              Obx(() => SwitchListTile(
-                    title: Text(TrKeys.saveAsTemplate.tr),
-                    subtitle: Text(TrKeys.saveAsTemplateDesc.tr),
-                    value: controller.isTemplateChallenge.value,
-                    onChanged: (value) {
-                      controller.isTemplateChallenge.value = value;
-                    },
-                    activeColor: AppColors.primary,
-                    contentPadding: EdgeInsets.zero,
-                  )),
-
-              const SizedBox(height: AppDimensions.xl),
-
-              // Mensaje de error
-              Obx(() => controller.errorMessage.value.isNotEmpty
-                  ? Container(
-                      padding: const EdgeInsets.all(AppDimensions.md),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 50),
-                        borderRadius:
-                            BorderRadius.circular(AppDimensions.borderRadiusMd),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.error_outline, color: Colors.red),
-                          const SizedBox(width: AppDimensions.sm),
-                          Expanded(
-                            child: Text(
-                              controller.errorMessage.value,
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : const SizedBox.shrink()),
-
-              const SizedBox(height: AppDimensions.lg),
-
-              // Botón de guardar
-              SizedBox(
-                width: double.infinity,
-                child: Obx(() => ElevatedButton(
-                      onPressed: controller.isCreatingChallenge.value ||
-                              controller.isUpdatingChallenge.value
-                          ? null
-                          : () {
-                              if (isEditing) {
-                                controller.updateChallenge();
-                              } else {
-                                controller.createChallenge();
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: AppDimensions.md),
-                      ),
-                      child: controller.isCreatingChallenge.value ||
-                              controller.isUpdatingChallenge.value
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text(
-                              isEditing
-                                  ? TrKeys.save.tr
-                                  : TrKeys.createChallenge.tr,
-                              style: const TextStyle(
-                                  fontSize: AppDimensions.fontMd),
-                            ),
-                    )),
               ),
             ],
           ),
