@@ -493,11 +493,7 @@ class ChildDashboardPage extends GetView<ChildAccessController> {
             ),
             TextButton.icon(
               onPressed: () {
-                Get.snackbar(
-                  TrKeys.comingSoon.tr,
-                  TrKeys.comingSoonMessage.tr,
-                  snackPosition: SnackPosition.BOTTOM,
-                );
+                Get.toNamed(Routes.childChallenges);
               },
               icon: Icon(
                 Icons.visibility,

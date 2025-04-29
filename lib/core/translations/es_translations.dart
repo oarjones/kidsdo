@@ -645,4 +645,20 @@ final Map<String, String> esTranslations = {
   'completed_challenges_stat': 'Retos completados',
   'library_challenges_stat': 'Retos en biblioteca',
   'challenges_asigned_visual_eval': 'Visualiza y evalúa los retos asignados',
+
+  // UI de retos para niños
+  'mark_as_completed': 'Marcar como completado',
+  'pending_approval': 'Pendiente de aprobación',
+  'waiting_for_parent_approval': 'Esperando la aprobación de tus padres',
+  'total_challenges': 'Total',
+  'your_progress': 'Tu progreso',
+// 'no_challenges_found': 'No se encontraron retos',
+  'no_completed_challenges_yet':
+      'Aún no has completado ningún reto. ¡Sigue adelante!',
+  'no_challenges_match_filter': 'No hay retos que coincidan con este filtro',
+  'show_all_challenges': 'Mostrar todos los retos',
+  'points_earned': 'Puntos ganados',
+  'awesome': '¡Genial!',
+  'challenge_completed': '¡Buen trabajo! ¡Reto completado!',
+  'all': 'Todos',
 };

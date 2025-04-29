@@ -536,4 +536,19 @@ class TrKeys {
   static const libraryChallengesStat =
       'library_challenges_stat'; // 'Library challenges',
   static const challengesAsignedVisualEval = 'challenges_asigned_visual_eval';
+
+  // UI de retos para niños
+  static const markAsCompleted = 'mark_as_completed';
+  static const pendingApproval = 'pending_approval';
+  static const waitingForParentApproval = 'waiting_for_parent_approval';
+  static const totalChallenges = 'total_challenges';
+  static const yourProgress = 'your_progress';
+  // static const noChallengesFound = 'no_challenges_found';
+  static const noCompletedChallengesYet = 'no_completed_challenges_yet';
+  static const noChallengesMatchFilter = 'no_challenges_match_filter';
+  static const showAllChallenges = 'show_all_challenges';
+  static const pointsEarned = 'points_earned';
+  static const awesome = 'awesome';
+  static const challengeCompleted = 'challenge_completed';
+  static const all = 'all';
 }

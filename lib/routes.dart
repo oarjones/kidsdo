@@ -5,6 +5,7 @@ import 'package:kidsdo/presentation/pages/challenges/assign_challenge_page.dart'
 import 'package:kidsdo/presentation/pages/challenges/challenges_library_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/challenges_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/create_edit_challenge_page.dart';
+import 'package:kidsdo/presentation/pages/child_access/child_challenges_page.dart';
 import 'package:kidsdo/presentation/pages/settings/parental_control_page.dart';
 import 'package:kidsdo/presentation/pages/splash/splash_page.dart';
 import 'package:kidsdo/presentation/pages/auth/login_page.dart';
@@ -144,6 +145,11 @@ class AppPages {
     ),
 
     // Rutas para acceso infantil
+    GetPage(
+      name: Routes.childChallenges,
+      page: () => const ChildChallengesPage(),
+      transition: Transition.rightToLeft,
+    ),
     GetPage(
       name: Routes.childProfileSelection,
       page: () => const ChildProfileSelectionPage(),

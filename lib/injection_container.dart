@@ -9,6 +9,7 @@ import 'package:kidsdo/data/datasources/remote/challenge_remote_datasource.dart'
 import 'package:kidsdo/data/repositories/challenge_repository_impl.dart';
 import 'package:kidsdo/domain/repositories/challenge_repository.dart';
 import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
+import 'package:kidsdo/presentation/controllers/child_challenges_controller.dart';
 import 'package:kidsdo/presentation/controllers/parental_control_controller.dart';
 import 'package:kidsdo/presentation/controllers/profile_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -237,6 +238,14 @@ Future<void> init() async {
       challengeRepository: Get.find<IChallengeRepository>(),
       sessionController: Get.find<SessionController>(),
       logger: logger,
+    ),
+  );
+
+  Get.put<ChildChallengesController>(
+    ChildChallengesController(
+      challengeRepository: Get.find<IChallengeRepository>(),
+      childAccessController: Get.find<ChildAccessController>(),
+      logger: Get.find<Logger>(),
     ),
   );
 }
