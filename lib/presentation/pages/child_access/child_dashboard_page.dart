@@ -918,11 +918,25 @@ class ChildDashboardPage extends GetView<ChildAccessController> {
     return BottomNavigationBar(
       currentIndex: 0,
       onTap: (index) {
-        Get.snackbar(
-          TrKeys.comingSoon.tr,
-          TrKeys.comingSoonMessage.tr,
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        switch (index) {
+          case 0:
+            Get.offNamed(Routes.childDashboard);
+            break;
+          case 1:
+            Get.offNamed(Routes.childChallenges);
+            break;
+          case 2:
+            Get.offNamed(Routes.childRewards);
+            break;
+          case 3:
+            Get.offNamed(Routes.childAchievements);
+            break;
+        }
+        // Get.snackbar(
+        //   TrKeys.comingSoon.tr,
+        //   TrKeys.comingSoonMessage.tr,
+        //   snackPosition: SnackPosition.BOTTOM,
+        // );
       },
       selectedItemColor: themeColor,
       unselectedItemColor:

@@ -31,6 +31,74 @@ class ChildProgressIndicator extends StatelessWidget {
     );
   }
 
+  // Widget _buildDefaultProgressBar() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       // Etiqueta del progreso
+  //       Text(
+  //         label,
+  //         style: TextStyle(
+  //           fontWeight: FontWeight.bold,
+  //           fontSize: AppDimensions.fontSm,
+  //           color: color,
+  //         ),
+  //       ),
+  //       const SizedBox(height: AppDimensions.xs),
+
+  //       // Barra de progreso
+  //       Stack(
+  //         children: [
+  //           // Fondo
+  //           Container(
+  //             height: height,
+  //             width: double.infinity,
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey.withValues(alpha: 100),
+  //               borderRadius: BorderRadius.circular(height / 2),
+  //             ),
+  //           ),
+
+  //           // Progreso
+  //           AnimatedContainer(
+  //             duration: const Duration(milliseconds: 300),
+  //             height: height,
+  //             width: double.infinity * progress,
+  //             decoration: BoxDecoration(
+  //               color: color,
+  //               borderRadius: BorderRadius.circular(height / 2),
+  //               boxShadow: [
+  //                 BoxShadow(
+  //                   color: color.withValues(alpha: 100),
+  //                   blurRadius: 4,
+  //                   offset: const Offset(0, 2),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+
+  //           // Porcentaje
+  //           Center(
+  //             child: SizedBox(
+  //               height: height,
+  //               child: Center(
+  //                 child: Text(
+  //                   '${(progress * 100).toInt()}%',
+  //                   style: TextStyle(
+  //                     color: progress > 0.5 ? Colors.white : Colors.black,
+  //                     fontSize: AppDimensions.fontXs,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
+
   Widget _buildDefaultProgressBar() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,21 +127,29 @@ class ChildProgressIndicator extends StatelessWidget {
               ),
             ),
 
-            // Progreso
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              height: height,
-              width: double.infinity * progress,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(height / 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withValues(alpha: 100),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+            // Progreso - Usamos ClipRRect y FractionallySizedBox para un cálculo seguro
+            ClipRRect(
+              borderRadius: BorderRadius.circular(height / 2),
+              child: SizedBox(
+                width: double.infinity,
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: progress.isNaN ? 0.0 : progress.clamp(0.0, 1.0),
+                  child: Container(
+                    height: height,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(height / 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withValues(alpha: 100),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
             ),
 

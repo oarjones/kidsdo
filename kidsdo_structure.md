@@ -1,150 +1,155 @@
-# Estructura del Proyecto KidsDo 
-Generada: 27/04/2025 10:24:46,36 
- 
-## Archivos de Configuración 
-- pubspec.yaml 
- 
-## Estructura de lib 
- 
-- **lib/** 
-  - app.dart 
-  - firebase_options.dart 
-  - injection_container.dart 
-  - main.dart 
-  - routes.dart 
-- **lib\core/** 
-- **lib\core\constants/** 
-  - colors.dart 
-  - dimensions.dart 
-- **lib\core\data/** 
-  - predefined_challenges.dart 
-- **lib\core\errors/** 
-  - failures.dart 
-- **lib\core\middleware/** 
-  - auth_middleware.dart 
-- **lib\core\network/** 
-- **lib\core\theme/** 
-  - app_theme.dart 
-  - auth_theme.dart 
-- **lib\core\translations/** 
-  - app_translations.dart 
-  - en_translations.dart 
-  - es_translations.dart 
-- **lib\core\utils/** 
-  - family_utils.dart 
-  - form_validators.dart 
-  - random_generator.dart 
-- **lib\core\widgets/** 
-- **lib\data/** 
-- **lib\data\datasources/** 
-- **lib\data\datasources\local/** 
-- **lib\data\datasources\remote/** 
-  - auth_remote_datasource.dart 
-  - challenge_remote_datasource.dart 
-  - family_child_remote_datasource.dart 
-  - family_remote_datasource.dart 
-  - user_remote_datasource.dart 
-- **lib\data\models/** 
-  - assigned_challenge_model.dart 
-  - challenge_model.dart 
-  - child_model.dart 
-  - family_child_model.dart 
-  - family_model.dart 
-  - parent_model.dart 
-  - user_model.dart 
-- **lib\data\repositories/** 
-  - auth_repository_impl.dart 
-  - challenge_repository_impl.dart 
-  - family_child_repository_impl.dart 
-  - family_repository_impl.dart 
-  - user_repository_impl.dart 
-- **lib\domain/** 
-- **lib\domain\entities/** 
-  - assigned_challenge.dart 
-  - base_user.dart 
-  - challenge.dart 
-  - child.dart 
-  - family.dart 
-  - family_child.dart 
-  - parent.dart 
-- **lib\domain\repositories/** 
-  - auth_repository.dart 
-  - challenge_repository.dart 
-  - family_child_repository.dart 
-  - family_repository.dart 
-  - user_repository.dart 
-- **lib\domain\usecases/** 
-- **lib\presentation/** 
-- **lib\presentation\bloc/** 
-- **lib\presentation\controllers/** 
-  - auth_controller.dart 
-  - challenge_controller.dart 
-  - child_access_controller.dart 
-  - child_profile_controller.dart 
-  - family_controller.dart 
-  - language_controller.dart 
-  - parental_control_controller.dart 
-  - profile_controller.dart 
-  - session_controller.dart 
-- **lib\presentation\pages/** 
-- **lib\presentation\pages\achievements/** 
-- **lib\presentation\pages\auth/** 
-  - login_page.dart 
-  - register_page.dart 
-  - reset_password_page.dart 
-- **lib\presentation\pages\challenges/** 
-  - active_challenges_page.dart 
-  - assign_challenge_page.dart 
-  - challenges_library_page.dart 
-  - challenges_page.dart 
-  - create_edit_challenge_page.dart 
-- **lib\presentation\pages\child_access/** 
-  - child_dashboard_page.dart 
-  - child_profile_selection_page.dart 
-  - restricted_access_page.dart 
-- **lib\presentation\pages\family/** 
-  - child_profiles_page.dart 
-  - create_child_profile_page.dart 
-  - create_family_page.dart 
-  - edit_child_profile_page.dart 
-  - family_page.dart 
-  - invite_code_page.dart 
-  - join_family_page.dart 
-- **lib\presentation\pages\home/** 
-  - home_page.dart 
-- **lib\presentation\pages\profile/** 
-  - edit_profile_page.dart 
-  - profile_page.dart 
-- **lib\presentation\pages\rewards/** 
-- **lib\presentation\pages\settings/** 
-  - parental_control_page.dart 
-- **lib\presentation\pages\splash/** 
-  - splash_page.dart 
-- **lib\presentation\widgets/** 
-- **lib\presentation\widgets\auth/** 
-  - auth_button.dart 
-  - auth_message.dart 
-  - auth_text_field.dart 
-  - language_selector_auth.dart 
-  - parental_pin_dialog.dart 
-  - pin_code_widget.dart 
-- **lib\presentation\widgets\challenges/** 
-  - assigned_challenge_card.dart 
-  - challenges.dart 
-  - challenge_card.dart 
-  - challenge_filter_drawer.dart 
-  - challenge_icon_selector.dart 
-- **lib\presentation\widgets\child/** 
-  - age_adapted_container.dart 
-  - avatar_picker.dart 
-  - theme_preview.dart 
-  - theme_selector.dart 
-- **lib\presentation\widgets\common/** 
-  - app_logo.dart 
-  - cached_avatar.dart 
-  - language_selector.dart 
-- **lib\presentation\widgets\family/** 
-  - family_members_list.dart 
-- **lib\presentation\widgets\parental_control/** 
-  - time_restriction_widget.dart 
-- **lib\presentation\widgets\rewards/** 
+# Estructura del Proyecto KidsDo
+Generada: 29/04/2025 11:06:21,76
+
+## Archivos de Configuración
+- pubspec.yaml: Define las dependencias del proyecto, metadatos y configuración general de la aplicación Flutter.
+
+## Estructura de lib
+
+- **lib/**
+  - app.dart: Define el widget principal de la aplicación (`KidsDoApp`), configurando GetMaterialApp (temas, rutas, transiciones, internacionalización).
+  - firebase_options.dart: Proporciona opciones de configuración de Firebase para diferentes plataformas (Android, iOS, etc.). Generado por FlutterFire CLI.
+  - injection_container.dart: Configura la inyección de dependencias (usando GetX). Inicializa y registra fuentes de datos, repositorios, controladores y dependencias externas como servicios de Firebase y SharedPreferences.
+  - main.dart: Punto de entrada principal de la aplicación. Inicializa Firebase, Firebase App Check, la inyección de dependencias, establece orientaciones de pantalla preferidas y ejecuta el widget principal de la app (`KidsDoApp`).
+  - routes.dart: Define las rutas de navegación de la aplicación (nombres de ruta y páginas correspondientes) y configura las transiciones y middlewares de GetX (AuthMiddleware, NoAuthMiddleware).
+- **lib\core/**: Contiene la lógica central reutilizable, constantes, utilidades y temas.
+- **lib\core\constants/**: Define constantes globales para la aplicación.
+  - colors.dart: Define constantes de color estáticas utilizadas en toda la aplicación, incluyendo colores primarios, secundarios, funcionales, de texto, de fondo y específicos para niños.
+  - dimensions.dart: Define constantes de dimensión estáticas (rellenos, márgenes, tamaños de fuente, tamaños de icono, radios de borde, elevaciones) para un espaciado y dimensionamiento consistentes en la interfaz de usuario.
+- **lib\core\data/**: Podría contener datos predefinidos o iniciales.
+  - predefined_challenges.dart: Contiene una lista estática de objetos `ChallengeModel` predefinidos, categorizados y traducidos, sirviendo como biblioteca de retos inicial o de respaldo.
+- **lib\core\errors/**: Define clases para manejar diferentes tipos de errores.
+  - failures.dart: Define clases `Failure` personalizadas (p. ej., `AuthFailure`, `ServerFailure`, `NotFoundFailure`) utilizadas con el tipo `Either` para el manejo de errores en las capas de datos y dominio.
+- **lib\core\middleware/**: Contiene middleware para la gestión de rutas (p.ej., autenticación).
+  - auth_middleware.dart: Middleware de GetX (`AuthMiddleware`, `NoAuthMiddleware`) utilizado para proteger rutas según el estado de autenticación del usuario, redirigiendo a los usuarios apropiadamente (p. ej., al inicio de sesión si no está autenticado, o a home si ya está autenticado e intenta acceder al inicio de sesión).
+- **lib\core\network/**: (Vacío) Posiblemente para utilidades de red futuras.
+- **lib\core\theme/**: Define los temas visuales de la aplicación.
+  - app_theme.dart: Define los temas claro y oscuro para la aplicación utilizando `ThemeData`, configurando esquemas de color, tipografía (Google Fonts) y estilos para widgets comunes como AppBar, Buttons, TextFields y BottomNavigationBar.
+  - auth_theme.dart: Define elementos de tema específicos (estilos, decoraciones) utilizados consistentemente en las pantallas de autenticación (Login, Register, Reset Password).
+- **lib\core\translations/**: Gestiona la internacionalización y localización.
+  - app_translations.dart: Configura las traducciones de GetX mapeando códigos de idioma ('es', 'en') a sus respectivos mapas de traducción. Proporciona una clase auxiliar `Tr` para un acceso más fácil a las traducciones.
+  - en_translations.dart: Contiene los pares clave-valor para las traducciones al inglés utilizadas en toda la aplicación.
+  - es_translations.dart: Contiene los pares clave-valor para las traducciones al español utilizadas en toda la aplicación.
+- **lib\core\utils/**: Contiene clases y funciones de utilidad.
+  - family_utils.dart: Funciones de utilidad para comprobaciones y formato comunes relacionados con la familia (p. ej., comprobar roles, formatear códigos de invitación).
+  - form_validators.dart: Proporciona métodos estáticos para validaciones comunes de campos de formulario (requerido, email, contraseña, nombre, etc.), integrado con las traducciones de GetX.
+  - random_generator.dart: Funciones de utilidad para generar cadenas aleatorias, utilizadas específicamente para códigos de invitación y potencialmente IDs únicos.
+- **lib\core\widgets/**: (Vacío) Posiblemente para widgets globales reutilizables.
+- **lib\data/**: Implementación de la capa de datos (repositorios, modelos, fuentes de datos).
+- **lib\data\datasources/**: Define las fuentes de datos (remotas, locales).
+- **lib\data\datasources\local/**: (Vacío) Para futuras fuentes de datos locales.
+- **lib\data\datasources\remote/**: Define las fuentes de datos remotas (API, Firebase).
+  - auth_remote_datasource.dart: Interfaz e implementación para manejar operaciones de autenticación directamente con Firebase Auth y servicios de Google Sign-In.
+  - challenge_remote_datasource.dart: Interfaz e implementación para manejar operaciones de datos de retos y retos asignados directamente con las colecciones de Firestore (`challenges`, `assignedChallenges`, `predefinedChallenges`).
+  - family_child_remote_datasource.dart: Interfaz e implementación para manejar operaciones de datos de perfiles infantiles directamente con la colección `familyChildren` de Firestore.
+  - family_remote_datasource.dart: Interfaz e implementación para manejar operaciones de datos de familias directamente con la colección `families` de Firestore.
+  - user_remote_datasource.dart: Interfaz e implementación para manejar operaciones de datos de usuario directamente con la colección `users` de Firestore.
+- **lib\data\models/**: Modelos de datos que mapean entidades y datos remotos/locales.
+  - assigned_challenge_model.dart: Modelo de datos de Firestore para `AssignedChallenge`, maneja la conversión hacia/desde documentos de Firestore.
+  - challenge_model.dart: Modelo de datos de Firestore para `Challenge`, maneja la conversión y posibles claves de traducción.
+  - child_model.dart: Modelo de datos de Firestore para `Child`, extendiendo `UserModel`.
+  - family_child_model.dart: Modelo de datos de Firestore para `FamilyChild`, maneja la conversión hacia/desde documentos de Firestore.
+  - family_model.dart: Modelo de datos de Firestore para `Family`, maneja la conversión hacia/desde documentos de Firestore.
+  - parent_model.dart: Modelo de datos de Firestore para `Parent`, extendiendo `UserModel`.
+  - user_model.dart: Modelo de datos base de Firestore implementando `FirestoreModel`, maneja propiedades comunes de usuario y conversión.
+- **lib\data\repositories/**: Implementaciones concretas de los repositorios del dominio.
+  - auth_repository_impl.dart: Implementación de `IAuthRepository` utilizando Firebase Authentication y Firestore para el almacenamiento de datos de usuario. Maneja el mapeo entre entidades de dominio y modelos de datos.
+  - challenge_repository_impl.dart: Implementación de `IChallengeRepository` utilizando Firestore para gestionar datos de retos y retos asignados.
+  - family_child_repository_impl.dart: Implementación de `IFamilyChildRepository` utilizando Firestore para gestionar datos de perfiles infantiles dentro de la colección `familyChildren`.
+  - family_repository_impl.dart: Implementación de `IFamilyRepository` utilizando Firestore para gestionar datos de familias, incluyendo miembros y códigos de invitación.
+  - user_repository_impl.dart: Implementación de `IUserRepository` utilizando Firestore para guardar y recuperar datos de usuarios padres e hijos de la colección `users`.
+- **lib\domain/**: Capa de dominio con entidades, repositorios (interfaces) y casos de uso.
+- **lib\domain\entities/**: Define las entidades principales del dominio de la aplicación.
+  - assigned_challenge.dart: Define la estructura de datos para un reto que ha sido asignado a un niño, incluyendo estado, fechas, puntos ganados e historial de evaluaciones.
+  - base_user.dart: Entidad base que define propiedades comunes para todos los usuarios (padre/hijo) como UID, nombre visible, avatar, fecha de creación y configuración.
+  - challenge.dart: Define la estructura de datos para un reto, incluyendo título, descripción, categoría, puntos, frecuencia, rango de edad y si es una plantilla o específico de la familia.
+  - child.dart: Define la estructura de datos para un usuario hijo (posiblemente heredado o independiente, si `FamilyChild` es el modelo principal). Incluye ID del padre y potencialmente ID de la familia.
+  - family.dart: Define la estructura de datos para una familia, incluyendo ID, nombre, creador, miembros, fecha de creación y código de invitación.
+  - family_child.dart: Define la estructura de datos para un perfil infantil gestionado dentro del contexto de una familia, incluyendo ID de la familia, ID del creador, puntos, nivel y configuración.
+  - parent.dart: Define la estructura de datos para un usuario padre, extendiendo `BaseUser` con listas de IDs de hijos y el ID de la familia a la que pertenecen.
+- **lib\domain\repositories/**: Interfaces abstractas que definen los contratos para los repositorios.
+  - auth_repository.dart: Interfaz abstracta que define el contrato para operaciones de autenticación (registro, inicio de sesión, cierre de sesión, obtener usuario actual, etc.).
+  - challenge_repository.dart: Interfaz abstracta que define el contrato para operaciones relacionadas con retos (obtener retos, crear, actualizar, eliminar, asignar, evaluar).
+  - family_child_repository.dart: Interfaz abstracta que define el contrato para operaciones relacionadas con perfiles infantiles gestionados dentro de una familia (crear, obtener, actualizar, eliminar).
+  - family_repository.dart: Interfaz abstracta que define el contrato para operaciones de familia (crear, obtener, actualizar, gestionar miembros, códigos de invitación).
+  - user_repository.dart: Interfaz abstracta que define el contrato para operaciones de datos de usuario (guardar padre/hijo, obtener usuario por ID).
+- **lib\domain\usecases/**: (Vacío) Para casos de uso futuros que encapsulen lógica de negocio compleja.
+- **lib\presentation/**: Capa de presentación (UI, controladores/blocs, widgets).
+- **lib\presentation\bloc/**: (Vacío) Para futura implementación con BLoC si se decide.
+- **lib\presentation\controllers/**: Controladores de estado (usando GetX).
+  - auth_controller.dart: Gestiona el estado y la lógica de autenticación (login, registro, logout, reseteo de contraseña, inicio de sesión con Google). Contiene controladores de texto y lógica de validación para formularios de autenticación.
+  - challenge_controller.dart: Gestiona el estado y la lógica relacionados con los retos, incluyendo la carga de retos predefinidos/familiares, creación, edición, eliminación, asignación y evaluación de retos. Maneja el filtrado y la selección en la biblioteca.
+  - child_access_controller.dart: Gestiona el estado relacionado con el acceso al modo infantil, incluyendo la carga de perfiles infantiles disponibles, activación/desactivación del modo infantil y comprobación de restricciones de control parental (límites de tiempo, límites de sesión).
+  - child_challenges_controller.dart: Gestiona el estado y la lógica específicamente para la vista del niño de sus retos. Carga los retos asignados para el niño activo, los filtra y maneja el marcado de retos como completados (pendiente de aprobación parental).
+  - child_profile_controller.dart: Gestiona la creación, edición, eliminación y carga de perfiles infantiles dentro de una familia. Maneja la selección/subida de avatares y la configuración de temas para los perfiles.
+  - family_controller.dart: Gestiona el estado relacionado con la familia del usuario, incluyendo la carga de la familia actual, creación/unión a familias, gestión de miembros y generación/uso de códigos de invitación.
+  - language_controller.dart: Gestiona el estado del idioma de la aplicación, permitiendo a los usuarios cambiar entre los idiomas soportados (inglés/español) y persistiendo la selección.
+  - parental_control_controller.dart: Gestiona la configuración del control parental almacenada en SharedPreferences, incluyendo verificación de PIN, restricciones de tiempo, bloqueo de perfiles y bloqueos temporales por intentos fallidos de PIN.
+  - profile_controller.dart: Gestiona los datos del perfil del padre autenticado, incluyendo la carga del perfil, manejo de actualizaciones de avatar (selección/subida) y actualización del nombre visible.
+  - session_controller.dart: Gestiona el estado general de la sesión del usuario, comprobando si un usuario ha iniciado sesión, manteniendo los datos del usuario actual y limpiando la sesión al cerrar sesión.
+- **lib\presentation\pages/**: Contiene las diferentes páginas/pantallas de la aplicación.
+- **lib\presentation\pages\achievements/**: (Vacío) Para la futura sección de logros.
+- **lib\presentation\pages\auth/**: Páginas relacionadas con la autenticación.
+  - login_page.dart: Pantalla de inicio de sesión donde los usuarios introducen su email y contraseña o usan el inicio de sesión social (Google) para autenticarse. Proporciona enlaces para registrarse y restablecer la contraseña.
+  - register_page.dart: Pantalla de registro donde los nuevos usuarios pueden crear una cuenta proporcionando su nombre, email y contraseña.
+  - reset_password_page.dart: Página donde los usuarios que olvidaron su contraseña pueden introducir su dirección de correo electrónico para recibir un enlace de restablecimiento de contraseña.
+- **lib\presentation\pages\challenges/**: Páginas relacionadas con la gestión de retos por parte de los padres.
+  - active_challenges_page.dart: Página para que los padres vean y gestionen todos los retos actualmente activos asignados a los niños de la familia. Permite filtrar por niño/estado y evaluar retos.
+  - assign_challenge_page.dart: Página/formulario donde un padre asigna un reto seleccionado (de la biblioteca o de los retos familiares) a un niño específico, estableciendo fechas de inicio/fin y frecuencia de evaluación.
+  - challenges_library_page.dart: Muestra la biblioteca de retos predefinidos y creados por la familia. Permite filtrar, buscar, seleccionar, importar/exportar y convertir plantillas en retos familiares.
+  - challenges_page.dart: Página de navegación principal para la gestión de retos, proporcionando acceso a Retos Activos, Biblioteca de Retos y Creación de Nuevos Retos. Muestra estadísticas básicas.
+  - create_edit_challenge_page.dart: Página/formulario utilizado tanto para crear nuevos retos personalizados como para editar los existentes. Incluye campos para título, descripción, categoría, frecuencia, puntos, rango de edad, icono y una opción para guardar como plantilla.
+- **lib\presentation\pages\child_access/**: Páginas específicas para el modo de acceso infantil.
+  - child_challenges_page.dart: Página dentro del modo infantil donde el niño activo puede ver sus retos asignados, filtrados por estado (todos, pendientes, completados) o frecuencia (diaria, semanal). Permite marcar retos como completados.
+  - child_dashboard_page.dart: Pantalla principal del modo infantil. Muestra un saludo personalizado, progreso de puntos/nivel, resúmenes de retos activos y recompensas disponibles.
+  - child_profile_selection_page.dart: Pantalla que se muestra al entrar en modo infantil, permitiendo al usuario seleccionar qué perfil de niño activar. También proporciona acceso de vuelta al modo padre mediante verificación de PIN.
+  - restricted_access_page.dart: Página que se muestra cuando el acceso infantil está bloqueado debido a controles parentales (límites de tiempo, bloqueo temporal, bloqueo de perfil). Muestra la razón de la restricción y opciones para ir a inicio o desbloquear con PIN parental.
+- **lib\presentation\pages\family/**: Páginas relacionadas con la gestión de la familia y perfiles infantiles.
+  - child_profiles_page.dart: Muestra la lista de perfiles infantiles asociados a la familia actual. Permite ver, editar y eliminar perfiles, así como acceder al modo infantil para un perfil específico.
+  - create_child_profile_page.dart: Página/formulario utilizado para crear un nuevo perfil infantil dentro de la familia, incluyendo nombre, fecha de nacimiento, avatar y configuración de tema.
+  - create_family_page.dart: Página que permite a un usuario (que no está ya en una familia) crear una nueva familia proporcionando un nombre para la misma.
+  - edit_child_profile_page.dart: Página/formulario utilizado para editar los detalles de un perfil infantil existente, incluyendo nombre, fecha de nacimiento, avatar, puntos, nivel y configuración de tema.
+  - family_page.dart: Muestra detalles sobre la familia actual del usuario, incluyendo nombre, miembros, código de invitación (para creadores) y opciones para gestionar perfiles infantiles o abandonar la familia. Si el usuario no está en una familia, muestra opciones para crear o unirse a una.
+  - invite_code_page.dart: Página específica para que el creador de la familia vea, copie o regenere el código de invitación de la familia.
+  - join_family_page.dart: Página que permite a un usuario (que no está ya en una familia) unirse a una familia existente introduciendo un código de invitación.
+- **lib\presentation\pages\home/**: Página principal de la aplicación.
+  - home_page.dart: Pantalla principal del panel de control después de que un usuario inicia sesión. Muestra un mensaje de bienvenida y proporciona navegación a secciones clave como Familia, Retos, Modo Infantil y Control Parental. Incluye la barra de navegación inferior principal.
+- **lib\presentation\pages\profile/**: Páginas relacionadas con el perfil del usuario (padre).
+  - edit_profile_page.dart: Página que permite a los usuarios autenticados (padres) editar la información de su perfil, como el nombre visible y el avatar.
+  - profile_page.dart: Muestra la información del perfil del usuario autenticado (padre), incluyendo avatar, nombre, email y estadísticas como número de hijos y estado familiar. Proporciona acceso a la edición y otras configuraciones.
+- **lib\presentation\pages\rewards/**: (Vacío) Para la futura sección de recompensas.
+- **lib\presentation\pages\settings/**: Páginas de configuración.
+  - parental_control_page.dart: Página donde los padres pueden configurar los ajustes de control parental, incluyendo el establecimiento de un PIN, restricciones de tiempo, bloqueo de perfiles y restricciones de contenido.
+- **lib\presentation\pages\splash/**: Pantalla de inicio.
+  - splash_page.dart: Pantalla de bienvenida inicial que se muestra al iniciar la app. Comprueba el estado de autenticación del usuario y navega a la página de inicio de sesión o a la página principal.
+- **lib\presentation\widgets/**: Widgets reutilizables de la interfaz de usuario.
+- **lib\presentation\widgets\auth/**: Widgets específicos para las pantallas de autenticación.
+  - auth_button.dart: Widget de botón reutilizable para pantallas de autenticación, soportando estilos primario, secundario y de inicio de sesión social, incluyendo estados de carga.
+  - auth_message.dart: Widget reutilizable para mostrar mensajes (error, éxito, información, advertencia) en pantallas de autenticación, típicamente utilizado para feedback.
+  - auth_text_field.dart: Widget de campo de texto reutilizable estilizado específicamente para formularios de autenticación, incluyendo características como iconos de prefijo, toggle de visibilidad para contraseñas y validación.
+  - language_selector_auth.dart: Widget selector de idioma diseñado específicamente para pantallas de autenticación, mostrando emojis de banderas y marcas de verificación para el idioma seleccionado.
+  - parental_pin_dialog.dart: Widget de diálogo que solicita al usuario (padre) introducir su PIN de control parental para verificación. Maneja intentos incorrectos y bloqueos temporales.
+  - pin_code_widget.dart: Widget que proporciona un teclado numérico y cajas de entrada para introducir un código PIN. Utilizado dentro de `ParentalPinDialog`.
+- **lib\presentation\widgets\challenges/**: Widgets relacionados con la funcionalidad de retos.
+  - assigned_challenge_card.dart: Widget de tarjeta para mostrar detalles de un reto asignado a un niño, incluyendo estado, información del niño, título del reto, categoría, puntos, fecha límite y un botón de evaluación.
+  - celebration_animation.dart: Widget que muestra una animación de celebración (confeti, mensaje, puntos) cuando un reto se completa con éxito.
+  - challenges.dart: Archivo de exportación que agrupa widgets relacionados con retos para facilitar su importación en otros lugares.
+  - challenge_card.dart: Widget de tarjeta para mostrar un reto de la biblioteca, mostrando sus detalles (título, descripción, categoría, frecuencia, rango de edad, puntos) y opciones para seleccionar, convertir a reto familiar o ver detalles. Adapta la visualización de puntos según la edad del niño.
+  - challenge_filter_drawer.dart: Widget de panel lateral (drawer) utilizado para filtrar retos en la biblioteca según categoría, frecuencia, rango de edad y adecuación a la edad.
+  - challenge_icon_selector.dart: Widget que permite a los usuarios seleccionar un icono para un reto personalizado desde una cuadrícula predefinida de iconos.
+  - child_challenge_card.dart: Widget de tarjeta diseñado para la vista del niño, mostrando un reto asignado con visuales adaptados a la edad. Muestra título, descripción, puntos y estado (completado/pendiente). Incluye un botón para marcar como completado.
+  - child_progress_indicator.dart: Widget indicador de progreso adaptado para la vista del niño, mostrando el progreso ya sea como una barra estándar o utilizando estrellas/elementos visuales para niños más pequeños.
+- **lib\presentation\widgets\child/**: Widgets específicos para la interfaz del modo infantil.
+  - age_adapted_container.dart: Widget contenedor que adapta su apariencia (relleno, radio de borde, color de fondo, sombra) y potencialmente su widget hijo según la edad proporcionada del niño.
+  - avatar_picker.dart: Widget que permite a los usuarios (probablemente para perfiles infantiles) elegir un avatar, ya sea seleccionando un icono predefinido o subiendo una imagen personalizada. Maneja la visualización, selección, limpieza y estado de subida.
+  - theme_preview.dart: Muestra una vista previa de cómo se verá la interfaz del niño basada en la configuración de tema seleccionada (color, estilo, tamaño de interfaz) y la información del perfil (nombre, avatar).
+  - theme_selector.dart: Widget que permite a los padres personalizar el tema para el perfil de un niño, incluyendo color, estilo visual (p. ej., espacio, selva) y tamaño de los elementos de la interfaz.
+- **lib\presentation\widgets\common/**: Widgets comunes reutilizables en toda la aplicación.
+  - app_logo.dart: Widget reutilizable para mostrar el logo de la aplicación, opcionalmente con el nombre de la app y el eslogan.
+  - cached_avatar.dart: Widget reutilizable para mostrar avatares de usuario utilizando imágenes de red cacheadas, con placeholders para estados de carga y error, y un avatar por defecto.
+  - language_selector.dart: Widget de botón de menú emergente que permite al usuario seleccionar el idioma de la aplicación (Español/Inglés).
+- **lib\presentation\widgets\family/**: Widgets relacionados con la funcionalidad de familia.
+  - family_members_list.dart: Widget que muestra la lista de miembros en la familia actual, mostrando su avatar, nombre, rol (creador/padre/hijo) y correo electrónico (para padres). Maneja estados de carga y error.
+- **lib\presentation\widgets\parental_control/**: Widgets relacionados con el control parental.
+  - time_restriction_widget.dart: Widget que se muestra cuando el acceso infantil está restringido debido a límites de tiempo establecidos por los padres. Muestra un mensaje y una opción para volver a inicio.
+- **lib\presentation\widgets\rewards/**: (Vacío) Para futuros widgets de recompensas.

@@ -56,9 +56,13 @@ class AgeAdaptedContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Verificar que el ancho no sea NaN o infinito
+    final safeWidth =
+        width != null && !width!.isNaN && !width!.isInfinite ? width : null;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      width: width,
+      width: safeWidth,
       height: height,
       padding: padding ?? _getPaddingByAge(),
       decoration: BoxDecoration(
