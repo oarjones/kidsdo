@@ -864,6 +864,15 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Añadir opción de asignación directa
+            ListTile(
+              leading: const Icon(Icons.assignment_ind, color: Colors.blue),
+              title: Text(TrKeys.assignToChildren.tr),
+              onTap: () {
+                Navigator.pop(context);
+                Get.toNamed('/batch-assign-challenges');
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.copy, color: AppColors.primary),
               title: Text(TrKeys.importToFamily.tr),

@@ -64,6 +64,7 @@ final Map<String, String> enTranslations = {
 
   // Challenges
   'challenges': 'Challenges',
+  'challenge': 'Challenge',
   'create_challenge': 'Create challenge',
   'edit_challenge': 'Edit challenge',
   'challenge_title': 'Challenge title',
@@ -649,4 +650,10 @@ final Map<String, String> enTranslations = {
   'awesome': 'Awesome!',
   'challenge_completed': 'Great job! Challenge completed!',
   'all': 'All',
+
+  'assign_to_children': 'Assign to children',
+  'and_others': 'and others',
+  'assign_challenge_now': 'Would you like to assign this challenge now?',
+  'not_now': 'Not now',
+  'assign': 'Assign',
 };

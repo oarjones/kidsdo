@@ -316,7 +316,18 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                                 if (isEditing) {
                                   controller.updateChallenge();
                                 } else {
-                                  controller.createChallenge();
+                                  controller.createChallenge().then((_) {
+                                    // Si la creación fue exitosa, mostramos diálogo con el reto recién seleccionado
+                                    if (controller.status.value ==
+                                        ChallengeStatus.success) {
+                                      // El reto recién creado estará en el registro de retos de familia
+                                      final lastCreatedChallenge = controller
+                                          .familyChallenges.lastOrNull;
+                                      if (lastCreatedChallenge != null) {
+                                        _showAssignDialog(lastCreatedChallenge);
+                                      }
+                                    }
+                                  });
                                 }
                               },
                         style: ElevatedButton.styleFrom(
@@ -344,6 +355,35 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Añadir este método a la clase _CreateEditChallengePageState
+  void _showAssignDialog(Challenge challenge) {
+    Get.dialog(
+      AlertDialog(
+        title: Text(TrKeys.challengeCreatedTitle.tr),
+        content: Text(TrKeys.assignChallengeNow.tr),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.back(); // Cerrar diálogo
+              Get.back(); // Volver a la página anterior
+            },
+            child: Text(TrKeys.notNow.tr),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back(); // Cerrar diálogo
+              // Seleccionar este reto para asignación
+              controller.selectedChallenge.value = challenge;
+              // Navegar a la página de asignación
+              Get.toNamed('/assign-challenge');
+            },
+            child: Text(TrKeys.assign.tr),
+          ),
+        ],
       ),
     );
   }

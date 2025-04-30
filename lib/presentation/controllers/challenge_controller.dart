@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kidsdo/core/data/predefined_challenges.dart';
@@ -375,6 +376,27 @@ class ChallengeController extends GetxController {
     predefinedChallenges.assignAll(translatedChallenges);
     useLocalChallenges.value = true;
     _logger.i("Loaded ${localChallenges.length} challenges from local data");
+  }
+
+  // Nueva función expuesta para implementación sin efectos secundarios (para uso en batch assign)
+  Future<Either<Failure, AssignedChallenge>> assignChallengeToChildImpl({
+    required String challengeId,
+    required String childId,
+    required String familyId,
+    required DateTime startDate,
+    required DateTime endDate,
+    required String evaluationFrequency,
+  }) async {
+    _logger.i("Assigning challenge to child: $challengeId -> $childId");
+
+    return await _challengeRepository.assignChallengeToChild(
+      challengeId: challengeId,
+      childId: childId,
+      familyId: familyId,
+      startDate: startDate,
+      endDate: endDate,
+      evaluationFrequency: evaluationFrequency,
+    );
   }
 
   Future<void> _migrateAndLoadChallenges() async {

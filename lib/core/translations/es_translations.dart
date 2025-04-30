@@ -66,6 +66,7 @@ final Map<String, String> esTranslations = {
 
   // Retos
   'challenges': 'Retos',
+  'challenge': 'Reto',
   'create_challenge': 'Crear reto',
   'edit_challenge': 'Editar reto',
   'challenge_title': 'Título del reto',
@@ -661,4 +662,10 @@ final Map<String, String> esTranslations = {
   'awesome': '¡Genial!',
   'challenge_completed': '¡Buen trabajo! ¡Reto completado!',
   'all': 'Todos',
+
+  'assign_to_children': 'Asignar a niños',
+  'and_others': 'y otros',
+  'assign_challenge_now': '¿Deseas asignar este reto ahora?',
+  'not_now': 'Ahora no',
+  'assign': 'Asignar',
 };

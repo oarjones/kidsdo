@@ -88,6 +88,7 @@ class TrKeys {
   static const createChildProfile = 'create_child_profile';
 
   // Retos
+  static const challenge = 'challenge';
   static const challenges = 'challenges';
   static const createChallenge = 'create_challenge';
   static const editChallenge = 'edit_challenge';
@@ -551,4 +552,10 @@ class TrKeys {
   static const awesome = 'awesome';
   static const challengeCompleted = 'challenge_completed';
   static const all = 'all';
+
+  static const assignToChildren = 'assign_to_children';
+  static const andOthers = 'and_others';
+  static const assignChallengeNow = 'assign_challenge_now';
+  static const notNow = 'not_now';
+  static const assign = 'assign';
 }
