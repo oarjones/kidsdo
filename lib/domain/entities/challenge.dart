@@ -20,6 +20,15 @@ enum ChallengeFrequency {
   once, // Una sola vez
 }
 
+/// Enumeración de duraciones de retos
+enum ChallengeDuration {
+  weekly, // Semanal
+  monthly, // Mensual
+  quarterly, // Trimestral
+  yearly, // Anual
+  punctual, // Puntual (fecha específica)
+}
+
 /// Entidad que representa un reto en el sistema
 class Challenge extends Equatable {
   final String id;
@@ -28,6 +37,7 @@ class Challenge extends Equatable {
   final ChallengeCategory category;
   final int points;
   final ChallengeFrequency frequency;
+  final ChallengeDuration duration; // Nueva propiedad: duración del reto
   final Map<String, dynamic> ageRange; // {'min': 3, 'max': 12}
   final bool isTemplate;
   final String createdBy;
@@ -42,6 +52,7 @@ class Challenge extends Equatable {
     required this.category,
     required this.points,
     required this.frequency,
+    required this.duration, // Nuevo campo obligatorio
     required this.ageRange,
     required this.isTemplate,
     required this.createdBy,
@@ -58,6 +69,7 @@ class Challenge extends Equatable {
         category,
         points,
         frequency,
+        duration,
         ageRange,
         isTemplate,
         createdBy,
@@ -73,6 +85,7 @@ class Challenge extends Equatable {
     ChallengeCategory? category,
     int? points,
     ChallengeFrequency? frequency,
+    ChallengeDuration? duration,
     Map<String, dynamic>? ageRange,
     bool? isTemplate,
     String? createdBy,
@@ -87,6 +100,7 @@ class Challenge extends Equatable {
       category: category ?? this.category,
       points: points ?? this.points,
       frequency: frequency ?? this.frequency,
+      duration: duration ?? this.duration,
       ageRange: ageRange ?? this.ageRange,
       isTemplate: isTemplate ?? this.isTemplate,
       createdBy: createdBy ?? this.createdBy,

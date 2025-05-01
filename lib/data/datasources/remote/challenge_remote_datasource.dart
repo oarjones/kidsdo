@@ -3,7 +3,10 @@ import 'package:get/get.dart';
 
 import 'package:kidsdo/data/models/challenge_model.dart';
 import 'package:kidsdo/data/models/assigned_challenge_model.dart';
+import 'package:kidsdo/data/models/challenge_execution_model.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
+import 'package:kidsdo/domain/entities/challenge.dart';
+import 'package:kidsdo/domain/entities/challenge_execution.dart';
 import 'package:logger/logger.dart';
 
 abstract class IChallengeRemoteDataSource {
@@ -33,6 +36,7 @@ abstract class IChallengeRemoteDataSource {
     required DateTime startDate,
     DateTime? endDate,
     required String evaluationFrequency,
+    bool isContinuous = false, // Nuevo parámetro para indicar si es continuo
   });
 
   /// Obtiene los retos asignados a un niño
@@ -50,7 +54,24 @@ abstract class IChallengeRemoteDataSource {
   /// Elimina un reto asignado
   Future<void> deleteAssignedChallenge(String assignedChallengeId);
 
-  /// Evalúa un reto asignado
+  /// Evalúa una ejecución específica de un reto asignado
+  Future<void> evaluateExecution({
+    required String assignedChallengeId,
+    required int executionIndex,
+    required AssignedChallengeStatus status,
+    required int points,
+    String? note,
+  });
+
+  /// Crea una nueva ejecución para un reto continuo
+  Future<void> createNextExecution({
+    required String assignedChallengeId,
+    required DateTime startDate,
+    required DateTime endDate,
+  });
+
+  /// Evalúa un reto asignado (método legacy para compatibilidad)
+  @Deprecated('Use evaluateExecution instead')
   Future<void> evaluateAssignedChallenge({
     required String assignedChallengeId,
     required AssignedChallengeStatus status,
@@ -209,9 +230,21 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
     required String childId,
     required String familyId,
     required DateTime startDate,
-    DateTime? endDate, // Ahora es opcional
+    DateTime? endDate,
     required String evaluationFrequency,
+    bool isContinuous = false,
   }) async {
+    // Obtener el reto original para conocer su duración
+    final challenge = await getChallengeById(challengeId);
+
+    // Crear la primera ejecución del reto
+    final firstExecution = ChallengeExecutionModel(
+      startDate: startDate,
+      endDate: endDate ?? _calculateEndDate(startDate, challenge.duration),
+      status: AssignedChallengeStatus.active,
+      evaluations: [],
+    );
+
     // Crear datos del reto asignado
     final Map<String, dynamic> assignedChallengeData = {
       'challengeId': challengeId,
@@ -223,10 +256,12 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
       'pointsEarned': 0,
       'evaluations': [],
       'createdAt': Timestamp.now(),
+      'isContinuous': isContinuous,
+      'executions': [firstExecution.toFirestore()],
     };
 
-    // Añadir endDate solo si no es nulo
-    if (endDate != null) {
+    // Añadir endDate solo si no es nulo y no es continuo
+    if (endDate != null && !isContinuous) {
       assignedChallengeData['endDate'] = Timestamp.fromDate(endDate);
     }
 
@@ -291,6 +326,121 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
   }
 
   @override
+  Future<void> evaluateExecution({
+    required String assignedChallengeId,
+    required int executionIndex,
+    required AssignedChallengeStatus status,
+    required int points,
+    String? note,
+  }) async {
+    // Obtener reto asignado actual
+    final assignedChallenge =
+        await getAssignedChallengeById(assignedChallengeId);
+
+    if (executionIndex < 0 ||
+        executionIndex >= assignedChallenge.executions.length) {
+      throw FirebaseException(
+        plugin: 'firestore',
+        code: 'invalid-argument',
+        message: 'Índice de ejecución inválido',
+      );
+    }
+
+    // Obtener la ejecución específica
+    final List<ChallengeExecution> updatedExecutions =
+        List.from(assignedChallenge.executions);
+    final execution = updatedExecutions[executionIndex];
+
+    // Crear nueva evaluación
+    final evaluation = ChallengeEvaluation(
+      date: DateTime.now(),
+      status: status,
+      points: points,
+      note: note,
+    );
+
+    // Actualizar estado de la ejecución y añadir evaluación
+    final updatedExecution = execution.copyWith(
+      status: status,
+      evaluations: [...execution.evaluations, evaluation],
+    );
+    updatedExecutions[executionIndex] = updatedExecution;
+
+    // Actualizar puntos totales ganados
+    final totalPoints = assignedChallenge.pointsEarned + points;
+
+    // Determinar el nuevo estado global del reto asignado
+    AssignedChallengeStatus newStatus = assignedChallenge.status;
+
+    // Si es la ejecución actual (la última) y es completada/fallida
+    if (executionIndex == assignedChallenge.executions.length - 1) {
+      if (status == AssignedChallengeStatus.completed ||
+          status == AssignedChallengeStatus.failed) {
+        // Si es continuo, se mantiene activo para la siguiente ejecución
+        // Si no es continuo, toma el estado de la evaluación
+        newStatus = assignedChallenge.isContinuous
+            ? AssignedChallengeStatus.active
+            : status;
+      }
+    }
+
+    // Crear modelo actualizado
+    final updatedAssignedChallenge = assignedChallenge.copyWith(
+      status: newStatus,
+      pointsEarned: totalPoints,
+      executions: updatedExecutions,
+    );
+
+    // Guardar en Firestore
+    await updateAssignedChallenge(
+        AssignedChallengeModel.fromEntity(updatedAssignedChallenge));
+  }
+
+  @override
+  Future<void> createNextExecution({
+    required String assignedChallengeId,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    // Obtener reto asignado actual
+    final assignedChallenge =
+        await getAssignedChallengeById(assignedChallengeId);
+
+    // Verificar que sea un reto continuo
+    if (!assignedChallenge.isContinuous) {
+      throw FirebaseException(
+        plugin: 'firestore',
+        code: 'invalid-argument',
+        message:
+            'No se puede crear una nueva ejecución para un reto no continuo',
+      );
+    }
+
+    // Crear nueva ejecución
+    final newExecution = ChallengeExecutionModel(
+      startDate: startDate,
+      endDate: endDate,
+      status: AssignedChallengeStatus.active,
+      evaluations: [],
+    );
+
+    // Añadir la nueva ejecución a la lista
+    final updatedExecutions = [...assignedChallenge.executions, newExecution];
+
+    // Actualizar el reto asignado
+    final updatedAssignedChallenge = assignedChallenge.copyWith(
+      executions: updatedExecutions,
+      status:
+          AssignedChallengeStatus.active, // Asegurar que el reto está activo
+    );
+
+    // Guardar en Firestore
+    await updateAssignedChallenge(
+        AssignedChallengeModel.fromEntity(updatedAssignedChallenge));
+  }
+
+  @override
+  @Deprecated('Use evaluateExecution instead')
   Future<void> evaluateAssignedChallenge({
     required String assignedChallengeId,
     required AssignedChallengeStatus status,
@@ -301,6 +451,19 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
     final assignedChallenge =
         await getAssignedChallengeById(assignedChallengeId);
 
+    // Si tiene ejecuciones, evaluar la más reciente
+    if (assignedChallenge.executions.isNotEmpty) {
+      await evaluateExecution(
+        assignedChallengeId: assignedChallengeId,
+        executionIndex: assignedChallenge.executions.length - 1,
+        status: status,
+        points: points,
+        note: note,
+      );
+      return;
+    }
+
+    // Si no tiene ejecuciones (compatibilidad con versiones antiguas)
     // Crear nueva evaluación
     final evaluation = ChallengeEvaluation(
       date: DateTime.now(),
@@ -316,7 +479,9 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
     AssignedChallengeStatus newStatus = assignedChallenge.status;
     if (status == AssignedChallengeStatus.completed ||
         status == AssignedChallengeStatus.failed) {
-      newStatus = status;
+      newStatus = assignedChallenge.isContinuous
+          ? AssignedChallengeStatus.active
+          : status;
     }
 
     // Añadir la evaluación a la lista
@@ -332,5 +497,40 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
     // Guardar en Firestore
     await updateAssignedChallenge(
         AssignedChallengeModel.fromEntity(updatedAssignedChallenge));
+  }
+
+  // Método auxiliar para calcular la fecha de fin según la duración
+  DateTime _calculateEndDate(DateTime startDate, ChallengeDuration duration) {
+    switch (duration) {
+      case ChallengeDuration.weekly:
+        // Obtener el próximo domingo
+        final int daysUntilSunday = 7 - startDate.weekday;
+        return startDate.add(Duration(days: daysUntilSunday));
+
+      case ChallengeDuration.monthly:
+        // Último día del mes
+        final nextMonth = startDate.month < 12
+            ? DateTime(startDate.year, startDate.month + 1, 1)
+            : DateTime(startDate.year + 1, 1, 1);
+        return nextMonth.subtract(const Duration(days: 1));
+
+      case ChallengeDuration.quarterly:
+        // Último día del trimestre actual
+        final int currentQuarter = (startDate.month - 1) ~/ 3;
+        final int lastMonthOfQuarter = (currentQuarter + 1) * 3;
+        final nextQuarter = lastMonthOfQuarter < 12
+            ? DateTime(startDate.year, lastMonthOfQuarter + 1, 1)
+            : DateTime(startDate.year + 1, 1, 1);
+        return nextQuarter.subtract(const Duration(days: 1));
+
+      case ChallengeDuration.yearly:
+        // Último día del año
+        return DateTime(startDate.year, 12, 31);
+
+      case ChallengeDuration.punctual:
+      default:
+        // Por defecto, una semana
+        return startDate.add(const Duration(days: 7));
+    }
   }
 }

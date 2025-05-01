@@ -14,6 +14,7 @@ class ChallengeModel extends Challenge {
     required super.category,
     required super.points,
     required super.frequency,
+    required super.duration, // Nuevo campo obligatorio
     required super.ageRange,
     required super.isTemplate,
     required super.createdBy,
@@ -52,6 +53,8 @@ class ChallengeModel extends Challenge {
       category: _mapStringToCategory(data['category'] ?? 'hygiene'),
       points: data['points'] ?? 0,
       frequency: _mapStringToFrequency(data['frequency'] ?? 'daily'),
+      duration:
+          _mapStringToDuration(data['duration'] ?? 'weekly'), // Nuevo campo
       ageRange:
           data['ageRange'] as Map<String, dynamic>? ?? {'min': 0, 'max': 18},
       isTemplate: data['isTemplate'] ?? false,
@@ -72,6 +75,7 @@ class ChallengeModel extends Challenge {
       'category': _categoryToString(category),
       'points': points,
       'frequency': _frequencyToString(frequency),
+      'duration': _durationToString(duration), // Nuevo campo
       'ageRange': ageRange,
       'isTemplate': isTemplate,
       'createdBy': createdBy,
@@ -103,6 +107,7 @@ class ChallengeModel extends Challenge {
         category: challenge.category,
         points: challenge.points,
         frequency: challenge.frequency,
+        duration: challenge.duration,
         ageRange: challenge.ageRange,
         isTemplate: challenge.isTemplate,
         createdBy: challenge.createdBy,
@@ -122,6 +127,7 @@ class ChallengeModel extends Challenge {
       category: challenge.category,
       points: challenge.points,
       frequency: challenge.frequency,
+      duration: challenge.duration,
       ageRange: challenge.ageRange,
       isTemplate: challenge.isTemplate,
       createdBy: challenge.createdBy,
@@ -201,6 +207,39 @@ class ChallengeModel extends Challenge {
         return 'quarterly';
       case ChallengeFrequency.once:
         return 'once';
+    }
+  }
+
+  // Nuevos métodos para mapear duración
+  static ChallengeDuration _mapStringToDuration(String duration) {
+    switch (duration) {
+      case 'weekly':
+        return ChallengeDuration.weekly;
+      case 'monthly':
+        return ChallengeDuration.monthly;
+      case 'quarterly':
+        return ChallengeDuration.quarterly;
+      case 'yearly':
+        return ChallengeDuration.yearly;
+      case 'punctual':
+        return ChallengeDuration.punctual;
+      default:
+        return ChallengeDuration.weekly;
+    }
+  }
+
+  static String _durationToString(ChallengeDuration duration) {
+    switch (duration) {
+      case ChallengeDuration.weekly:
+        return 'weekly';
+      case ChallengeDuration.monthly:
+        return 'monthly';
+      case ChallengeDuration.quarterly:
+        return 'quarterly';
+      case ChallengeDuration.yearly:
+        return 'yearly';
+      case ChallengeDuration.punctual:
+        return 'punctual';
     }
   }
 }

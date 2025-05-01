@@ -129,6 +129,8 @@ class AssignedChallengeModel extends AssignedChallenge {
         return 'failed';
       case AssignedChallengeStatus.pending:
         return 'pending';
+      case AssignedChallengeStatus.inactive:
+        return 'inactive';
     }
   }
 }

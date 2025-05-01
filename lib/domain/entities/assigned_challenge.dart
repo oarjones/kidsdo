@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'challenge_execution.dart';
 
 /// Enumeración de estados de retos asignados
 enum AssignedChallengeStatus {
@@ -6,6 +7,7 @@ enum AssignedChallengeStatus {
   completed, // Completado
   failed, // Fallido
   pending, // Pendiente
+  inactive, // Inactivo (para retos no continuos que han terminado)
 }
 
 /// Clase para las evaluaciones de un reto
@@ -53,6 +55,8 @@ class AssignedChallenge extends Equatable {
   final int pointsEarned;
   final List<ChallengeEvaluation> evaluations;
   final DateTime createdAt;
+  final bool isContinuous; // Indica si el reto se reinicia automáticamente
+  final List<ChallengeExecution> executions; // Lista de ejecuciones del reto
 
   const AssignedChallenge({
     required this.id,
@@ -66,6 +70,8 @@ class AssignedChallenge extends Equatable {
     this.pointsEarned = 0,
     this.evaluations = const [],
     required this.createdAt,
+    this.isContinuous = false,
+    this.executions = const [],
   });
 
   @override
@@ -81,6 +87,8 @@ class AssignedChallenge extends Equatable {
         pointsEarned,
         evaluations,
         createdAt,
+        isContinuous,
+        executions,
       ];
 
   AssignedChallenge copyWith({
@@ -95,6 +103,8 @@ class AssignedChallenge extends Equatable {
     int? pointsEarned,
     List<ChallengeEvaluation>? evaluations,
     DateTime? createdAt,
+    bool? isContinuous,
+    List<ChallengeExecution>? executions,
   }) {
     return AssignedChallenge(
       id: id ?? this.id,
@@ -108,9 +118,24 @@ class AssignedChallenge extends Equatable {
       pointsEarned: pointsEarned ?? this.pointsEarned,
       evaluations: evaluations ?? this.evaluations,
       createdAt: createdAt ?? this.createdAt,
+      isContinuous: isContinuous ?? this.isContinuous,
+      executions: executions ?? this.executions,
     );
   }
 
   /// Verifica si este es un reto continuo (sin fecha de fin)
-  bool get isContinuous => endDate == null;
+  bool get isContinuousChallenge => isContinuous;
+
+  /// Obtiene la ejecución actual del reto
+  ChallengeExecution? get currentExecution {
+    if (executions.isEmpty) return null;
+
+    // La ejecución actual es la más reciente en la lista
+    return executions.lastWhere(
+      (execution) =>
+          execution.status == AssignedChallengeStatus.active ||
+          execution.status == AssignedChallengeStatus.pending,
+      orElse: () => executions.last,
+    );
+  }
 }
