@@ -633,7 +633,9 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
                   const Divider(),
                   _buildInfoRow(
                     TrKeys.dueDate.tr,
-                    Text(_formatDate(assignedChallenge.endDate)),
+                    Text(assignedChallenge.endDate != null
+                        ? _formatDate(assignedChallenge.endDate!)
+                        : ''),
                   ),
                   const Divider(),
                   _buildInfoRow(
@@ -1143,7 +1145,8 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
   }
 
   // Formatear fecha para mostrar
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime? date) {
+    date = date ?? DateTime.now();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));

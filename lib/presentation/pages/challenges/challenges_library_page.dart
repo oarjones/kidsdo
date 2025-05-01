@@ -402,7 +402,8 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                       challenge: challenge,
                       adaptedPoints: adaptedPoints,
                       childAge: controller.selectedChildAge.value,
-                      isSelected: controller.isChallengeSelected(challenge.id),
+                      isSelected: Rx<bool>(
+                          controller.isChallengeSelected(challenge.id)),
                       onSelect: () =>
                           controller.toggleChallengeSelection(challenge.id),
                       onConvert: () => controller
@@ -418,6 +419,7 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
         ),
       ),
       // Botón flotante para acciones con selección
+      // Reemplazar el FloatingActionButton.extended actual
       floatingActionButton: Obx(() {
         if (controller.selectedChallengeIds.isEmpty) {
           return const SizedBox.shrink();
@@ -426,9 +428,12 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
         return FloatingActionButton.extended(
           onPressed: () => _showSelectionOptions(context),
           label: Text(
-              "${controller.selectedChallengeIds.length} ${TrKeys.selected.tr}"),
-          icon: const Icon(Icons.check_circle),
+            "${TrKeys.assignChallenge.tr}: ${controller.selectedChallengeIds.length} ${controller.selectedChallengeIds.length == 1 ? TrKeys.challengeSingular.tr : TrKeys.challengesPlural.tr}",
+            style: const TextStyle(fontSize: 16),
+          ),
+          icon: const Icon(Icons.assignment_ind),
           backgroundColor: AppColors.primary,
+          extendedPadding: const EdgeInsets.symmetric(horizontal: 20),
         );
       }),
     );

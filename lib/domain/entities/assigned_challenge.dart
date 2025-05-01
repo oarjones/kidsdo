@@ -48,7 +48,7 @@ class AssignedChallenge extends Equatable {
   final String familyId;
   final AssignedChallengeStatus status;
   final DateTime startDate;
-  final DateTime endDate;
+  final DateTime? endDate; // Ahora puede ser nulo para retos continuos
   final String evaluationFrequency; // 'daily', 'weekly'
   final int pointsEarned;
   final List<ChallengeEvaluation> evaluations;
@@ -61,7 +61,7 @@ class AssignedChallenge extends Equatable {
     required this.familyId,
     required this.status,
     required this.startDate,
-    required this.endDate,
+    this.endDate, // Ya no es required
     required this.evaluationFrequency,
     this.pointsEarned = 0,
     this.evaluations = const [],
@@ -103,11 +103,14 @@ class AssignedChallenge extends Equatable {
       familyId: familyId ?? this.familyId,
       status: status ?? this.status,
       startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
+      endDate: endDate, // Manejo especial - puede establecerse a null
       evaluationFrequency: evaluationFrequency ?? this.evaluationFrequency,
       pointsEarned: pointsEarned ?? this.pointsEarned,
       evaluations: evaluations ?? this.evaluations,
       createdAt: createdAt ?? this.createdAt,
     );
   }
+
+  /// Verifica si este es un reto continuo (sin fecha de fin)
+  bool get isContinuous => endDate == null;
 }

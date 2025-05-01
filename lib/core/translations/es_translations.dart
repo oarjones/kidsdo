@@ -668,4 +668,9 @@ final Map<String, String> esTranslations = {
   'assign_challenge_now': '¿Deseas asignar este reto ahora?',
   'not_now': 'Ahora no',
   'assign': 'Asignar',
+
+  'continuous_challenge': 'Reto continuo',
+  'never_ends': 'Sin fecha fin',
+  'challenge_singular': 'reto',
+  'challenges_plural': 'retos',
 };

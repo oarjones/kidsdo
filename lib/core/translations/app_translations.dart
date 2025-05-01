@@ -558,4 +558,9 @@ class TrKeys {
   static const assignChallengeNow = 'assign_challenge_now';
   static const notNow = 'not_now';
   static const assign = 'assign';
+
+  static const continuousChallenge = 'continuous_challenge';
+  static const neverEnds = 'never_ends';
+  static const challengeSingular = 'challenge_singular';
+  static const challengesPlural = 'challenges_plural';
 }

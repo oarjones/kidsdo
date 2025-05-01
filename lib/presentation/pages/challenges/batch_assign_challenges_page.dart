@@ -31,6 +31,9 @@ class _BatchAssignChallengesPageState extends State<BatchAssignChallengesPage> {
   late DateTime endDate;
   String evaluationFrequency = 'daily';
 
+  // Añadir variable para controlar si el reto es continuo
+  bool isContinuous = true; // Por defecto, los retos serán continuos
+
   @override
   void initState() {
     super.initState();
@@ -130,39 +133,82 @@ class _BatchAssignChallengesPageState extends State<BatchAssignChallengesPage> {
                       ),
                       const SizedBox(height: AppDimensions.lg),
 
+                      // AQUÍ INSERTAR EL NUEVO SWITCH - entre la fecha de inicio y la fecha fin
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            TrKeys.continuousChallenge.tr,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: AppDimensions.fontMd,
+                            ),
+                          ),
+                          Switch(
+                            value: isContinuous,
+                            onChanged: (value) {
+                              setState(() {
+                                isContinuous = value;
+                              });
+                            },
+                            activeColor: AppColors.primary,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppDimensions.md),
+
                       Text(
-                        TrKeys.endDate.tr,
-                        style: const TextStyle(
+                        isContinuous ? TrKeys.neverEnds.tr : TrKeys.endDate.tr,
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: AppDimensions.fontMd,
+                          color: isContinuous
+                              ? Colors.grey.shade500
+                              : Colors.black,
                         ),
                       ),
                       const SizedBox(height: AppDimensions.sm),
-                      InkWell(
-                        onTap: () => _selectEndDate(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppDimensions.md,
-                            vertical: AppDimensions.md,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.grey.withValues(alpha: 150)),
-                            borderRadius: BorderRadius.circular(
-                                AppDimensions.borderRadiusMd),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.calendar_today,
-                                  color: AppColors.primary),
-                              const SizedBox(width: AppDimensions.md),
-                              Text(
-                                DateFormat('EEEE, MMMM d, yyyy')
-                                    .format(endDate),
-                                style: const TextStyle(
-                                    fontSize: AppDimensions.fontMd),
+                      Opacity(
+                        opacity: isContinuous ? 0.5 : 1.0,
+                        child: AbsorbPointer(
+                          absorbing: isContinuous,
+                          child: InkWell(
+                            onTap: isContinuous
+                                ? null
+                                : () => _selectEndDate(context),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppDimensions.md,
+                                vertical: AppDimensions.md,
                               ),
-                            ],
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.grey.withValues(alpha: 150)),
+                                borderRadius: BorderRadius.circular(
+                                    AppDimensions.borderRadiusMd),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.calendar_today,
+                                      color: isContinuous
+                                          ? Colors.grey.shade400
+                                          : AppColors.primary),
+                                  const SizedBox(width: AppDimensions.md),
+                                  Text(
+                                    isContinuous
+                                        ? TrKeys.neverEnds.tr
+                                        : DateFormat('EEEE, MMMM d, yyyy')
+                                            .format(endDate),
+                                    style: TextStyle(
+                                      fontSize: AppDimensions.fontMd,
+                                      color: isContinuous
+                                          ? Colors.grey.shade500
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -484,7 +530,7 @@ class _BatchAssignChallengesPageState extends State<BatchAssignChallengesPage> {
           childId: childId,
           familyId: currentUser.familyId!,
           startDate: startDate,
-          endDate: endDate,
+          endDate: isContinuous ? null : endDate, // Usar null si es continuo
           evaluationFrequency: evaluationFrequency,
         );
 

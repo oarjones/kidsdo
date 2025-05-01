@@ -31,7 +31,7 @@ abstract class IChallengeRemoteDataSource {
     required String childId,
     required String familyId,
     required DateTime startDate,
-    required DateTime endDate,
+    DateTime? endDate,
     required String evaluationFrequency,
   });
 
@@ -209,22 +209,26 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
     required String childId,
     required String familyId,
     required DateTime startDate,
-    required DateTime endDate,
+    DateTime? endDate, // Ahora es opcional
     required String evaluationFrequency,
   }) async {
     // Crear datos del reto asignado
-    final assignedChallengeData = {
+    final Map<String, dynamic> assignedChallengeData = {
       'challengeId': challengeId,
       'childId': childId,
       'familyId': familyId,
       'status': 'active',
       'startDate': Timestamp.fromDate(startDate),
-      'endDate': Timestamp.fromDate(endDate),
       'evaluationFrequency': evaluationFrequency,
       'pointsEarned': 0,
       'evaluations': [],
       'createdAt': Timestamp.now(),
     };
+
+    // Añadir endDate solo si no es nulo
+    if (endDate != null) {
+      assignedChallengeData['endDate'] = Timestamp.fromDate(endDate);
+    }
 
     // Crear documento en Firestore
     final docRef = await _firestore

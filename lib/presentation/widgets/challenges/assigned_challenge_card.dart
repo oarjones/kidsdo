@@ -213,15 +213,16 @@ class AssignedChallengeCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: AppDimensions.xs),
-                      Text(
-                        _formatDate(assignedChallenge.endDate),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: _isOverdue(assignedChallenge.endDate)
-                              ? Colors.red
-                              : Colors.grey.shade600,
+                      if (assignedChallenge.endDate != null)
+                        Text(
+                          _formatDate(assignedChallenge.endDate!),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: _isOverdue(assignedChallenge.endDate!)
+                                ? Colors.red
+                                : Colors.grey.shade600,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ],
@@ -294,19 +295,21 @@ class AssignedChallengeCard extends StatelessWidget {
   }
 
   // Formatear fecha para mostrar
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime? date) {
+    final actualDate = date ?? DateTime.now();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
     final tomorrow = today.add(const Duration(days: 1));
-    final dateOnly = DateTime(date.year, date.month, date.day);
+    final dateOnly =
+        DateTime(actualDate.year, actualDate.month, actualDate.day);
 
     if (dateOnly == today) {
-      return '${TrKeys.today.tr} (${DateFormat('MMM d').format(date)})';
+      return '${TrKeys.today.tr} (${DateFormat('MMM d').format(actualDate)})';
     } else if (dateOnly == yesterday) {
-      return '${TrKeys.yesterday.tr} (${DateFormat('MMM d').format(date)})';
+      return '${TrKeys.yesterday.tr} (${DateFormat('MMM d').format(actualDate)})';
     } else if (dateOnly == tomorrow) {
-      return '${TrKeys.tomorrow.tr} (${DateFormat('MMM d').format(date)})';
+      return '${TrKeys.tomorrow.tr} (${DateFormat('MMM d').format(actualDate)})';
     } else if (dateOnly.isAfter(today)) {
       final difference = dateOnly.difference(today).inDays;
       return '$difference ${difference == 1 ? TrKeys.days.tr : TrKeys.daysLeft.tr}';

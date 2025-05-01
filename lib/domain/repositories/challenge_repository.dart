@@ -30,7 +30,7 @@ abstract class IChallengeRepository {
     required String childId,
     required String familyId,
     required DateTime startDate,
-    required DateTime endDate,
+    DateTime? endDate, // Ahora es opcional
     required String evaluationFrequency,
   });
 

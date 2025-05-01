@@ -10,7 +10,7 @@ class AssignedChallengeModel extends AssignedChallenge {
     required super.familyId,
     required super.status,
     required super.startDate,
-    required super.endDate,
+    super.endDate, // Ya no es required
     required super.evaluationFrequency,
     super.pointsEarned = 0,
     super.evaluations = const [],
@@ -42,7 +42,10 @@ class AssignedChallengeModel extends AssignedChallenge {
       familyId: data['familyId'] ?? '',
       status: _mapStringToStatus(data['status'] ?? 'pending'),
       startDate: (data['startDate'] as Timestamp).toDate(),
-      endDate: (data['endDate'] as Timestamp).toDate(),
+      // La fecha de fin ahora es opcional
+      endDate: data['endDate'] != null
+          ? (data['endDate'] as Timestamp).toDate()
+          : null,
       evaluationFrequency: data['evaluationFrequency'] ?? 'daily',
       pointsEarned: data['pointsEarned'] ?? 0,
       evaluations: evaluations,
@@ -62,18 +65,24 @@ class AssignedChallengeModel extends AssignedChallenge {
       };
     }).toList();
 
-    return {
+    final Map<String, dynamic> data = {
       'challengeId': challengeId,
       'childId': childId,
       'familyId': familyId,
       'status': _statusToString(status),
       'startDate': Timestamp.fromDate(startDate),
-      'endDate': Timestamp.fromDate(endDate),
       'evaluationFrequency': evaluationFrequency,
       'pointsEarned': pointsEarned,
       'evaluations': evaluationsList,
       'createdAt': Timestamp.fromDate(createdAt),
     };
+
+    // Solo añadir endDate si no es nulo
+    if (endDate != null) {
+      data['endDate'] = Timestamp.fromDate(endDate!);
+    }
+
+    return data;
   }
 
   /// Crea un AssignedChallengeModel desde AssignedChallenge

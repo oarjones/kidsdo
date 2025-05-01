@@ -656,4 +656,9 @@ final Map<String, String> enTranslations = {
   'assign_challenge_now': 'Would you like to assign this challenge now?',
   'not_now': 'Not now',
   'assign': 'Assign',
+
+  'continuous_challenge': 'Continuous challenge',
+  'never_ends': 'Never ends',
+  'challenge_singular': 'challenge',
+  'challenges_plural': 'challenges',
 };

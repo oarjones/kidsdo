@@ -634,7 +634,10 @@ class _ChildChallengesPageState extends State<ChildChallengesPage>
                         ),
                       ),
                       Text(
-                        _formatDate(assignedChallenge.endDate),
+                        // _formatDate(assignedChallenge.endDate),
+                        assignedChallenge.endDate != null
+                            ? _formatDate(assignedChallenge.endDate!)
+                            : '',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),

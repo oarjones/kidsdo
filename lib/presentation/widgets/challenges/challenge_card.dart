@@ -8,7 +8,7 @@ class ChallengeCard extends StatelessWidget {
   final Challenge challenge;
   final int adaptedPoints;
   final int childAge;
-  final bool isSelected;
+  final Rx<bool> isSelected;
   final VoidCallback onSelect;
   final VoidCallback onConvert;
   final VoidCallback onTap;
@@ -39,7 +39,7 @@ class ChallengeCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: isSelected
+        side: isSelected.value
             ? const BorderSide(color: AppColors.primary, width: 2)
             : BorderSide.none,
       ),
@@ -99,11 +99,11 @@ class ChallengeCard extends StatelessWidget {
                   ),
 
                   // Checkbox para selección
-                  Checkbox(
-                    value: isSelected,
-                    onChanged: (_) => onSelect(),
-                    activeColor: AppColors.primary,
-                  ),
+                  Obx(() => Checkbox(
+                        value: isSelected.value,
+                        onChanged: (_) => onSelect(),
+                        activeColor: AppColors.primary,
+                      )),
                 ],
               ),
 

@@ -384,7 +384,7 @@ class ChallengeController extends GetxController {
     required String childId,
     required String familyId,
     required DateTime startDate,
-    required DateTime endDate,
+    DateTime? endDate,
     required String evaluationFrequency,
   }) async {
     _logger.i("Assigning challenge to child: $challengeId -> $childId");

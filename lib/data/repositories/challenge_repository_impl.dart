@@ -104,7 +104,7 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
     required String childId,
     required String familyId,
     required DateTime startDate,
-    required DateTime endDate,
+    DateTime? endDate, // Ahora puede ser nulo
     required String evaluationFrequency,
   }) async {
     try {
@@ -114,7 +114,7 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
         childId: childId,
         familyId: familyId,
         startDate: startDate,
-        endDate: endDate,
+        endDate: endDate, // Puede ser nulo
         evaluationFrequency: evaluationFrequency,
       );
       return Right(assignedChallenge);
