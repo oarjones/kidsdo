@@ -669,8 +669,55 @@ final Map<String, String> esTranslations = {
   'not_now': 'Ahora no',
   'assign': 'Asignar',
 
-  'continuous_challenge': 'Reto continuo',
-  'never_ends': 'Sin fecha fin',
   'challenge_singular': 'reto',
   'challenges_plural': 'retos',
+
+  // Duraciones de Retos
+  'challenge_duration': 'Duración del Reto',
+  'duration_weekly': 'Semanal',
+  'duration_monthly': 'Mensual',
+  'duration_quarterly': 'Trimestral',
+  'duration_yearly': 'Anual',
+  'duration_punctual': 'Fechas Específicas',
+
+  // Explicaciones de duraciones
+  'duration_weekly_explanation':
+      'La ejecución abarca una semana (lunes a domingo)',
+  'duration_monthly_explanation':
+      'La ejecución abarca un mes (1 al último día)',
+  'duration_quarterly_explanation':
+      'La ejecución abarca un trimestre (3 meses)',
+  'duration_yearly_explanation': 'La ejecución abarca un año completo',
+  'duration_punctual_explanation':
+      'La ejecución abarca un rango de fechas personalizado',
+
+  // Retos continuos
+  'continuous_challenge': 'Reto Continuo',
+  'continuous_challenge_explanation':
+      'El reto se reiniciará automáticamente después de cada evaluación, con nuevas fechas basadas en su duración',
+  'never_ends':
+      'Este reto continuará automáticamente con nuevos períodos después de cada evaluación',
+
+  // Patrones de repetición
+  'duration_weekly_repeat': 'Se repite semanalmente',
+  'duration_monthly_repeat': 'Se repite mensualmente',
+  'duration_quarterly_repeat': 'Se repite trimestralmente',
+  'duration_yearly_repeat': 'Se repite anualmente',
+  'duration_punctual_repeat': 'No se repite',
+
+  // Estados adicionales
+  'inactive': 'Inactivo',
+
+  // Evaluación de ejecuciones
+  'current_execution': 'Período Actual',
+  'execution': 'Período',
+  'evaluating_execution': 'Evaluando Período',
+  'evaluation_period': 'Período',
+  'next_execution_info': 'Próximo Período',
+  'next_execution_explanation':
+      'Después de esta evaluación, se creará automáticamente un nuevo período basado en la duración del reto',
+
+  // Advertencias
+  'punctual_template_warning':
+      'Los retos con fechas específicas no pueden guardarse como plantillas',
 };

@@ -20,6 +20,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'tooth_brush',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'hygiene_teeth_night',
@@ -35,6 +36,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'tooth_brush',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'hygiene_bath',
@@ -50,6 +52,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'shower',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'hygiene_hands',
@@ -65,6 +68,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'soap',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'hygiene_hair',
@@ -80,6 +84,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'hair_brush',
+      duration: ChallengeDuration.weekly,
     ),
   ];
 
@@ -99,6 +104,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'book',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'school_reading',
@@ -114,6 +120,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'book_open',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'school_backpack',
@@ -129,6 +136,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'backpack',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'school_good_grade',
@@ -144,6 +152,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'star',
+      duration: ChallengeDuration.weekly,
     ),
   ];
 
@@ -163,6 +172,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'bed',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'order_toys',
@@ -178,6 +188,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'toys',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'order_room',
@@ -193,6 +204,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'room',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'order_clothes',
@@ -208,6 +220,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'tshirt',
+      duration: ChallengeDuration.weekly,
     ),
   ];
 
@@ -227,6 +240,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'clock',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'responsibility_alarm',
@@ -242,6 +256,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'alarm',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'responsibility_pet',
@@ -257,6 +272,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'pet',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'responsibility_plant',
@@ -272,6 +288,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'plant',
+      duration: ChallengeDuration.weekly,
     ),
   ];
 
@@ -291,6 +308,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'cutlery',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'help_dishes',
@@ -306,6 +324,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'dishes',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'help_trash',
@@ -321,6 +340,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'trash',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'help_groceries',
@@ -336,6 +356,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'grocery',
+      duration: ChallengeDuration.weekly,
     ),
   ];
 
@@ -355,6 +376,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'garden',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'special_recycle',
@@ -370,6 +392,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'recycle',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'special_holiday',
@@ -385,6 +408,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'party',
+      duration: ChallengeDuration.weekly,
     ),
   ];
 
@@ -404,6 +428,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'share',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'sibling_play',
@@ -419,6 +444,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'play',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'sibling_help',
@@ -434,6 +460,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'help',
+      duration: ChallengeDuration.weekly,
     ),
     ChallengeModel(
       id: 'sibling_conflict',
@@ -449,6 +476,7 @@ class PredefinedChallenges {
       createdBy: 'system',
       createdAt: DateTime.now(),
       icon: 'handshake',
+      duration: ChallengeDuration.weekly,
     ),
   ];
 

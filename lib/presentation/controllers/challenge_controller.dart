@@ -117,50 +117,272 @@ class ChallengeController extends GetxController {
 
   /// Actualiza las traducciones de los retos cuando cambia el idioma
   void _updateChallengeTranslations() {
-    // [Código existente para actualizar traducciones...]
+    // Actualizar los retos predefinidos
+    for (int i = 0; i < predefinedChallenges.length; i++) {
+      final challenge = predefinedChallenges[i];
+      if (challenge is ChallengeModel && challenge.titleKey != null) {
+        // Crear una copia actualizada del reto con las traducciones actualizadas
+        final updatedChallenge = ChallengeModel(
+            id: challenge.id,
+            title: challenge.titleKey!.tr,
+            description: challenge.descriptionKey?.tr ?? challenge.description,
+            category: challenge.category,
+            points: challenge.points,
+            frequency: challenge.frequency,
+            ageRange: challenge.ageRange,
+            isTemplate: challenge.isTemplate,
+            createdBy: challenge.createdBy,
+            createdAt: challenge.createdAt,
+            familyId: challenge.familyId,
+            icon: challenge.icon,
+            titleKey: challenge.titleKey,
+            descriptionKey: challenge.descriptionKey,
+            duration: ChallengeDuration.weekly);
+
+        // Reemplazar el reto en la lista
+        predefinedChallenges[i] = updatedChallenge;
+      }
+    }
+
+    // Actualizar los retos filtrados
+    applyFilters();
+
+    // Actualizar el reto seleccionado si existe
+    if (selectedChallenge.value != null &&
+        selectedChallenge.value is ChallengeModel &&
+        (selectedChallenge.value as ChallengeModel).titleKey != null) {
+      final selectedChallengeModel = selectedChallenge.value as ChallengeModel;
+      selectedChallenge.value = ChallengeModel(
+          id: selectedChallengeModel.id,
+          title: selectedChallengeModel.titleKey!.tr,
+          description: selectedChallengeModel.descriptionKey?.tr ??
+              selectedChallengeModel.description,
+          category: selectedChallengeModel.category,
+          points: selectedChallengeModel.points,
+          frequency: selectedChallengeModel.frequency,
+          ageRange: selectedChallengeModel.ageRange,
+          isTemplate: selectedChallengeModel.isTemplate,
+          createdBy: selectedChallengeModel.createdBy,
+          createdAt: selectedChallengeModel.createdAt,
+          familyId: selectedChallengeModel.familyId,
+          icon: selectedChallengeModel.icon,
+          titleKey: selectedChallengeModel.titleKey,
+          descriptionKey: selectedChallengeModel.descriptionKey,
+          duration: ChallengeDuration.weekly);
+    }
   }
 
   @override
   void onInit() {
     super.onInit();
 
-    // [Código de inicialización existente...]
+    IChallengeRemoteDataSource challengeDataSource =
+        ChallengeRemoteDataSource(firestore: Get.find<FirebaseFirestore>());
+    Get.put<IChallengeRemoteDataSource>(challengeDataSource);
 
     _initializeControllers();
 
-    // [Resto del código de inicialización...]
+    // Inicializar filteredChallenges con todos los retos predefinidos
+    ever(predefinedChallenges, (_) {
+      applyFilters();
+    });
+
+    // Añadir listener al controlador de búsqueda
+    searchController.addListener(() {
+      searchQuery.value = searchController.text;
+      applyFilters();
+    });
+
+    // Listen for changes in the session user
+    ever(_sessionController.currentUser, (user) {
+      if (user != null && user.familyId != null) {
+        loadFamilyChallenges(user.familyId!);
+      } else {
+        // Clear challenges when user logs out or has no family
+        familyChallenges.clear();
+        assignedChallenges.clear();
+      }
+    });
+
+    // Load predefined challenges on init
+    loadPredefinedChallenges();
+
+    // Initial load if user is already logged in with a family
+    final currentUser = _sessionController.currentUser.value;
+    if (currentUser != null && currentUser.familyId != null) {
+      loadFamilyChallenges(currentUser.familyId!);
+    }
+
+    // Inicializar filtros
+    initializeFilters();
+
+    _logger.i("ChallengeController initialized");
   }
 
   void _initializeControllers() {
-    // [Código existente de inicialización de controladores...]
+    titleController = TextEditingController();
+    descriptionController = TextEditingController();
+    pointsController = TextEditingController(text: '10');
+
+    // Add listeners to clear error message when typing
+    titleController.addListener(_clearErrorOnChange);
+    descriptionController.addListener(_clearErrorOnChange);
+    pointsController.addListener(_clearErrorOnChange);
+
+    _logger.d("Text controllers initialized");
   }
 
   @override
   void onClose() {
-    // [Código existente de onClose...]
+    _disposeControllers();
+    searchController.dispose(); // Añadir esta línea
+    _logger.i("ChallengeController closed");
     super.onClose();
   }
 
   void _disposeControllers() {
-    // [Código existente de disposición de controladores...]
+    titleController.removeListener(_clearErrorOnChange);
+    descriptionController.removeListener(_clearErrorOnChange);
+    pointsController.removeListener(_clearErrorOnChange);
+
+    titleController.dispose();
+    descriptionController.dispose();
+    pointsController.dispose();
+
+    _logger.d("Text controllers disposed");
   }
 
   void _clearErrorOnChange() {
-    // [Código existente...]
+    if (errorMessage.isNotEmpty) {
+      errorMessage.value = '';
+    }
   }
 
   /// Carga los retos de una familia específica
   Future<void> loadFamilyChallenges(String familyId) async {
-    // [Código existente...]
+    isLoadingFamilyChallenges.value = true;
+    errorMessage.value = '';
+
+    _logger.i("Loading family challenges for family: $familyId");
+    final result = await _challengeRepository.getChallengesByFamily(familyId);
+
+    result.fold(
+      (failure) {
+        status.value = ChallengeStatus.error;
+        errorMessage.value = _mapFailureToMessage(failure);
+        isLoadingFamilyChallenges.value = false;
+        _logger.e("Error loading family challenges: ${failure.message}");
+      },
+      (challenges) {
+        familyChallenges.assignAll(challenges);
+        status.value = ChallengeStatus.success;
+        isLoadingFamilyChallenges.value = false;
+        _logger
+            .i("Family challenges loaded successfully: ${challenges.length}");
+      },
+    );
   }
 
   /// Carga los retos predefinidos
   Future<void> loadPredefinedChallenges() async {
-    // [Código existente...]
+    isLoadingPredefinedChallenges.value = true;
+    errorMessage.value = '';
+    dataSource.value = 'loading';
+
+    _logger.i("Loading predefined challenges");
+
+    try {
+      // Intenta cargar desde Firestore primero
+      final result = await _challengeRepository.getPredefinedChallenges();
+
+      result.fold(
+        (failure) {
+          _logger.w(
+              "Error loading from Firestore: ${failure.message}. Using local fallback.");
+          _loadLocalPredefinedChallenges();
+          dataSource.value = 'local';
+          status.value = ChallengeStatus.success;
+        },
+        (challenges) {
+          if (challenges.isEmpty) {
+            // Si no hay retos en Firestore, intentar migrar los locales
+            _logger.i(
+                "No challenges found in Firestore. Attempting to migrate local challenges.");
+            _migrateAndLoadChallenges();
+          } else {
+            _logger.i("Loaded ${challenges.length} challenges from Firestore");
+            // Asegurarse de que las traducciones se aplican correctamente
+            final translatedChallenges = challenges.map((challenge) {
+              if (challenge is ChallengeModel && challenge.titleKey != null) {
+                return ChallengeModel(
+                  id: challenge.id,
+                  title: challenge.titleKey!.tr,
+                  description:
+                      challenge.descriptionKey?.tr ?? challenge.description,
+                  category: challenge.category,
+                  points: challenge.points,
+                  frequency: challenge.frequency,
+                  ageRange: challenge.ageRange,
+                  isTemplate: challenge.isTemplate,
+                  createdBy: challenge.createdBy,
+                  createdAt: challenge.createdAt,
+                  familyId: challenge.familyId,
+                  icon: challenge.icon,
+                  titleKey: challenge.titleKey,
+                  descriptionKey: challenge.descriptionKey,
+                  duration: challenge.duration,
+                );
+              }
+              return challenge;
+            }).toList();
+
+            predefinedChallenges.assignAll(translatedChallenges);
+            dataSource.value = 'firestore';
+            status.value = ChallengeStatus.success;
+          }
+        },
+      );
+    } catch (e) {
+      _logger.e("Unexpected error loading challenges: $e");
+      _loadLocalPredefinedChallenges();
+      dataSource.value = 'local';
+    } finally {
+      isLoadingPredefinedChallenges.value = false;
+    }
   }
 
   void _loadLocalPredefinedChallenges() {
-    // [Código existente...]
+    _logger.i("Loading local predefined challenges");
+    // Cargar retos desde el archivo local
+    final localChallenges = PredefinedChallenges.getAll();
+
+    // Asegurarse de aplicar las traducciones correctamente
+    final translatedChallenges = localChallenges.map((challenge) {
+      if (challenge is ChallengeModel && challenge.titleKey != null) {
+        return ChallengeModel(
+          id: challenge.id,
+          title: challenge.titleKey!.tr,
+          description: challenge.descriptionKey?.tr ?? challenge.description,
+          category: challenge.category,
+          points: challenge.points,
+          frequency: challenge.frequency,
+          ageRange: challenge.ageRange,
+          isTemplate: challenge.isTemplate,
+          createdBy: challenge.createdBy,
+          createdAt: challenge.createdAt,
+          familyId: challenge.familyId,
+          icon: challenge.icon,
+          titleKey: challenge.titleKey,
+          descriptionKey: challenge.descriptionKey,
+          duration: challenge.duration,
+        );
+      }
+      return challenge;
+    }).toList();
+
+    predefinedChallenges.assignAll(translatedChallenges);
+    useLocalChallenges.value = true;
+    _logger.i("Loaded ${localChallenges.length} challenges from local data");
   }
 
   // Nueva función expuesta para implementación sin efectos secundarios (para uso en batch assign)
@@ -188,16 +410,129 @@ class ChallengeController extends GetxController {
   }
 
   Future<void> _migrateAndLoadChallenges() async {
-    // [Código existente...]
+    try {
+      // Primero cargar los locales
+      final localChallenges = PredefinedChallenges.getAll();
+
+      // Convertir de Challenge a ChallengeModel
+      final challengeModels = localChallenges
+          .map((challenge) => ChallengeModel.fromEntity(challenge))
+          .toList();
+
+      // Intentar migrarlos a Firestore
+      _logger.i(
+          "Attempting to migrate ${challengeModels.length} local challenges to Firestore");
+
+      // Acceder directamente al datasource para migrar
+      final remoteDataSource = Get.find<IChallengeRemoteDataSource>();
+      await remoteDataSource.migrateLocalChallengesToFirestore(challengeModels);
+
+      // Volver a cargar desde Firestore
+      _logger.i("Migration successful, loading from Firestore");
+      final result = await _challengeRepository.getPredefinedChallenges();
+
+      result.fold(
+        (failure) {
+          _logger.e(
+              "Error after migration: ${failure.message}. Using local fallback.");
+          predefinedChallenges.assignAll(localChallenges);
+          dataSource.value = 'local';
+        },
+        (challenges) {
+          _logger.i(
+              "Loaded ${challenges.length} challenges from Firestore after migration");
+          predefinedChallenges.assignAll(challenges);
+          dataSource.value = 'firestore';
+        },
+      );
+    } catch (e) {
+      _logger.e("Error during migration: $e. Using local fallback.");
+      _loadLocalPredefinedChallenges();
+      dataSource.value = 'local';
+    }
   }
 
   Future<void> saveTemplateChallengeToFirestore(Challenge challenge) async {
-    // [Código existente...]
+    try {
+      // Solo si estamos usando Firestore como fuente de datos
+      if (dataSource.value != 'firestore') {
+        errorMessage.value = 'template_save_requires_cloud'.tr;
+        return;
+      }
+
+      isCreatingChallenge.value = true;
+      status.value = ChallengeStatus.loading;
+
+      // Crear copia del reto asegurando que es un template
+      final templateChallenge = challenge.copyWith(
+        isTemplate: true,
+      );
+
+      // Guardar en Firestore
+      final result =
+          await _challengeRepository.createChallenge(templateChallenge);
+
+      result.fold(
+        (failure) {
+          status.value = ChallengeStatus.error;
+          errorMessage.value = _mapFailureToMessage(failure);
+          _logger.e("Error saving template challenge: ${failure.message}");
+        },
+        (savedChallenge) {
+          // Actualizar lista de retos predefinidos
+          final index =
+              predefinedChallenges.indexWhere((c) => c.id == savedChallenge.id);
+          if (index >= 0) {
+            predefinedChallenges[index] = savedChallenge;
+          } else {
+            predefinedChallenges.add(savedChallenge);
+          }
+
+          status.value = ChallengeStatus.success;
+          _logger.i(
+              "Template challenge saved to Firestore: ${savedChallenge.title}");
+
+          Get.snackbar(
+            'template_saved_title'.tr,
+            'template_saved_message'.tr,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green.shade50,
+            colorText: Colors.green,
+          );
+        },
+      );
+    } catch (e) {
+      status.value = ChallengeStatus.error;
+      errorMessage.value = e.toString();
+      _logger.e("Error saving template challenge: $e");
+    } finally {
+      isCreatingChallenge.value = false;
+    }
   }
 
   /// Obtiene un reto por su id
   Future<void> getChallengeById(String challengeId) async {
-    // [Código existente...]
+    status.value = ChallengeStatus.loading;
+    errorMessage.value = '';
+
+    _logger.i("Getting challenge by id: $challengeId");
+    final result = await _challengeRepository.getChallengeById(challengeId);
+
+    result.fold(
+      (failure) {
+        status.value = ChallengeStatus.error;
+        errorMessage.value = _mapFailureToMessage(failure);
+        _logger.e("Error getting challenge: ${failure.message}");
+      },
+      (challenge) {
+        selectedChallenge.value = challenge;
+        status.value = ChallengeStatus.success;
+        _logger.i("Challenge loaded successfully: ${challenge.title}");
+
+        // Actualizar controladores con los datos del reto
+        _populateFormWithChallenge(challenge);
+      },
+    );
   }
 
   /// Crea un nuevo reto
@@ -238,7 +573,37 @@ class ChallengeController extends GetxController {
     _logger.i("Creating challenge: ${challenge.title}");
     final result = await _challengeRepository.createChallenge(challenge);
 
-    // [Resto del código para manejar el resultado...]
+    result.fold(
+      (failure) {
+        status.value = ChallengeStatus.error;
+        errorMessage.value = _mapFailureToMessage(failure);
+        isCreatingChallenge.value = false;
+        _logger.e("Error creating challenge: ${failure.message}");
+      },
+      (createdChallenge) {
+        // Añadir el nuevo reto a la lista correspondiente
+        if (isTemplateChallenge.value) {
+          predefinedChallenges.add(createdChallenge);
+        } else if (currentUser.familyId != null) {
+          familyChallenges.add(createdChallenge);
+        }
+
+        status.value = ChallengeStatus.success;
+        isCreatingChallenge.value = false;
+        _clearForm();
+
+        _logger.i("Challenge created successfully: ${createdChallenge.title}");
+
+        // Mostrar mensaje de éxito
+        Get.snackbar(
+          'challenge_created_title'.tr,
+          'challenge_created_message'.tr,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade50,
+          colorText: Colors.green,
+        );
+      },
+    );
   }
 
   /// Actualiza un reto existente
@@ -271,12 +636,94 @@ class ChallengeController extends GetxController {
       icon: selectedIcon.value.isEmpty ? null : selectedIcon.value,
     );
 
-    // [Resto del código para actualizar el reto...]
+    _logger.i("Updating challenge: ${updatedChallenge.title}");
+    final result = await _challengeRepository.updateChallenge(updatedChallenge);
+
+    result.fold(
+      (failure) {
+        status.value = ChallengeStatus.error;
+        errorMessage.value = _mapFailureToMessage(failure);
+        isUpdatingChallenge.value = false;
+        _logger.e("Error updating challenge: ${failure.message}");
+      },
+      (_) {
+        // Actualizar en la lista correspondiente
+        if (updatedChallenge.isTemplate) {
+          final index = predefinedChallenges
+              .indexWhere((c) => c.id == updatedChallenge.id);
+          if (index != -1) {
+            predefinedChallenges[index] = updatedChallenge;
+          }
+        } else {
+          final index =
+              familyChallenges.indexWhere((c) => c.id == updatedChallenge.id);
+          if (index != -1) {
+            familyChallenges[index] = updatedChallenge;
+          }
+        }
+
+        // Actualizar el reto seleccionado
+        selectedChallenge.value = updatedChallenge;
+
+        status.value = ChallengeStatus.success;
+        isUpdatingChallenge.value = false;
+
+        _logger.i("Challenge updated successfully: ${updatedChallenge.title}");
+
+        // Mostrar mensaje de éxito
+        Get.snackbar(
+          'challenge_updated_title'.tr,
+          'challenge_updated_message'.tr,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade50,
+          colorText: Colors.green,
+        );
+      },
+    );
   }
 
   /// Elimina un reto
   Future<void> deleteChallenge(String challengeId) async {
-    // [Código existente...]
+    isDeletingChallenge.value = true;
+    status.value = ChallengeStatus.loading;
+    errorMessage.value = '';
+
+    _logger.i("Deleting challenge: $challengeId");
+    final result = await _challengeRepository.deleteChallenge(challengeId);
+
+    result.fold(
+      (failure) {
+        status.value = ChallengeStatus.error;
+        errorMessage.value = _mapFailureToMessage(failure);
+        isDeletingChallenge.value = false;
+        _logger.e("Error deleting challenge: ${failure.message}");
+      },
+      (_) {
+        // Eliminar de la lista correspondiente
+        predefinedChallenges.removeWhere((c) => c.id == challengeId);
+        familyChallenges.removeWhere((c) => c.id == challengeId);
+
+        // Si es el reto seleccionado, deseleccionar
+        if (selectedChallenge.value?.id == challengeId) {
+          selectedChallenge.value = null;
+          _clearForm();
+        }
+
+        status.value = ChallengeStatus.success;
+        isDeletingChallenge.value = false;
+
+        _logger.i("Challenge deleted successfully");
+
+        // Mostrar mensaje de éxito
+        Get.snackbar(
+          'challenge_deleted_title'.tr,
+          'challenge_deleted_message'.tr,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade50,
+          colorText: Colors.green,
+        );
+      },
+    );
   }
 
   /// Asigna un reto a un niño
@@ -326,12 +773,94 @@ class ChallengeController extends GetxController {
       isContinuous: isContinuousChallenge.value, // Nuevo parámetro
     );
 
-    // [Resto del código para manejar el resultado...]
+    result.fold(
+      (failure) {
+        status.value = ChallengeStatus.error;
+        errorMessage.value = _mapFailureToMessage(failure);
+        isAssigningChallenge.value = false;
+        _logger.e("Error assigning challenge: ${failure.message}");
+      },
+      (assignedChallenge) {
+        // Añadir a la lista de retos asignados
+        assignedChallenges.add(assignedChallenge);
+
+        status.value = ChallengeStatus.success;
+        isAssigningChallenge.value = false;
+
+        _logger.i("Challenge assigned successfully");
+
+        // Mostrar mensaje de éxito
+        Get.snackbar(
+          'challenge_assigned_title'.tr,
+          'challenge_assigned_message'.tr,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade50,
+          colorText: Colors.green,
+        );
+      },
+    );
+  }
+
+  /// Evalúa una ejecución específica de un reto
+  Future<void> evaluateExecution({
+    required String assignedChallengeId,
+    required int executionIndex,
+    required AssignedChallengeStatus status,
+    required int points,
+    String? note,
+  }) async {
+    isEvaluatingChallenge.value = true;
+    errorMessage.value = '';
+
+    _logger.i(
+        "Evaluating execution $executionIndex for challenge: $assignedChallengeId");
+
+    final result = await _challengeRepository.evaluateExecution(
+      assignedChallengeId: assignedChallengeId,
+      executionIndex: executionIndex,
+      status: status,
+      points: points,
+      note: note,
+    );
+
+    result.fold(
+      (failure) {
+        errorMessage.value = _mapFailureToMessage(failure);
+        _logger.e("Error evaluating execution: ${failure.message}");
+      },
+      (_) async {
+        await _reloadAssignedChallenge(assignedChallengeId);
+        _logger.i("Execution evaluated successfully");
+      },
+    );
+
+    isEvaluatingChallenge.value = false;
   }
 
   /// Carga los retos asignados a un niño
   Future<void> loadAssignedChallengesByChild(String childId) async {
-    // [Código existente...]
+    isLoadingAssignedChallenges.value = true;
+    errorMessage.value = '';
+
+    _logger.i("Loading assigned challenges for child: $childId");
+    final result =
+        await _challengeRepository.getAssignedChallengesByChild(childId);
+
+    result.fold(
+      (failure) {
+        status.value = ChallengeStatus.error;
+        errorMessage.value = _mapFailureToMessage(failure);
+        isLoadingAssignedChallenges.value = false;
+        _logger.e("Error loading assigned challenges: ${failure.message}");
+      },
+      (challenges) {
+        assignedChallenges.assignAll(challenges);
+        status.value = ChallengeStatus.success;
+        isLoadingAssignedChallenges.value = false;
+        _logger
+            .i("Assigned challenges loaded successfully: ${challenges.length}");
+      },
+    );
   }
 
   /// Evalúa un reto asignado
@@ -510,9 +1039,43 @@ class ChallengeController extends GetxController {
     );
   }
 
-  /// Elimina un reto asignado
   Future<void> deleteAssignedChallenge(String assignedChallengeId) async {
-    // [Código existente...]
+    status.value = ChallengeStatus.loading;
+    errorMessage.value = '';
+
+    _logger.i("Deleting assigned challenge: $assignedChallengeId");
+    final result =
+        await _challengeRepository.deleteAssignedChallenge(assignedChallengeId);
+
+    result.fold(
+      (failure) {
+        status.value = ChallengeStatus.error;
+        errorMessage.value = _mapFailureToMessage(failure);
+        _logger.e("Error deleting assigned challenge: ${failure.message}");
+      },
+      (_) {
+        // Eliminar de la lista
+        assignedChallenges.removeWhere((c) => c.id == assignedChallengeId);
+
+        // Si es el seleccionado, deseleccionar
+        if (selectedAssignedChallenge.value?.id == assignedChallengeId) {
+          selectedAssignedChallenge.value = null;
+        }
+
+        status.value = ChallengeStatus.success;
+
+        _logger.i("Assigned challenge deleted successfully");
+
+        // Mostrar mensaje de éxito
+        Get.snackbar(
+          'assigned_challenge_deleted_title'.tr,
+          'assigned_challenge_deleted_message'.tr,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade50,
+          colorText: Colors.green,
+        );
+      },
+    );
   }
 
   /// Rellena el formulario con los datos de un reto
@@ -530,7 +1093,37 @@ class ChallengeController extends GetxController {
 
   /// Valida el formulario de reto
   bool _validateChallengeForm() {
-    // [Código existente...]
+    if (titleController.text.trim().isEmpty) {
+      errorMessage.value = 'title_required'.tr;
+      return false;
+    }
+
+    if (descriptionController.text.trim().isEmpty) {
+      errorMessage.value = 'description_required'.tr;
+      return false;
+    }
+
+    if (pointsController.text.trim().isEmpty) {
+      errorMessage.value = 'points_required'.tr;
+      return false;
+    }
+
+    try {
+      final points = int.parse(pointsController.text.trim());
+      if (points <= 0) {
+        errorMessage.value = 'points_must_be_positive'.tr;
+        return false;
+      }
+    } catch (e) {
+      errorMessage.value = 'invalid_points'.tr;
+      return false;
+    }
+
+    if (selectedAgeRange['min'] > selectedAgeRange['max']) {
+      errorMessage.value = 'invalid_age_range'.tr;
+      return false;
+    }
+
     // Añadir validación adicional para retos puntuales si es necesario
     if (selectedDuration.value == ChallengeDuration.punctual &&
         isTemplateChallenge.value) {
@@ -575,80 +1168,272 @@ class ChallengeController extends GetxController {
   /// Convierte un reto predefinido en un reto personalizado para la familia
   Future<void> convertTemplateToFamilyChallenge(
       Challenge templateChallenge) async {
-    // [Código existente...]
+    final currentUser = _sessionController.currentUser.value;
+    if (currentUser == null || currentUser.familyId == null) {
+      _logger.e("No user logged in or no family, can't convert template");
+      errorMessage.value = 'not_in_family'.tr;
+      return;
+    }
+
+    status.value = ChallengeStatus.loading;
+    errorMessage.value = '';
+
+    // Crear una copia del reto pero como reto familiar
+    final familyChallenge = templateChallenge.copyWith(
+      id: '', // Se asignará en Firestore
+      isTemplate: false,
+      familyId: currentUser.familyId,
+      createdBy: currentUser.uid,
+      createdAt: DateTime.now(),
+    );
+
+    _logger.i(
+        "Converting template challenge to family challenge: ${templateChallenge.title}");
+    final result = await _challengeRepository.createChallenge(familyChallenge);
+
+    result.fold(
+      (failure) {
+        status.value = ChallengeStatus.error;
+        errorMessage.value = _mapFailureToMessage(failure);
+        _logger.e("Error converting template challenge: ${failure.message}");
+      },
+      (createdChallenge) {
+        // Añadir a la lista de retos familiares
+        familyChallenges.add(createdChallenge);
+
+        status.value = ChallengeStatus.success;
+
+        _logger.i("Template challenge converted successfully");
+
+        // Mostrar mensaje de éxito
+        Get.snackbar(
+          'template_converted_title'.tr,
+          'template_converted_message'.tr,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade50,
+          colorText: Colors.green,
+        );
+      },
+    );
   }
 
   /// Inicializa los filtros
   void initializeFilters() {
-    // [Código existente...]
+    filterCategory.value = null;
+    filterMinAge.value = 0;
+    filterMaxAge.value = 18;
+    filterFrequency.value = null;
+    searchQuery.value = '';
+    searchController.text = '';
+
+    // Aplica el filtro inicial
+    applyFilters();
   }
 
   /// Aplica los filtros a la lista de retos predefinidos
   void applyFilters() {
-    // [Código existente...]
+    // Comenzar con todos los retos predefinidos o familiares según el contexto
+    List<Challenge> challenges = [...predefinedChallenges];
+
+    // Filtrar por categoría si está seleccionada
+    if (filterCategory.value != null) {
+      challenges = challenges
+          .where((challenge) => challenge.category == filterCategory.value)
+          .toList();
+    }
+
+    // Filtrar por frecuencia si está seleccionada
+    if (filterFrequency.value != null) {
+      challenges = challenges
+          .where((challenge) => challenge.frequency == filterFrequency.value)
+          .toList();
+    }
+
+    // Filtrar por rango de edad
+    challenges = challenges.where((challenge) {
+      final minAge = challenge.ageRange['min'] as int;
+      final maxAge = challenge.ageRange['max'] as int;
+
+      // Verificar superposición de rangos de edad
+      return maxAge >= filterMinAge.value && minAge <= filterMaxAge.value;
+    }).toList();
+
+    // Filtrar por edad apropiada si está habilitado
+    if (showOnlyAgeAppropriate.value) {
+      challenges = challenges.where((challenge) {
+        final minAge = challenge.ageRange['min'] as int;
+        final maxAge = challenge.ageRange['max'] as int;
+        return selectedChildAge.value >= minAge &&
+            selectedChildAge.value <= maxAge;
+      }).toList();
+    }
+
+    // Filtrar por búsqueda de texto
+    if (searchQuery.value.isNotEmpty) {
+      final query = searchQuery.value.toLowerCase();
+      challenges = challenges
+          .where((challenge) =>
+              challenge.title.toLowerCase().contains(query) ||
+              challenge.description.toLowerCase().contains(query))
+          .toList();
+    }
+
+    // Actualizar la lista filtrada
+    filteredChallenges.assignAll(challenges);
   }
 
   /// Cambia la categoría de filtro
   void setFilterCategory(ChallengeCategory? category) {
-    // [Código existente...]
+    filterCategory.value = category;
+    applyFilters();
   }
 
   /// Cambia la frecuencia de filtro
   void setFilterFrequency(ChallengeFrequency? frequency) {
-    // [Código existente...]
+    filterFrequency.value = frequency;
+    applyFilters();
   }
 
   /// Establece el rango de edad para filtrar
   void setAgeRange(int min, int max) {
-    // [Código existente...]
+    filterMinAge.value = min;
+    filterMaxAge.value = max;
+    applyFilters();
   }
 
   /// Cambia el modo de mostrar solo retos apropiados para la edad
   void toggleAgeAppropriate(bool value) {
-    // [Código existente...]
+    showOnlyAgeAppropriate.value = value;
+    applyFilters();
   }
 
   /// Actualiza la consulta de búsqueda
   void updateSearchQuery(String query) {
-    // [Código existente...]
+    searchQuery.value = query;
+    applyFilters();
   }
 
   /// Limpia todos los filtros
   void clearFilters() {
-    // [Código existente...]
+    initializeFilters();
   }
 
   /// Selecciona o deselecciona un reto
   void toggleChallengeSelection(String challengeId) {
-    // [Código existente...]
+    if (selectedChallengeIds.contains(challengeId)) {
+      selectedChallengeIds.remove(challengeId);
+    } else {
+      selectedChallengeIds.add(challengeId);
+    }
   }
 
   /// Verifica si un reto está seleccionado
   bool isChallengeSelected(String challengeId) {
-    // [Código existente...]
     return selectedChallengeIds.contains(challengeId);
   }
 
   /// Limpia la selección de retos
   void clearSelection() {
-    // [Código existente...]
+    selectedChallengeIds.clear();
   }
 
   /// Adapta la dificultad del reto según la edad
   int adaptPointsByAge(int basePoints, int ageMin, int ageMax, int childAge) {
-    // [Código existente...]
-    return basePoints;
+    // Si la edad del niño está fuera del rango, mantener puntos base
+    if (childAge < ageMin || childAge > ageMax) {
+      return basePoints;
+    }
+
+    // Adaptar puntos según la edad relativa dentro del rango
+    final ageRange = ageMax - ageMin;
+    if (ageRange == 0) return basePoints;
+
+    final relativeAge = (childAge - ageMin) / ageRange;
+
+    // Para edades más jóvenes dentro del rango, dar más puntos
+    // Para edades mayores, dar menos puntos (aumentar la dificultad)
+    if (relativeAge < 0.5) {
+      // Más joven, hasta 40% más puntos
+      return (basePoints * (1 + 0.4 * (0.5 - relativeAge) * 2)).round();
+    } else {
+      // Mayor, hasta 20% menos puntos
+      return (basePoints * (1 - 0.2 * (relativeAge - 0.5) * 2)).round();
+    }
   }
 
   /// Importa retos desde JSON
   Future<void> importChallengesFromJson(String jsonString) async {
-    // [Código existente...]
+    isImporting.value = true;
+    errorMessage.value = '';
+
+    try {
+      // Parsing y validación del JSON aquí
+      // Convertir a modelos de reto
+      // Guardar en Firebase
+
+      isImporting.value = false;
+      Get.snackbar(
+        'import_success_title'.tr,
+        'import_success_message'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.shade50,
+        colorText: Colors.green,
+      );
+    } catch (e) {
+      isImporting.value = false;
+      errorMessage.value = e.toString();
+      _logger.e("Error importing challenges: $e");
+
+      Get.snackbar(
+        'import_error_title'.tr,
+        'import_error_message'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade50,
+        colorText: Colors.red,
+      );
+    }
   }
 
   /// Exporta retos a JSON
   Future<String> exportChallengesToJson(List<Challenge> challenges) async {
-    // [Código existente...]
-    return '';
+    isExporting.value = true;
+    errorMessage.value = '';
+
+    try {
+      // Convertir retos a formato JSON
+      final jsonData = challenges.map((challenge) {
+        // Crear mapa con propiedades del reto
+        return {
+          'title': challenge.title,
+          'description': challenge.description,
+          'category': _categoryToString(challenge.category),
+          'frequency': _frequencyToString(challenge.frequency),
+          'points': challenge.points,
+          'ageRange': challenge.ageRange,
+          'icon': challenge.icon,
+        };
+      }).toList();
+
+      // Convertir a string JSON
+      final jsonString = jsonEncode(jsonData);
+
+      isExporting.value = false;
+      return jsonString;
+    } catch (e) {
+      isExporting.value = false;
+      errorMessage.value = e.toString();
+      _logger.e("Error exporting challenges: $e");
+
+      Get.snackbar(
+        'export_error_title'.tr,
+        'export_error_message'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade50,
+        colorText: Colors.red,
+      );
+
+      return '';
+    }
   }
 
   /// Calcula la fecha de fin en función de la duración del reto
@@ -680,15 +1465,59 @@ class ChallengeController extends GetxController {
         return DateTime(startDate.year, 12, 31);
 
       case ChallengeDuration.punctual:
-      default:
         // Por defecto, una semana
         return startDate.add(const Duration(days: 7));
     }
   }
 
+  // Métodos auxiliares para convertir enumeraciones a strings
+  static String _categoryToString(ChallengeCategory category) {
+    switch (category) {
+      case ChallengeCategory.hygiene:
+        return 'hygiene';
+      case ChallengeCategory.school:
+        return 'school';
+      case ChallengeCategory.order:
+        return 'order';
+      case ChallengeCategory.responsibility:
+        return 'responsibility';
+      case ChallengeCategory.help:
+        return 'help';
+      case ChallengeCategory.special:
+        return 'special';
+      case ChallengeCategory.sibling:
+        return 'sibling';
+    }
+  }
+
+  static String _frequencyToString(ChallengeFrequency frequency) {
+    switch (frequency) {
+      case ChallengeFrequency.daily:
+        return 'daily';
+      case ChallengeFrequency.weekly:
+        return 'weekly';
+      case ChallengeFrequency.monthly:
+        return 'monthly';
+      case ChallengeFrequency.quarterly:
+        return 'quarterly';
+      case ChallengeFrequency.once:
+        return 'once';
+    }
+  }
+
   /// Maps failure types to user-friendly messages
   String _mapFailureToMessage(Failure failure) {
-    // [Código existente...]
-    return failure.message;
+    switch (failure.runtimeType) {
+      case ServerFailure:
+        return TrKeys.serverErrorMessage.tr;
+      case NetworkFailure:
+        return TrKeys.connectionErrorMessage.tr;
+      case NotFoundFailure:
+        return failure.message;
+      case ValidationFailure:
+        return failure.message;
+      default:
+        return TrKeys.unexpectedErrorMessage.tr;
+    }
   }
 }

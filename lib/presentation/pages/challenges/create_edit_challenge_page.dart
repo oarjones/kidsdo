@@ -136,7 +136,7 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                             )),
                         const SizedBox(height: AppDimensions.md),
 
-                        // Frecuencia (ahora debajo de categoría)
+                        // Frecuencia
                         Text(
                           TrKeys.frequency.tr,
                           style: const TextStyle(
@@ -162,6 +162,68 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                                 border: OutlineInputBorder(),
                                 filled: true,
                                 fillColor: Color(0xFFF5F5F5),
+                              ),
+                            )),
+                        const SizedBox(height: AppDimensions.md),
+
+                        // NUEVA SECCIÓN: Duración
+                        Text(
+                          TrKeys.challengeDuration.tr,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: AppDimensions.fontMd,
+                          ),
+                        ),
+                        const SizedBox(height: AppDimensions.sm),
+                        Obx(() => DropdownButtonFormField<ChallengeDuration>(
+                              value: controller.selectedDuration.value,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  controller.selectedDuration.value = value;
+                                }
+                              },
+                              items: ChallengeDuration.values.map((duration) {
+                                return DropdownMenuItem<ChallengeDuration>(
+                                  value: duration,
+                                  child: Text(_getDurationName(duration)),
+                                );
+                              }).toList(),
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                filled: true,
+                                fillColor: Color(0xFFF5F5F5),
+                              ),
+                            )),
+                        const SizedBox(height: AppDimensions.md),
+
+                        // Explicación de duración (ayuda contextual)
+                        Obx(() => Container(
+                              padding: const EdgeInsets.all(AppDimensions.sm),
+                              decoration: BoxDecoration(
+                                color: AppColors.infoLight,
+                                borderRadius: BorderRadius.circular(
+                                    AppDimensions.borderRadiusSm),
+                                border: Border.all(color: AppColors.info),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.info_outline,
+                                    color: AppColors.info,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      _getDurationExplanation(
+                                          controller.selectedDuration.value),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.info,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             )),
                         const SizedBox(height: AppDimensions.lg),
@@ -262,6 +324,20 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                               value: controller.isTemplateChallenge.value,
                               onChanged: (value) {
                                 controller.isTemplateChallenge.value = value;
+                                // Los retos puntuales no pueden ser plantillas
+                                if (value &&
+                                    controller.selectedDuration.value ==
+                                        ChallengeDuration.punctual) {
+                                  Get.snackbar(
+                                    TrKeys.warning.tr,
+                                    TrKeys.punctualTemplateWarning.tr,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    backgroundColor:
+                                        Colors.amber.withValues(alpha: 0.1),
+                                    colorText: Colors.amber.shade900,
+                                  );
+                                  controller.isTemplateChallenge.value = false;
+                                }
                               },
                               activeColor: AppColors.primary,
                               contentPadding: EdgeInsets.zero,
@@ -452,6 +528,38 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
         return TrKeys.frequencyQuarterly.tr;
       case ChallengeFrequency.once:
         return TrKeys.frequencyOnce.tr;
+    }
+  }
+
+  // Nueva función para obtener el nombre de duración
+  String _getDurationName(ChallengeDuration duration) {
+    switch (duration) {
+      case ChallengeDuration.weekly:
+        return TrKeys.durationWeekly.tr;
+      case ChallengeDuration.monthly:
+        return TrKeys.durationMonthly.tr;
+      case ChallengeDuration.quarterly:
+        return TrKeys.durationQuarterly.tr;
+      case ChallengeDuration.yearly:
+        return TrKeys.durationYearly.tr;
+      case ChallengeDuration.punctual:
+        return TrKeys.durationPunctual.tr;
+    }
+  }
+
+  // Nueva función para obtener explicación de cada duración
+  String _getDurationExplanation(ChallengeDuration duration) {
+    switch (duration) {
+      case ChallengeDuration.weekly:
+        return TrKeys.durationWeeklyExplanation.tr;
+      case ChallengeDuration.monthly:
+        return TrKeys.durationMonthlyExplanation.tr;
+      case ChallengeDuration.quarterly:
+        return TrKeys.durationQuarterlyExplanation.tr;
+      case ChallengeDuration.yearly:
+        return TrKeys.durationYearlyExplanation.tr;
+      case ChallengeDuration.punctual:
+        return TrKeys.durationPunctualExplanation.tr;
     }
   }
 }

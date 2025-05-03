@@ -242,7 +242,7 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
       startDate: startDate,
       endDate: endDate ?? _calculateEndDate(startDate, challenge.duration),
       status: AssignedChallengeStatus.active,
-      evaluations: [],
+      evaluations: const [],
     );
 
     // Crear datos del reto asignado
@@ -421,7 +421,7 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
       startDate: startDate,
       endDate: endDate,
       status: AssignedChallengeStatus.active,
-      evaluations: [],
+      evaluations: const [],
     );
 
     // Añadir la nueva ejecución a la lista
@@ -528,9 +528,8 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
         return DateTime(startDate.year, 12, 31);
 
       case ChallengeDuration.punctual:
-      default:
-        // Por defecto, una semana
-        return startDate.add(const Duration(days: 7));
+        // Si es puntual, la fecha de fin es la misma que la de inicio
+        return startDate;
     }
   }
 }

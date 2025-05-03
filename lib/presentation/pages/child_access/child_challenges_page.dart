@@ -849,6 +849,19 @@ class _ChildChallengesPageState extends State<ChildChallengesPage>
             size: size,
           ),
         );
+      case AssignedChallengeStatus.inactive:
+        return Container(
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 98, 102, 98).withValues(alpha: 50),
+            shape: BoxShape.circle,
+          ),
+          padding: const EdgeInsets.all(4),
+          child: Icon(
+            Icons.pending,
+            color: const Color.fromARGB(255, 98, 102, 98).withValues(alpha: 50),
+            size: size,
+          ),
+        );
       // default:
       //   return Container(
       //     decoration: BoxDecoration(

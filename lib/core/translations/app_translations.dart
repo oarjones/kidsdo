@@ -563,4 +563,46 @@ class TrKeys {
   static const neverEnds = 'never_ends';
   static const challengeSingular = 'challenge_singular';
   static const challengesPlural = 'challenges_plural';
+
+  // Claves para duraciones de retos
+  static const challengeDuration = 'challenge_duration';
+  static const durationWeekly = 'duration_weekly';
+  static const durationMonthly = 'duration_monthly';
+  static const durationQuarterly = 'duration_quarterly';
+  static const durationYearly = 'duration_yearly';
+  static const durationPunctual = 'duration_punctual';
+
+  // Explicaciones de duraciones
+  static const durationWeeklyExplanation = 'duration_weekly_explanation';
+  static const durationMonthlyExplanation = 'duration_monthly_explanation';
+  static const durationQuarterlyExplanation = 'duration_quarterly_explanation';
+  static const durationYearlyExplanation = 'duration_yearly_explanation';
+  static const durationPunctualExplanation = 'duration_punctual_explanation';
+
+  // Textos para retos continuos
+  //static const continuousChallenge = 'continuous_challenge';
+  static const continuousChallengeExplanation =
+      'continuous_challenge_explanation';
+  //static const neverEnds = 'never_ends';
+
+  // Textos de repetición
+  static const durationWeeklyRepeat = 'duration_weekly_repeat';
+  static const durationMonthlyRepeat = 'duration_monthly_repeat';
+  static const durationQuarterlyRepeat = 'duration_quarterly_repeat';
+  static const durationYearlyRepeat = 'duration_yearly_repeat';
+  static const durationPunctualRepeat = 'duration_punctual_repeat';
+
+  // Estados adicionales
+  static const inactive = 'inactive';
+
+  // Evaluación de ejecuciones
+  static const currentExecution = 'current_execution';
+  static const execution = 'execution';
+  static const evaluatingExecution = 'evaluating_execution';
+  static const evaluationPeriod = 'evaluation_period';
+  static const nextExecutionInfo = 'next_execution_info';
+  static const nextExecutionExplanation = 'next_execution_explanation';
+
+  // Advertencias
+  static const punctualTemplateWarning = 'punctual_template_warning';
 }

@@ -657,8 +657,51 @@ final Map<String, String> enTranslations = {
   'not_now': 'Not now',
   'assign': 'Assign',
 
-  'continuous_challenge': 'Continuous challenge',
-  'never_ends': 'Never ends',
   'challenge_singular': 'challenge',
   'challenges_plural': 'challenges',
+
+  // Challenge Durations
+  'challenge_duration': 'Challenge Duration',
+  'duration_weekly': 'Weekly',
+  'duration_monthly': 'Monthly',
+  'duration_quarterly': 'Quarterly',
+  'duration_yearly': 'Yearly',
+  'duration_punctual': 'Specific Date Range',
+
+  // Duration explanations
+  'duration_weekly_explanation': 'Execution spans a week (Monday to Sunday)',
+  'duration_monthly_explanation': 'Execution spans a month (1st to last day)',
+  'duration_quarterly_explanation': 'Execution spans a quarter (3 months)',
+  'duration_yearly_explanation': 'Execution spans a full year',
+  'duration_punctual_explanation': 'Execution spans a custom date range',
+
+  // Continuous challenges
+  'continuous_challenge': 'Continuous Challenge',
+  'continuous_challenge_explanation':
+      'The challenge will automatically restart after each evaluation, with new dates based on its duration',
+  'never_ends':
+      'This challenge will automatically continue with new periods after each evaluation',
+
+  // Duration repeat patterns
+  'duration_weekly_repeat': 'Repeats weekly',
+  'duration_monthly_repeat': 'Repeats monthly',
+  'duration_quarterly_repeat': 'Repeats quarterly',
+  'duration_yearly_repeat': 'Repeats yearly',
+  'duration_punctual_repeat': 'Does not repeat',
+
+  // Additional status
+  'inactive': 'Inactive',
+
+  // Execution evaluation
+  'current_execution': 'Current Period',
+  'execution': 'Period',
+  'evaluating_execution': 'Evaluating Period',
+  'evaluation_period': 'Period',
+  'next_execution_info': 'Next Period',
+  'next_execution_explanation':
+      'After this evaluation, a new period will be created automatically based on the challenge duration',
+
+  // Warnings
+  'punctual_template_warning':
+      'Custom date range challenges cannot be saved as templates',
 };

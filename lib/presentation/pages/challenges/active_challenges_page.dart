@@ -1077,6 +1077,8 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
         return TrKeys.failed.tr;
       case AssignedChallengeStatus.pending:
         return TrKeys.pending.tr;
+      case AssignedChallengeStatus.inactive:
+        return TrKeys.inactive.tr;
     }
   }
 
@@ -1090,6 +1092,8 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
         return Colors.red;
       case AssignedChallengeStatus.pending:
         return Colors.orange;
+      case AssignedChallengeStatus.inactive:
+        return const Color.fromARGB(255, 121, 119, 117);
     }
   }
 
@@ -1103,6 +1107,8 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
         return Icons.cancel;
       case AssignedChallengeStatus.pending:
         return Icons.pending;
+      case AssignedChallengeStatus.inactive:
+        return Icons.cancel_outlined;
     }
   }
 

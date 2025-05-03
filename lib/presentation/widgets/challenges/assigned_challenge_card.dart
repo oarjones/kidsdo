@@ -6,6 +6,7 @@ import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
 import 'package:kidsdo/domain/entities/challenge.dart';
+import 'package:kidsdo/domain/entities/challenge_execution.dart';
 import 'package:kidsdo/domain/entities/family_child.dart';
 import 'package:kidsdo/presentation/widgets/common/cached_avatar.dart';
 
@@ -27,6 +28,15 @@ class AssignedChallengeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener la ejecución actual si existe
+    final currentExecution = assignedChallenge.currentExecution;
+
+    // Determinar fechas relevantes (de la ejecución actual o del reto completo)
+    final DateTime startDate =
+        currentExecution?.startDate ?? assignedChallenge.startDate;
+    final DateTime? endDate =
+        currentExecution?.endDate ?? assignedChallenge.endDate;
+
     return Card(
       margin: const EdgeInsets.only(bottom: AppDimensions.md),
       elevation: 2,
@@ -73,6 +83,40 @@ class AssignedChallengeCard extends StatelessWidget {
                       color: _getStatusColor(assignedChallenge.status),
                     ),
                   ),
+
+                  // Indicador de reto continuo si aplica
+                  if (assignedChallenge.isContinuous) ...[
+                    const SizedBox(width: AppDimensions.sm),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.indigo.withValues(alpha: 50),
+                        borderRadius:
+                            BorderRadius.circular(AppDimensions.borderRadiusSm),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.repeat,
+                            color: Colors.indigo,
+                            size: 12,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            TrKeys.continuousChallenge.tr,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.indigo,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
 
                   const Spacer(),
 
@@ -213,12 +257,14 @@ class AssignedChallengeCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: AppDimensions.xs),
-                      if (assignedChallenge.endDate != null)
+
+                      // Si no es fecha nula, mostrar fecha de vencimiento
+                      if (endDate != null)
                         Text(
-                          _formatDate(assignedChallenge.endDate!),
+                          _formatDate(endDate),
                           style: TextStyle(
                             fontSize: 12,
-                            color: _isOverdue(assignedChallenge.endDate!)
+                            color: _isOverdue(endDate)
                                 ? Colors.red
                                 : Colors.grey.shade600,
                           ),
@@ -228,61 +274,145 @@ class AssignedChallengeCard extends StatelessWidget {
                 ],
               ),
 
+              // Si hay una ejecución actual, mostrar información
+              if (currentExecution != null &&
+                  assignedChallenge.isContinuous) ...[
+                const SizedBox(height: AppDimensions.sm),
+                Container(
+                  padding: const EdgeInsets.all(AppDimensions.sm),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 20),
+                    borderRadius:
+                        BorderRadius.circular(AppDimensions.borderRadiusSm),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.event,
+                        size: 16,
+                        color: Colors.grey.shade700,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        "${TrKeys.currentExecution.tr}: ${_formatDateRange(currentExecution.startDate, currentExecution.endDate)}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _getStatusColor(currentExecution.status)
+                              .withValues(alpha: 50),
+                          borderRadius: BorderRadius.circular(
+                              AppDimensions.borderRadiusSm),
+                        ),
+                        child: Text(
+                          _getStatusName(currentExecution.status),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: _getStatusColor(currentExecution.status),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+
               const SizedBox(height: AppDimensions.md),
 
-              // Últimas evaluaciones o botón para evaluar
-              if (assignedChallenge.evaluations.isNotEmpty) ...[
-                Row(
-                  children: [
-                    Icon(
-                      Icons.history,
-                      size: 16,
-                      color: Colors.grey.shade600,
+              // Mostrar ejecuciones o botón para evaluar
+              Row(
+                mainAxisAlignment: (assignedChallenge.evaluations.isNotEmpty ||
+                        (currentExecution?.evaluations.isNotEmpty ?? false))
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.end,
+                children: [
+                  // Última evaluación (si existe)
+                  if (assignedChallenge.evaluations.isNotEmpty ||
+                      (currentExecution?.evaluations.isNotEmpty ?? false))
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.history,
+                          size: 16,
+                          color: Colors.grey.shade600,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          "${TrKeys.lastEvaluation.tr}: ${_getLastEvaluationDate(assignedChallenge, currentExecution)}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      "${TrKeys.lastEvaluation.tr}: ${DateFormat('MMM d').format(assignedChallenge.evaluations.last.date)}",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                    const Spacer(),
-                    // Botón para evaluar
-                    TextButton.icon(
-                      onPressed: onEvaluate,
-                      icon: const Icon(Icons.rate_review, size: 16),
-                      label: Text(TrKeys.evaluateChallenge.tr),
-                      style: TextButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                      ),
-                    ),
-                  ],
-                ),
-              ] else
-                // Botón para evaluar
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: onEvaluate,
-                      icon: const Icon(Icons.rate_review, size: 16),
-                      label: Text(TrKeys.evaluateChallenge.tr),
-                      style: ElevatedButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                      ),
-                    ),
-                  ],
-                ),
+
+                  // Botón para evaluar
+                  assignedChallenge.status ==
+                              AssignedChallengeStatus.completed ||
+                          assignedChallenge.status ==
+                              AssignedChallengeStatus.failed ||
+                          (currentExecution != null &&
+                              (currentExecution.status ==
+                                      AssignedChallengeStatus.completed ||
+                                  currentExecution.status ==
+                                      AssignedChallengeStatus.failed))
+                      ? TextButton.icon(
+                          onPressed: onEvaluate,
+                          icon: const Icon(Icons.rate_review, size: 16),
+                          label: Text(TrKeys.evaluateChallenge.tr),
+                          style: TextButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                          ),
+                        )
+                      : ElevatedButton.icon(
+                          onPressed: onEvaluate,
+                          icon: const Icon(Icons.rate_review, size: 16),
+                          label: Text(TrKeys.evaluateChallenge.tr),
+                          style: ElevatedButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                          ),
+                        ),
+                ],
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  // Obtener fecha de la última evaluación (de la ejecución actual o del reto completo)
+  String _getLastEvaluationDate(
+      AssignedChallenge challenge, ChallengeExecution? execution) {
+    // Primero buscar en la ejecución actual
+    if (execution != null && execution.evaluations.isNotEmpty) {
+      return DateFormat('MMM d').format(execution.evaluations.last.date);
+    }
+
+    // Si no hay evaluaciones en la ejecución actual, buscar en el reto completo
+    if (challenge.evaluations.isNotEmpty) {
+      return DateFormat('MMM d').format(challenge.evaluations.last.date);
+    }
+
+    return TrKeys.noEvaluationsYet.tr;
+  }
+
+  // Formatear rango de fechas
+  String _formatDateRange(DateTime start, DateTime end) {
+    return "${DateFormat('MMM d').format(start)} - ${DateFormat('MMM d').format(end)}";
   }
 
   // Determinar si una fecha de finalización está vencida
@@ -330,6 +460,8 @@ class AssignedChallengeCard extends StatelessWidget {
         return TrKeys.failed.tr;
       case AssignedChallengeStatus.pending:
         return TrKeys.pending.tr;
+      case AssignedChallengeStatus.inactive:
+        return TrKeys.inactive.tr;
     }
   }
 
@@ -344,6 +476,8 @@ class AssignedChallengeCard extends StatelessWidget {
         return Colors.red;
       case AssignedChallengeStatus.pending:
         return Colors.orange;
+      case AssignedChallengeStatus.inactive:
+        return Colors.grey;
     }
   }
 
@@ -358,6 +492,8 @@ class AssignedChallengeCard extends StatelessWidget {
         return Icons.cancel;
       case AssignedChallengeStatus.pending:
         return Icons.pending;
+      case AssignedChallengeStatus.inactive:
+        return Icons.disabled_by_default;
     }
   }
 
