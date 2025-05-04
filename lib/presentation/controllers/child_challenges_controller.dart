@@ -63,6 +63,9 @@ class ChildChallengesController extends GetxController {
   final RxString selectedFilter =
       RxString('all'); // all, pending, completed, daily, weekly
 
+  final RxList<AssignedChallenge> continuousChallenges =
+      RxList<AssignedChallenge>([]);
+
   ChildChallengesController({
     required IChallengeRepository challengeRepository,
     required ChildAccessController childAccessController,
@@ -173,7 +176,7 @@ class ChildChallengesController extends GetxController {
   void _filterChallenges() {
     final List<AssignedChallenge> filtered = [...assignedChallenges];
 
-    // Filtrar por búsqueda
+    // Filter by search
     if (searchQuery.value.isNotEmpty) {
       filtered.removeWhere((assignedChallenge) {
         final challenge = _findChallengeById(assignedChallenge.challengeId);
@@ -187,7 +190,7 @@ class ChildChallengesController extends GetxController {
       });
     }
 
-    // Aplicar filtro seleccionado
+    // Apply selected filter
     switch (selectedFilter.value) {
       case 'pending':
         pendingChallenges.assignAll(filtered.where((c) =>
@@ -203,7 +206,7 @@ class ChildChallengesController extends GetxController {
       case 'daily':
         final challengeFrequencies = <String, ChallengeFrequency>{};
 
-        // Obtener frecuencia de cada reto
+        // Get frequency of each challenge
         for (final assignedChallenge in filtered) {
           final challenge = _findChallengeById(assignedChallenge.challengeId);
           if (challenge != null) {
@@ -212,7 +215,7 @@ class ChildChallengesController extends GetxController {
           }
         }
 
-        // Filtrar por retos diarios
+        // Filter by daily challenges
         dailyChallenges.assignAll(filtered.where((c) =>
             challengeFrequencies[c.challengeId] == ChallengeFrequency.daily));
         break;
@@ -220,7 +223,7 @@ class ChildChallengesController extends GetxController {
       case 'weekly':
         final challengeFrequencies = <String, ChallengeFrequency>{};
 
-        // Obtener frecuencia de cada reto
+        // Get frequency of each challenge
         for (final assignedChallenge in filtered) {
           final challenge = _findChallengeById(assignedChallenge.challengeId);
           if (challenge != null) {
@@ -229,14 +232,19 @@ class ChildChallengesController extends GetxController {
           }
         }
 
-        // Filtrar por retos semanales
+        // Filter by weekly challenges
         weeklyChallenges.assignAll(filtered.where((c) =>
             challengeFrequencies[c.challengeId] == ChallengeFrequency.weekly));
         break;
 
+      case 'continuous':
+        // Filter only continuous challenges
+        continuousChallenges.assignAll(filtered.where((c) => c.isContinuous));
+        break;
+
       case 'all':
       default:
-        // Actualizar todas las listas filtradas
+        // Update all filtered lists
         pendingChallenges.assignAll(filtered.where((c) =>
             c.status == AssignedChallengeStatus.active ||
             c.status == AssignedChallengeStatus.pending));
@@ -244,7 +252,7 @@ class ChildChallengesController extends GetxController {
         completedChallenges.assignAll(filtered
             .where((c) => c.status == AssignedChallengeStatus.completed));
 
-        // Obtener frecuencia de cada reto
+        // Get frequency of each challenge
         final challengeFrequencies = <String, ChallengeFrequency>{};
         for (final assignedChallenge in filtered) {
           final challenge = _findChallengeById(assignedChallenge.challengeId);
@@ -259,6 +267,9 @@ class ChildChallengesController extends GetxController {
 
         weeklyChallenges.assignAll(filtered.where((c) =>
             challengeFrequencies[c.challengeId] == ChallengeFrequency.weekly));
+
+        // Filter continuous challenges for the new tab
+        continuousChallenges.assignAll(filtered.where((c) => c.isContinuous));
         break;
     }
   }

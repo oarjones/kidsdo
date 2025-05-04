@@ -74,7 +74,7 @@ class ChallengeModel extends Challenge {
       'description': description,
       'category': _categoryToString(category),
       'points': points,
-      'frequency': _frequencyToString(frequency),
+      //'frequency': _frequencyToString(frequency),
       'duration': _durationToString(duration), // Nuevo campo
       'ageRange': ageRange,
       'isTemplate': isTemplate,

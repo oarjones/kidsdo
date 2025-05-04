@@ -625,4 +625,28 @@ class TrKeys {
   static const weeks = 'weeks';
   static const month = 'month';
   static const months = 'months';
+
+  // static const continuousChallenge = 'continuous_challenge';
+  // static const neverEnds = 'never_ends';
+  static const currentPeriod = 'current_period';
+  static const nextPeriodStarts = 'next_period_starts';
+  static const willRenewSoon = 'will_renew_soon';
+  static const comesBackSoon = 'comes_back_soon';
+  static const notStartedYet = 'not_started_yet';
+  static const timeExpired = 'time_expired';
+  static const lastDay = 'last_day';
+  static const oneDayLeft = 'one_day_left';
+  // static const daysLeft = 'days_left';
+  static const finished = 'finished';
+  static const hurryUp = 'hurry_up';
+  static const fewDaysLeft = 'few_days_left';
+  static const plentyOfTime = 'plenty_of_time';
+  static const timeIsUp = 'time_is_up';
+  static const littleTimeLeft = 'little_time_left';
+  // static const continuousChallengeInfo = 'continuous_challenge_info';
+  static const continuousChallengeInfoSimple =
+      'continuous_challenge_info_simple';
+  // static const day = 'day';
+  static const noContinuousChallengesYet = 'no_continuous_challenges_yet';
+  static const manyDaysLeft = 'many_days_left';
 }

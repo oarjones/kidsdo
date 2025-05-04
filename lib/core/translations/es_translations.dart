@@ -695,8 +695,8 @@ final Map<String, String> esTranslations = {
   'continuous_challenge': 'Reto Continuo',
   'continuous_challenge_explanation':
       'El reto se reiniciará automáticamente después de cada evaluación, con nuevas fechas basadas en su duración',
-  'never_ends':
-      'Este reto continuará automáticamente con nuevos períodos después de cada evaluación',
+  // 'never_ends':
+  //     'Este reto continuará automáticamente con nuevos períodos después de cada evaluación',
 
   // Patrones de repetición
   'duration_weekly_repeat': 'Se repite semanalmente',
@@ -732,11 +732,36 @@ final Map<String, String> esTranslations = {
   'points_this_execution': 'Puntos esta Ejecución',
   'assign_points': 'Asignar Puntos',
   'original': 'Original',
-  'continuous_challenge_info': 'Reto Continuo',
+  // 'continuous_challenge_info': 'Reto Continuo',
   'next_execution_starts_at': 'La siguiente ejecución comenzará el',
   'day': 'día',
   'week': 'semana',
   'weeks': 'semanas',
   'month': 'mes',
   'months': 'meses',
+
+  // Nuevas claves para retos continuos y periodos de ejecución
+// "continuous_challenge": "Reto Continuo",
+  "never_ends": "Nunca Termina",
+  "current_period": "Periodo Actual",
+  "next_period_starts": "Próximo Periodo Comienza",
+  "will_renew_soon": "Se renovará pronto",
+  "comes_back_soon": "¡Volverá pronto!",
+  "not_started_yet": "Aún no comenzado",
+  "time_expired": "Tiempo terminado",
+  "last_day": "Último día",
+  "one_day_left": "1 día restante",
+  // "days_left": "días restantes",
+  "finished": "Terminado",
+  "hurry_up": "¡Date prisa!",
+  "few_days_left": "Pocos días restantes",
+  "plenty_of_time": "Tiempo suficiente",
+  "time_is_up": "¡Se acabó el tiempo!",
+  "little_time_left": "Queda poco tiempo",
+  "continuous_challenge_info":
+      "Este reto se repite automáticamente. ¡Cuando lo completes, empezará un nuevo periodo!",
+  "continuous_challenge_info_simple": "¡Este reto volverá!",
+  // "day": "Día",
+  "no_continuous_challenges_yet": "Aún no tienes retos continuos",
+  "many_days_left": "Muchos días restantes",
 };

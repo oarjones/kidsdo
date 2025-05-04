@@ -1,3 +1,5 @@
+// lib/presentation/widgets/challenges/child_challenge_card.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kidsdo/core/constants/colors.dart';
@@ -5,6 +7,7 @@ import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
 import 'package:kidsdo/domain/entities/challenge.dart';
+import 'package:kidsdo/domain/entities/challenge_execution.dart';
 import 'package:kidsdo/presentation/widgets/child/age_adapted_container.dart';
 
 class ChildChallengeCard extends StatelessWidget {
@@ -14,6 +17,8 @@ class ChildChallengeCard extends StatelessWidget {
   final Map<String, dynamic> settings;
   final bool isCompleted;
   final bool isPending;
+  final bool isContinuous;
+  final ChallengeExecution? currentExecution;
   final VoidCallback onTap;
   final VoidCallback? onComplete;
 
@@ -25,6 +30,8 @@ class ChildChallengeCard extends StatelessWidget {
     required this.settings,
     this.isCompleted = false,
     this.isPending = false,
+    this.isContinuous = false,
+    this.currentExecution,
     required this.onTap,
     this.onComplete,
   }) : super(key: key);
@@ -56,9 +63,20 @@ class ChildChallengeCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Título y estado
+              // Title and status
               Row(
                 children: [
+                  // If continuous, show refresh icon
+                  if (isContinuous)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 8.0),
+                      child: Icon(
+                        Icons.refresh,
+                        size: 16,
+                        color: Colors.purple,
+                      ),
+                    ),
+
                   Expanded(
                     child: Text(
                       challenge.title,
@@ -71,13 +89,42 @@ class ChildChallengeCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  _buildStatusIcon(themeColor),
+                  _buildStatusIcon(
+                      currentExecution?.status ?? assignedChallenge.status,
+                      themeColor),
                 ],
               ),
 
+              if (isContinuous && childAge > 6)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        "${TrKeys.currentPeriod.tr}: ",
+                        style: const TextStyle(
+                          fontSize: AppDimensions.fontXs,
+                          color: Colors.purple,
+                        ),
+                      ),
+                      Text(
+                        _formatDateSimple(
+                          currentExecution?.startDate,
+                          currentExecution?.endDate,
+                        ),
+                        style: const TextStyle(
+                          fontSize: AppDimensions.fontXs,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.purple,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
               const SizedBox(height: AppDimensions.sm),
 
-              // Descripción
+              // Description
               Text(
                 challenge.description,
                 style: TextStyle(
@@ -90,11 +137,11 @@ class ChildChallengeCard extends StatelessWidget {
 
               const SizedBox(height: AppDimensions.md),
 
-              // Puntos y botón de completar
+              // Points and completion button
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Puntos
+                  // Points
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppDimensions.sm,
@@ -126,7 +173,15 @@ class ChildChallengeCard extends StatelessWidget {
                     ),
                   ),
 
-                  // Botón de completar (solo si no está completado ni pendiente)
+                  // Show days left for current execution (if applicable)
+                  if (currentExecution != null &&
+                      !isCompleted &&
+                      !isPending &&
+                      childAge > 6)
+                    _buildDaysLeftIndicator(
+                        currentExecution?.endDate, themeColor),
+
+                  // Complete button (only if not completed or pending)
                   if (!isCompleted && !isPending && onComplete != null)
                     ElevatedButton.icon(
                       onPressed: onComplete,
@@ -147,7 +202,7 @@ class ChildChallengeCard extends StatelessWidget {
                       ),
                     ),
 
-                  // Si está pendiente, mostrar indicador
+                  // If pending, show indicator
                   if (isPending)
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -180,6 +235,31 @@ class ChildChallengeCard extends StatelessWidget {
                     ),
                 ],
               ),
+
+              // For continuous challenges that are completed, show renewal info
+              if (isContinuous && isCompleted && childAge > 6)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.update,
+                        size: 14,
+                        color: Colors.purple,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          TrKeys.willRenewSoon.tr,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.purple,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
@@ -188,7 +268,7 @@ class ChildChallengeCard extends StatelessWidget {
   }
 
   Widget _buildYoungChildCard(Color themeColor) {
-    // Versión más visual para niños pequeños (3-6 años)
+    // More visual version for young children (3-6 years)
     return Card(
       elevation: AppDimensions.elevationMd,
       margin: const EdgeInsets.only(bottom: AppDimensions.lg),
@@ -203,33 +283,56 @@ class ChildChallengeCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Icono grande y colorido
-              Container(
-                width: 70,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: isCompleted
-                      ? Colors.grey.withValues(alpha: 50)
-                      : themeColor.withValues(alpha: 50),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Icon(
-                    _getChallengeIcon(challenge.category),
-                    size: 40,
-                    color: isCompleted ? Colors.grey : themeColor,
+              // Large colorful icon
+              Stack(
+                children: [
+                  Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      color: isCompleted
+                          ? Colors.grey.withValues(alpha: 50)
+                          : themeColor.withValues(alpha: 50),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Icon(
+                        _getChallengeIcon(challenge.category),
+                        size: 40,
+                        color: isCompleted ? Colors.grey : themeColor,
+                      ),
+                    ),
                   ),
-                ),
+
+                  // Continuous indicator for young kids (small refresh badge)
+                  if (isContinuous)
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.purple,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.refresh,
+                          size: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                ],
               ),
 
               const SizedBox(width: AppDimensions.lg),
 
-              // Contenido
+              // Content
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Título grande
+                    // Large title
                     Text(
                       challenge.title,
                       style: TextStyle(
@@ -243,7 +346,7 @@ class ChildChallengeCard extends StatelessWidget {
 
                     const SizedBox(height: AppDimensions.sm),
 
-                    // Puntos grandes
+                    // Large points
                     Row(
                       children: [
                         Icon(
@@ -261,9 +364,45 @@ class ChildChallengeCard extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
-                        _buildStatusIcon(themeColor, size: 32),
+                        _buildStatusIcon(
+                            currentExecution?.status ??
+                                assignedChallenge.status,
+                            themeColor,
+                            size: 32),
                       ],
                     ),
+
+                    // Show simple timing information for young kids (only if active)
+                    if (currentExecution != null && !isCompleted && !isPending)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: _buildSimpleTimingForKids(
+                            currentExecution?.endDate, themeColor),
+                      ),
+
+                    // For continuous challenges, show simple renewal info
+                    if (isContinuous && isCompleted)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.refresh,
+                              size: 20,
+                              color: Colors.purple,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              TrKeys.comesBackSoon.tr,
+                              style: const TextStyle(
+                                fontSize: AppDimensions.fontMd,
+                                color: Colors.purple,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -274,7 +413,8 @@ class ChildChallengeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusIcon(Color themeColor, {double size = 24}) {
+  Widget _buildStatusIcon(AssignedChallengeStatus status, Color themeColor,
+      {double size = 24}) {
     if (isCompleted) {
       return Icon(
         Icons.check_circle,
@@ -294,6 +434,162 @@ class ChildChallengeCard extends StatelessWidget {
         size: size,
       );
     }
+  }
+
+  // New widget for showing days left
+  Widget _buildDaysLeftIndicator(DateTime? endDate, Color themeColor) {
+    // If endDate is null (continuous challenge without end date)
+    if (endDate == null) {
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.sm,
+          vertical: 2,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.purple.withValues(alpha: 30),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadiusSm),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.refresh,
+              size: 12,
+              color: Colors.purple,
+            ),
+            const SizedBox(width: 2),
+            Text(
+              TrKeys.continuousChallenge.tr,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.purple,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Normal implementation for challenges with end date
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final end = DateTime(endDate.year, endDate.month, endDate.day);
+
+    final daysLeft = end.difference(today).inDays;
+
+    Color statusColor;
+    if (daysLeft <= 1) {
+      statusColor = Colors.red;
+    } else if (daysLeft <= 3) {
+      statusColor = Colors.orange;
+    } else {
+      statusColor = Colors.green;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.sm,
+        vertical: 2,
+      ),
+      decoration: BoxDecoration(
+        color: statusColor.withValues(alpha: 30),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusSm),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.timer,
+            size: 12,
+            color: statusColor,
+          ),
+          const SizedBox(width: 2),
+          Text(
+            daysLeft <= 0
+                ? TrKeys.lastDay.tr
+                : daysLeft == 1
+                    ? TrKeys.oneDayLeft.tr
+                    : '$daysLeft ${TrKeys.daysLeft.tr}',
+            style: TextStyle(
+              fontSize: 12,
+              color: statusColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // New widget for showing simple timing for young kids
+  Widget _buildSimpleTimingForKids(DateTime? endDate, Color themeColor) {
+    // If endDate is null (continuous challenge without end date)
+    if (endDate == null) {
+      return Row(
+        children: [
+          const Icon(
+            Icons.refresh,
+            size: 20,
+            color: Colors.purple,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            TrKeys.neverEnds.tr,
+            style: const TextStyle(
+              fontSize: AppDimensions.fontMd,
+              fontWeight: FontWeight.bold,
+              color: Colors.purple,
+            ),
+          ),
+        ],
+      );
+    }
+
+    // Normal implementation for challenges with end date
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final end = DateTime(endDate.year, endDate.month, endDate.day);
+
+    final daysLeft = end.difference(today).inDays;
+
+    // Use different emoji based on days left
+    IconData icon;
+    Color color;
+    String message;
+
+    if (daysLeft <= 1) {
+      icon = Icons.timer;
+      color = Colors.red;
+      message = TrKeys.hurryUp.tr;
+    } else if (daysLeft <= 3) {
+      icon = Icons.hourglass_bottom;
+      color = Colors.orange;
+      message = TrKeys.fewDaysLeft.tr;
+    } else {
+      icon = Icons.calendar_today;
+      color = Colors.green;
+      message = TrKeys.plentyOfTime.tr;
+    }
+
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: color,
+        ),
+        const SizedBox(width: 6),
+        Text(
+          message,
+          style: TextStyle(
+            fontSize: AppDimensions.fontMd,
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
   }
 
   IconData _getChallengeIcon(ChallengeCategory category) {
@@ -330,6 +626,31 @@ class ChildChallengeCard extends StatelessWidget {
       case 'blue':
       default:
         return AppColors.childBlue;
+    }
+  }
+
+  // Helper method to format dates in a simple way
+  String _formatDateSimple(DateTime? start, DateTime? end) {
+    if (start == null || end == null) {
+      return TrKeys.notStartedYet.tr;
+    }
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final endDay = DateTime(end.year, end.month, end.day);
+
+    final daysRemaining = endDay.difference(today).inDays;
+
+    if (daysRemaining < 0) {
+      return TrKeys.finished.tr;
+    } else if (daysRemaining == 0) {
+      return TrKeys.lastDay.tr;
+    } else if (daysRemaining == 1) {
+      return TrKeys.oneDayLeft.tr;
+    } else if (daysRemaining <= 7) {
+      return '$daysRemaining ${TrKeys.daysLeft.tr}';
+    } else {
+      return TrKeys.manyDaysLeft.tr;
     }
   }
 }

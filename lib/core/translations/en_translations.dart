@@ -679,8 +679,8 @@ final Map<String, String> enTranslations = {
   'continuous_challenge': 'Continuous Challenge',
   'continuous_challenge_explanation':
       'The challenge will automatically restart after each evaluation, with new dates based on its duration',
-  'never_ends':
-      'This challenge will automatically continue with new periods after each evaluation',
+  // 'never_ends':
+  //     'This challenge will automatically continue with new periods after each evaluation',
 
   // Duration repeat patterns
   'duration_weekly_repeat': 'Repeats weekly',
@@ -716,11 +716,37 @@ final Map<String, String> enTranslations = {
   'points_this_execution': 'Points this Execution',
   'assign_points': 'Assign Points',
   'original': 'Original',
-  'continuous_challenge_info': 'Continuous Challenge',
+  // 'continuous_challenge_info': 'Continuous Challenge',
   'next_execution_starts_at': 'Next execution will start on',
   'day': 'day',
   'week': 'week',
   'weeks': 'weeks',
   'month': 'month',
   'months': 'months',
+
+  // New keys for continuous challenges and execution periods
+// "continuous_challenge": "Continuous Challenge",
+  "never_ends": "Never Ends",
+  "current_period": "Current Period",
+  "next_period_starts": "Next Period Starts",
+  "will_renew_soon": "Will renew soon",
+  "comes_back_soon": "Comes back soon!",
+  "not_started_yet": "Not started yet",
+  "time_expired": "Time expired",
+  "last_day": "Last day",
+  "one_day_left": "1 day left",
+  // "days_left": "days left",
+  "finished": "Finished",
+  "hurry_up": "Hurry up!",
+  "few_days_left": "Few days left",
+  "plenty_of_time": "Plenty of time",
+  "time_is_up": "Time is up!",
+  "little_time_left": "Little time left",
+  "continuous_challenge_info":
+      "This challenge repeats automatically. When completed, a new period will start!",
+  "continuous_challenge_info_simple": "This challenge will come back!",
+  // "day": "Day",
+  "no_continuous_challenges_yet":
+      "You don't have any continuous challenges yet",
+  "many_days_left": "Many days left",
 };
