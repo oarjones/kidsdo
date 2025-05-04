@@ -1,5 +1,7 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kidsdo/core/errors/failures.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
 import 'package:kidsdo/domain/entities/challenge.dart';
@@ -274,14 +276,17 @@ class ChildChallengesController extends GetxController {
   }
 
   /// Marca un reto como completado por el niño
+  // lib/presentation/controllers/child_challenges_controller.dart
+
+  /// Marca un reto como completado por el niño
   Future<void> markChallengeAsCompleted(String assignedChallengeId) async {
     isUpdating.value = true;
 
     try {
-      final challenge = assignedChallenges
+      final assignedChallenge = assignedChallenges
           .firstWhereOrNull((c) => c.id == assignedChallengeId);
 
-      if (challenge == null) {
+      if (assignedChallenge == null) {
         _logger.w(
             "Reto no encontrado para marcar como completado: $assignedChallengeId");
         isUpdating.value = false;
@@ -289,21 +294,39 @@ class ChildChallengesController extends GetxController {
       }
 
       // Obtener el reto completo para los puntos
-      final challengeDetails = _findChallengeById(challenge.challengeId);
+      final challengeDetails =
+          _findChallengeById(assignedChallenge.challengeId);
       if (challengeDetails == null) {
-        _logger.w("Detalles del reto no encontrados: ${challenge.challengeId}");
+        _logger.w(
+            "Detalles del reto no encontrados: ${assignedChallenge.challengeId}");
         isUpdating.value = false;
         return;
       }
 
-      // Actualizar estado en el repositorio (esto requiere intervención del padre para confirmar)
-      // Solo marcamos como pendiente de aprobación
-      final result = await _challengeRepository.evaluateAssignedChallenge(
-        assignedChallengeId: assignedChallengeId,
-        status: AssignedChallengeStatus.pending,
-        points: 0, // Los puntos los asigna el padre al aprobar
-        note: "Marcado como completado por el niño, pendiente de aprobación",
-      );
+      // Determinar qué ejecución evaluar
+      Either<Failure, void> result = right(null);
+
+      if (assignedChallenge.executions.isNotEmpty) {
+        // Si tiene ejecuciones, evaluar la ejecución actual (última)
+        final executionIndex = assignedChallenge.executions.length - 1;
+
+        result = await _challengeRepository.evaluateExecution(
+          assignedChallengeId: assignedChallengeId,
+          executionIndex: executionIndex,
+          status: AssignedChallengeStatus.pending, // Pendiente de aprobación
+          points: 0, // Los puntos los asigna el padre al aprobar
+          note: "Marcado como completado por el niño, pendiente de aprobación",
+        );
+      }
+      // else {
+      //   // Para retos antiguos sin ejecuciones, usar el método legacy
+      //   result = await _challengeRepository.evaluateAssignedChallenge(
+      //     assignedChallengeId: assignedChallengeId,
+      //     status: AssignedChallengeStatus.pending,
+      //     points: 0,
+      //     note: "Marcado como completado por el niño, pendiente de aprobación",
+      //   );
+      // }
 
       result.fold(
         (failure) {

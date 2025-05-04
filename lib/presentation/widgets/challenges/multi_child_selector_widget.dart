@@ -3,197 +3,251 @@ import 'package:get/get.dart';
 import 'package:kidsdo/core/constants/colors.dart';
 import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
-import 'package:kidsdo/presentation/controllers/child_profile_controller.dart';
+import 'package:kidsdo/domain/entities/challenge.dart';
+import 'package:kidsdo/domain/entities/family_child.dart';
 import 'package:kidsdo/presentation/widgets/common/cached_avatar.dart';
 
-class MultiChildSelectorWidget extends StatelessWidget {
-  final List<String> selectedChildIds;
-  final Function(String) onChildToggle;
-  final bool showSelectAll;
+class MultiChildSelectorWidget extends StatefulWidget {
+  final List<FamilyChild> children;
+  final Challenge? challenge;
+  final Function(List<FamilyChild>) onSelectionChanged;
+  final List<FamilyChild>? initialSelection;
 
   const MultiChildSelectorWidget({
     Key? key,
-    required this.selectedChildIds,
-    required this.onChildToggle,
-    this.showSelectAll = true,
+    required this.children,
+    required this.onSelectionChanged,
+    this.challenge,
+    this.initialSelection,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final ChildProfileController childProfileController =
-        Get.find<ChildProfileController>();
+  State<MultiChildSelectorWidget> createState() =>
+      _MultiChildSelectorWidgetState();
+}
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Título de la sección
-        Text(
-          TrKeys.assignToChild.tr,
-          style: const TextStyle(
-            fontSize: AppDimensions.fontLg,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: AppDimensions.sm),
+class _MultiChildSelectorWidgetState extends State<MultiChildSelectorWidget> {
+  late Set<String> selectedIds;
 
-        Obx(() {
-          if (childProfileController.isLoadingProfiles.value) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (childProfileController.childProfiles.isEmpty) {
-            return _buildNoChildrenMessage();
-          }
-
-          return Column(
-            children: [
-              // Selector "Seleccionar todos"
-              if (showSelectAll &&
-                  childProfileController.childProfiles.length > 1)
-                ListTile(
-                  leading: Checkbox(
-                    value: selectedChildIds.length ==
-                        childProfileController.childProfiles.length,
-                    onChanged: (_) {
-                      if (selectedChildIds.length ==
-                          childProfileController.childProfiles.length) {
-                        // Deseleccionar todos
-                        for (final child
-                            in childProfileController.childProfiles) {
-                          if (selectedChildIds.contains(child.id)) {
-                            onChildToggle(child.id);
-                          }
-                        }
-                      } else {
-                        // Seleccionar todos
-                        for (final child
-                            in childProfileController.childProfiles) {
-                          if (!selectedChildIds.contains(child.id)) {
-                            onChildToggle(child.id);
-                          }
-                        }
-                      }
-                    },
-                    activeColor: AppColors.primary,
-                  ),
-                  title: Text(
-                    selectedChildIds.length ==
-                            childProfileController.childProfiles.length
-                        ? TrKeys.clearSelection.tr
-                        : TrKeys.selectAll.tr,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-
-              // Lista de niños con checkboxes
-              Container(
-                padding: const EdgeInsets.all(AppDimensions.sm),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.withValues(alpha: 150)),
-                  borderRadius:
-                      BorderRadius.circular(AppDimensions.borderRadiusMd),
-                ),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: childProfileController.childProfiles.length,
-                  itemBuilder: (context, index) {
-                    final child = childProfileController.childProfiles[index];
-                    final isSelected = selectedChildIds.contains(child.id);
-
-                    return CheckboxListTile(
-                      value: isSelected,
-                      onChanged: (_) => onChildToggle(child.id),
-                      activeColor: AppColors.primary,
-                      title: Text(child.name),
-                      subtitle: Text('${child.age} ${TrKeys.yearsOld.tr}'),
-                      secondary: child.avatarUrl != null
-                          ? CachedAvatar(url: child.avatarUrl, radius: 20)
-                          : CircleAvatar(
-                              radius: 20,
-                              backgroundColor:
-                                  AppColors.primary.withValues(alpha: 50),
-                              child: const Icon(Icons.person,
-                                  color: AppColors.primary),
-                            ),
-                      dense: true,
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        }),
-
-        // Chips para mostrar los niños seleccionados
-        if (selectedChildIds.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: AppDimensions.md),
-            child: Obx(() => Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: selectedChildIds.map((childId) {
-                    final child = childProfileController.childProfiles
-                        .firstWhereOrNull((child) => child.id == childId);
-                    if (child == null) return const SizedBox.shrink();
-
-                    return Chip(
-                      label: Text(child.name),
-                      avatar: child.avatarUrl != null
-                          ? CachedAvatar(url: child.avatarUrl, radius: 12)
-                          : const CircleAvatar(
-                              radius: 12,
-                              child: Icon(Icons.person, size: 12),
-                            ),
-                      deleteIcon: const Icon(Icons.close, size: 18),
-                      onDeleted: () => onChildToggle(childId),
-                      backgroundColor: AppColors.primaryLight,
-                    );
-                  }).toList(),
-                )),
-          ),
-      ],
-    );
+  @override
+  void initState() {
+    super.initState();
+    // Inicializar con la selección inicial si existe
+    selectedIds =
+        widget.initialSelection?.map((child) => child.id).toSet() ?? <String>{};
   }
 
-  Widget _buildNoChildrenMessage() {
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppDimensions.lg),
       decoration: BoxDecoration(
-        color: Colors.amber.withValues(alpha: 50),
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
+        border: Border.all(color: Colors.grey.withValues(alpha: 50)),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.warning_amber_rounded,
-            color: Colors.amber,
-            size: 48,
-          ),
-          const SizedBox(height: AppDimensions.md),
-          Text(
-            TrKeys.noChildrenAvailable.tr,
-            style: const TextStyle(
-              fontSize: AppDimensions.fontLg,
-              fontWeight: FontWeight.bold,
+          // Encabezado con acciones
+          Padding(
+            padding: const EdgeInsets.all(AppDimensions.md),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  TrKeys.assignToChildren.tr,
+                  style: const TextStyle(
+                    fontSize: AppDimensions.fontLg,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: _selectAll,
+                      child: Text(TrKeys.selectAll.tr),
+                    ),
+                    const Text(' / '),
+                    TextButton(
+                      onPressed: _clearSelection,
+                      child: Text(TrKeys.clearSelection.tr),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: AppDimensions.sm),
-          Text(
-            TrKeys.noChildrenAvailableMessage.tr,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppDimensions.md),
-          ElevatedButton.icon(
-            onPressed: () {
-              Get.back();
-              Get.toNamed('/create-child');
-            },
-            icon: const Icon(Icons.add),
-            label: Text(TrKeys.createChildProfileFirst.tr),
-          ),
+          const Divider(height: 1),
+
+          // Lista de niños
+          if (widget.children.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(AppDimensions.lg),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    color: Colors.amber,
+                    size: 48,
+                  ),
+                  const SizedBox(height: AppDimensions.md),
+                  Text(
+                    TrKeys.noChildrenProfiles.tr,
+                    style: const TextStyle(
+                      fontSize: AppDimensions.fontLg,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.sm),
+                  Text(
+                    TrKeys.noChildProfilesAccessMessage.tr,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: widget.children.length,
+              separatorBuilder: (context, index) => const Divider(height: 1),
+              itemBuilder: (context, index) {
+                final child = widget.children[index];
+                final isSelected = selectedIds.contains(child.id);
+                final isAgeAppropriate = _isAgeAppropriate(child);
+
+                return CheckboxListTile(
+                  value: isSelected,
+                  onChanged: (_) => _toggleChild(child.id),
+                  secondary: CachedAvatar(
+                    url: child.avatarUrl,
+                    radius: 24,
+                  ),
+                  title: Text(
+                    child.name,
+                    style: TextStyle(
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${child.age} ${TrKeys.yearsOld.tr}'),
+                      if (!isAgeAppropriate) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.warning_amber,
+                                size: 16, color: Colors.amber.shade700),
+                            const SizedBox(width: 4),
+                            Text(
+                              TrKeys.ageAppropriate.tr,
+                              style: TextStyle(
+                                color: Colors.amber.shade700,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                  activeColor: AppColors.primary,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: AppDimensions.md,
+                    vertical: AppDimensions.sm,
+                  ),
+                );
+              },
+            ),
+
+          // Resumen de selección
+          if (widget.children.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(AppDimensions.md),
+              decoration: BoxDecoration(
+                color: Colors.grey.withValues(alpha: 10),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(AppDimensions.borderRadiusLg),
+                  bottomRight: Radius.circular(AppDimensions.borderRadiusLg),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 16,
+                    color: Colors.grey.shade600,
+                  ),
+                  const SizedBox(width: AppDimensions.sm),
+                  Text(
+                    _getSelectionSummary(),
+                    style: TextStyle(
+                      fontSize: AppDimensions.fontSm,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  bool _isAgeAppropriate(FamilyChild child) {
+    if (widget.challenge == null) return true;
+
+    final challengeMinAge = widget.challenge!.ageRange['min'] as int;
+    final challengeMaxAge = widget.challenge!.ageRange['max'] as int;
+
+    return child.age >= challengeMinAge && child.age <= challengeMaxAge;
+  }
+
+  void _toggleChild(String childId) {
+    setState(() {
+      if (selectedIds.contains(childId)) {
+        selectedIds.remove(childId);
+      } else {
+        selectedIds.add(childId);
+      }
+    });
+
+    // Notificar cambios al padre
+    final selectedChildren = widget.children
+        .where((child) => selectedIds.contains(child.id))
+        .toList();
+    widget.onSelectionChanged(selectedChildren);
+  }
+
+  void _selectAll() {
+    setState(() {
+      selectedIds = widget.children.map((child) => child.id).toSet();
+    });
+
+    // Notificar cambios al padre
+    widget.onSelectionChanged(widget.children);
+  }
+
+  void _clearSelection() {
+    setState(() {
+      selectedIds.clear();
+    });
+
+    // Notificar cambios al padre
+    widget.onSelectionChanged([]);
+  }
+
+  String _getSelectionSummary() {
+    if (selectedIds.isEmpty) {
+      return TrKeys.noChildrenAvailable.tr;
+    }
+
+    final count = selectedIds.length;
+    if (count == 1) {
+      return '1 ${TrKeys.childName.tr.toLowerCase()} ${TrKeys.selected.tr.toLowerCase()}';
+    } else {
+      return '$count ${TrKeys.children.tr.toLowerCase()} ${TrKeys.selected.tr.toLowerCase()}';
+    }
   }
 }

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:kidsdo/core/constants/colors.dart';
 import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
+import 'package:kidsdo/domain/entities/family_child.dart';
 import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
 import 'package:kidsdo/presentation/controllers/child_profile_controller.dart';
 import 'package:kidsdo/presentation/widgets/challenges/multi_child_selector_widget.dart';
@@ -24,7 +25,7 @@ class _BatchAssignChallengesPageState extends State<BatchAssignChallengesPage> {
       Get.find<ChildProfileController>();
 
   // Lista de IDs de niños seleccionados
-  final RxList<String> selectedChildIds = <String>[].obs;
+  List<FamilyChild> selectedChildren = [];
 
   // Variables para fechas y frecuencia
   late DateTime startDate;
@@ -88,10 +89,22 @@ class _BatchAssignChallengesPageState extends State<BatchAssignChallengesPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Selector de niños
-                      MultiChildSelectorWidget(
-                        selectedChildIds: selectedChildIds,
-                        onChildToggle: _toggleChildSelection,
-                      ),
+                      Obx(() => MultiChildSelectorWidget(
+                            children: childProfileController.childProfiles,
+                            onSelectionChanged: (selectedChildren) {
+                              setState(() {
+                                this.selectedChildren = selectedChildren;
+                              });
+                            },
+                            challenge: challengeController
+                                    .selectedChallengeIds.isNotEmpty
+                                ? challengeController.filteredChallenges
+                                    .firstWhereOrNull((c) =>
+                                        c.id ==
+                                        challengeController
+                                            .selectedChallengeIds.first)
+                                : null,
+                          )),
                       const SizedBox(height: AppDimensions.lg),
 
                       // Selector de fechas
@@ -308,7 +321,7 @@ class _BatchAssignChallengesPageState extends State<BatchAssignChallengesPage> {
               SizedBox(
                 width: double.infinity,
                 child: Obx(() => ElevatedButton(
-                      onPressed: selectedChildIds.isNotEmpty &&
+                      onPressed: selectedChildren.isNotEmpty &&
                               !challengeController.isAssigningChallenge.value
                           ? _assignChallenges
                           : null,
@@ -475,18 +488,10 @@ class _BatchAssignChallengesPageState extends State<BatchAssignChallengesPage> {
     }
   }
 
-  // Método para alternar la selección de un niño
-  void _toggleChildSelection(String childId) {
-    if (selectedChildIds.contains(childId)) {
-      selectedChildIds.remove(childId);
-    } else {
-      selectedChildIds.add(childId);
-    }
-  }
-
   // Método para asignar los retos
+  // ACTUALIZA el método _assignChallenges:
   Future<void> _assignChallenges() async {
-    if (selectedChildIds.isEmpty) {
+    if (selectedChildren.isEmpty) {
       Get.snackbar(
         TrKeys.warning.tr,
         'Please select at least one child',
@@ -524,14 +529,16 @@ class _BatchAssignChallengesPageState extends State<BatchAssignChallengesPage> {
 
     // Asignar cada reto a cada niño seleccionado
     for (final challenge in selectedChallenges) {
-      for (final childId in selectedChildIds) {
+      for (final child in selectedChildren) {
+        // Cambiado de childId a child
         final result = await challengeController.assignChallengeToChildImpl(
           challengeId: challenge.id,
-          childId: childId,
+          childId: child.id, // Usar child.id
           familyId: currentUser.familyId!,
           startDate: startDate,
-          endDate: isContinuous ? null : endDate, // Usar null si es continuo
+          endDate: isContinuous ? null : endDate,
           evaluationFrequency: evaluationFrequency,
+          isContinuous: isContinuous, // Añadir el parámetro isContinuous
         );
 
         result.fold(

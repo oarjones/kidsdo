@@ -605,4 +605,24 @@ class TrKeys {
 
   // Advertencias
   static const punctualTemplateWarning = 'punctual_template_warning';
+
+  // Nuevas claves para evaluación de ejecuciones
+  static const evaluateExecution = 'evaluate_execution';
+  static const selectExecutionToEvaluate = 'select_execution_to_evaluate';
+  // static const execution = 'execution';
+  // static const currentExecution = 'current_execution';
+  static const evaluations = 'evaluations';
+  static const challengePointsSummary = 'challenge_points_summary';
+  static const totalPointsAccumulated = 'total_points_accumulated';
+  static const pointsThisExecution = 'points_this_execution';
+  static const assignPoints = 'assign_points';
+  static const original = 'original';
+  static const continuousChallengeInfo = 'continuous_challenge_info';
+  static const nextExecutionStartsAt = 'next_execution_starts_at';
+
+  static const day = 'day';
+  static const week = 'week';
+  static const weeks = 'weeks';
+  static const month = 'month';
+  static const months = 'months';
 }

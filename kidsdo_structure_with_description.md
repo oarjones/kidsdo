@@ -1,5 +1,5 @@
 # Estructura del Proyecto KidsDo
-Generada: 29/04/2025 11:06:21,76 (Actualizado con datos de 03/05/2025  9:50:42,29)
+Generada: 29/04/2025 11:06:21,76
 
 ## Archivos de Configuración
 - pubspec.yaml: Define las dependencias del proyecto, metadatos y configuración general de la aplicación Flutter.
@@ -46,7 +46,6 @@ Generada: 29/04/2025 11:06:21,76 (Actualizado con datos de 03/05/2025  9:50:42,2
   - user_remote_datasource.dart: Interfaz e implementación para manejar operaciones de datos de usuario directamente con la colección `users` de Firestore.
 - **lib\data\models/**: Modelos de datos que mapean entidades y datos remotos/locales.
   - assigned_challenge_model.dart: Modelo de datos de Firestore para `AssignedChallenge`, maneja la conversión hacia/desde documentos de Firestore.
-  - challenge_execution_model.dart NUEVO
   - challenge_model.dart: Modelo de datos de Firestore para `Challenge`, maneja la conversión y posibles claves de traducción.
   - child_model.dart: Modelo de datos de Firestore para `Child`, extendiendo `UserModel`.
   - family_child_model.dart: Modelo de datos de Firestore para `FamilyChild`, maneja la conversión hacia/desde documentos de Firestore.
@@ -64,7 +63,6 @@ Generada: 29/04/2025 11:06:21,76 (Actualizado con datos de 03/05/2025  9:50:42,2
   - assigned_challenge.dart: Define la estructura de datos para un reto que ha sido asignado a un niño, incluyendo estado, fechas, puntos ganados e historial de evaluaciones.
   - base_user.dart: Entidad base que define propiedades comunes para todos los usuarios (padre/hijo) como UID, nombre visible, avatar, fecha de creación y configuración.
   - challenge.dart: Define la estructura de datos para un reto, incluyendo título, descripción, categoría, puntos, frecuencia, rango de edad y si es una plantilla o específico de la familia.
-  - challenge_execution.dart NUEVO
   - child.dart: Define la estructura de datos para un usuario hijo (posiblemente heredado o independiente, si `FamilyChild` es el modelo principal). Incluye ID del padre y potencialmente ID de la familia.
   - family.dart: Define la estructura de datos para una familia, incluyendo ID, nombre, creador, miembros, fecha de creación y código de invitación.
   - family_child.dart: Define la estructura de datos para un perfil infantil gestionado dentro del contexto de una familia, incluyendo ID de la familia, ID del creador, puntos, nivel y configuración.
@@ -82,8 +80,8 @@ Generada: 29/04/2025 11:06:21,76 (Actualizado con datos de 03/05/2025  9:50:42,2
   - auth_controller.dart: Gestiona el estado y la lógica de autenticación (login, registro, logout, reseteo de contraseña, inicio de sesión con Google). Contiene controladores de texto y lógica de validación para formularios de autenticación.
   - challenge_controller.dart: Gestiona el estado y la lógica relacionados con los retos, incluyendo la carga de retos predefinidos/familiares, creación, edición, eliminación, asignación y evaluación de retos. Maneja el filtrado y la selección en la biblioteca.
   - child_access_controller.dart: Gestiona el estado relacionado con el acceso al modo infantil, incluyendo la carga de perfiles infantiles disponibles, activación/desactivación del modo infantil y comprobación de restricciones de control parental (límites de tiempo, límites de sesión).
-  - child_challenges_controller.dart: Gestiona el estado y la lógica específicamente para la vista del niño de sus retos. Carga los retos asignados para el niño activo, los filtra y maneja el marcado de retos como completados (pendiente de aprobación parental). NUEVO
-  - child_profile_controller.dart: Gestiona la creación, edición, eliminación y carga de perfiles infantiles dentro de una familia. Maneja la selección/subida de avatares y la configuración de temas para los perfiles. NUEVO
+  - child_challenges_controller.dart: Gestiona el estado y la lógica específicamente para la vista del niño de sus retos. Carga los retos asignados para el niño activo, los filtra y maneja el marcado de retos como completados (pendiente de aprobación parental).
+  - child_profile_controller.dart: Gestiona la creación, edición, eliminación y carga de perfiles infantiles dentro de una familia. Maneja la selección/subida de avatares y la configuración de temas para los perfiles.
   - family_controller.dart: Gestiona el estado relacionado con la familia del usuario, incluyendo la carga de la familia actual, creación/unión a familias, gestión de miembros y generación/uso de códigos de invitación.
   - language_controller.dart: Gestiona el estado del idioma de la aplicación, permitiendo a los usuarios cambiar entre los idiomas soportados (inglés/español) y persistiendo la selección.
   - parental_control_controller.dart: Gestiona la configuración del control parental almacenada en SharedPreferences, incluyendo verificación de PIN, restricciones de tiempo, bloqueo de perfiles y bloqueos temporales por intentos fallidos de PIN.
@@ -98,7 +96,6 @@ Generada: 29/04/2025 11:06:21,76 (Actualizado con datos de 03/05/2025  9:50:42,2
 - **lib\presentation\pages\challenges/**: Páginas relacionadas con la gestión de retos por parte de los padres.
   - active_challenges_page.dart: Página para que los padres vean y gestionen todos los retos actualmente activos asignados a los niños de la familia. Permite filtrar por niño/estado y evaluar retos.
   - assign_challenge_page.dart: Página/formulario donde un padre asigna un reto seleccionado (de la biblioteca o de los retos familiares) a un niño específico, estableciendo fechas de inicio/fin y frecuencia de evaluación.
-  - batch_assign_challenges_page.dart NUEVO
   - challenges_library_page.dart: Muestra la biblioteca de retos predefinidos y creados por la familia. Permite filtrar, buscar, seleccionar, importar/exportar y convertir plantillas en retos familiares.
   - challenges_page.dart: Página de navegación principal para la gestión de retos, proporcionando acceso a Retos Activos, Biblioteca de Retos y Creación de Nuevos Retos. Muestra estadísticas básicas.
   - create_edit_challenge_page.dart: Página/formulario utilizado tanto para crear nuevos retos personalizados como para editar los existentes. Incluye campos para título, descripción, categoría, frecuencia, puntos, rango de edad, icono y una opción para guardar como plantilla.
@@ -135,15 +132,13 @@ Generada: 29/04/2025 11:06:21,76 (Actualizado con datos de 03/05/2025  9:50:42,2
   - pin_code_widget.dart: Widget que proporciona un teclado numérico y cajas de entrada para introducir un código PIN. Utilizado dentro de `ParentalPinDialog`.
 - **lib\presentation\widgets\challenges/**: Widgets relacionados con la funcionalidad de retos.
   - assigned_challenge_card.dart: Widget de tarjeta para mostrar detalles de un reto asignado a un niño, incluyendo estado, información del niño, título del reto, categoría, puntos, fecha límite y un botón de evaluación.
-  - celebration_animation.dart NUEVO
+  - celebration_animation.dart: Widget que muestra una animación de celebración (confeti, mensaje, puntos) cuando un reto se completa con éxito.
   - challenges.dart: Archivo de exportación que agrupa widgets relacionados con retos para facilitar su importación en otros lugares.
   - challenge_card.dart: Widget de tarjeta para mostrar un reto de la biblioteca, mostrando sus detalles (título, descripción, categoría, frecuencia, rango de edad, puntos) y opciones para seleccionar, convertir a reto familiar o ver detalles. Adapta la visualización de puntos según la edad del niño.
-  - challenge_evaluation_dialog.dart NUEVO
   - challenge_filter_drawer.dart: Widget de panel lateral (drawer) utilizado para filtrar retos en la biblioteca según categoría, frecuencia, rango de edad y adecuación a la edad.
   - challenge_icon_selector.dart: Widget que permite a los usuarios seleccionar un icono para un reto personalizado desde una cuadrícula predefinida de iconos.
   - child_challenge_card.dart: Widget de tarjeta diseñado para la vista del niño, mostrando un reto asignado con visuales adaptados a la edad. Muestra título, descripción, puntos y estado (completado/pendiente). Incluye un botón para marcar como completado.
-  - child_progress_indicator.dart NUEVO
-  - multi_child_selector_widget.dart NUEVO
+  - child_progress_indicator.dart: Widget indicador de progreso adaptado para la vista del niño, mostrando el progreso ya sea como una barra estándar o utilizando estrellas/elementos visuales para niños más pequeños.
 - **lib\presentation\widgets\child/**: Widgets específicos para la interfaz del modo infantil.
   - age_adapted_container.dart: Widget contenedor que adapta su apariencia (relleno, radio de borde, color de fondo, sombra) y potencialmente su widget hijo según la edad proporcionada del niño.
   - avatar_picker.dart: Widget que permite a los usuarios (probablemente para perfiles infantiles) elegir un avatar, ya sea seleccionando un icono predefinido o subiendo una imagen personalizada. Maneja la visualización, selección, limpieza y estado de subida.

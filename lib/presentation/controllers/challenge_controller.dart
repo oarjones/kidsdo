@@ -283,6 +283,43 @@ class ChallengeController extends GetxController {
     );
   }
 
+  DateTime calculateEndDate({
+    required DateTime startDate,
+    required ChallengeDuration duration,
+  }) {
+    switch (duration) {
+      case ChallengeDuration.weekly:
+        // Última fecha del período semanal (domingo)
+        final int daysUntilSunday = 7 - startDate.weekday;
+        return startDate
+            .add(Duration(days: daysUntilSunday == 7 ? 0 : daysUntilSunday));
+
+      case ChallengeDuration.monthly:
+        // Último día del mes
+        final nextMonth = startDate.month < 12
+            ? DateTime(startDate.year, startDate.month + 1, 1)
+            : DateTime(startDate.year + 1, 1, 1);
+        return nextMonth.subtract(const Duration(days: 1));
+
+      case ChallengeDuration.quarterly:
+        // Último día del trimestre actual
+        final int currentQuarter = (startDate.month - 1) ~/ 3;
+        final int lastMonthOfQuarter = (currentQuarter + 1) * 3;
+        final nextQuarter = lastMonthOfQuarter < 12
+            ? DateTime(startDate.year, lastMonthOfQuarter + 1, 1)
+            : DateTime(startDate.year + 1, 1, 1);
+        return nextQuarter.subtract(const Duration(days: 1));
+
+      case ChallengeDuration.yearly:
+        // Último día del año
+        return DateTime(startDate.year, 12, 31);
+
+      case ChallengeDuration.punctual:
+        // Por defecto, agregar una semana para retos puntuales
+        return startDate.add(const Duration(days: 7));
+    }
+  }
+
   /// Carga los retos predefinidos
   Future<void> loadPredefinedChallenges() async {
     isLoadingPredefinedChallenges.value = true;
@@ -864,6 +901,7 @@ class ChallengeController extends GetxController {
   }
 
   /// Evalúa un reto asignado
+
   Future<void> evaluateAssignedChallenge({
     required String assignedChallengeId,
     required AssignedChallengeStatus newStatus,
@@ -877,7 +915,7 @@ class ChallengeController extends GetxController {
     _logger.i(
         "Evaluating challenge: $assignedChallengeId with status: ${newStatus.toString()}");
 
-    // Obtener el reto asignado para saber el índice de la ejecución actual
+    // Obtener el reto asignado para determinar cómo evaluarlo
     final assignedChallengeResult = await _challengeRepository
         .getAssignedChallengeById(assignedChallengeId);
 
@@ -889,7 +927,7 @@ class ChallengeController extends GetxController {
         _logger.e("Error getting assigned challenge: ${failure.message}");
       },
       (assignedChallenge) async {
-        // Si tiene ejecuciones, usar el nuevo método
+        // Si tiene ejecuciones, usar el nuevo método para evaluar la última ejecución
         if (assignedChallenge.executions.isNotEmpty) {
           // Evaluar la ejecución actual (última)
           final executionIndex = assignedChallenge.executions.length - 1;
@@ -909,12 +947,8 @@ class ChallengeController extends GetxController {
               _logger.e("Error evaluating execution: ${failure.message}");
             },
             (_) async {
-              // Si es un reto continuo y se completó/falló, crear la siguiente ejecución
-              if (assignedChallenge.isContinuous &&
-                  (newStatus == AssignedChallengeStatus.completed ||
-                      newStatus == AssignedChallengeStatus.failed)) {
-                await _createNextExecution(assignedChallenge);
-              }
+              // Si es un reto continuo y se completó/falló, ya se creará automáticamente la siguiente ejecución
+              // No necesitamos hacer nada adicional aquí
 
               // Recargar el reto para obtener datos actualizados
               await _reloadAssignedChallenge(assignedChallengeId);
@@ -923,30 +957,34 @@ class ChallengeController extends GetxController {
               _logger.i("Challenge execution evaluated successfully");
             },
           );
-        } else {
-          // Usar el método legacy para compatibilidad
-          final result = await _challengeRepository.evaluateAssignedChallenge(
-            assignedChallengeId: assignedChallengeId,
-            status: newStatus,
-            points: points,
-            note: note,
-          );
-
-          result.fold(
-            (failure) {
-              status.value = ChallengeStatus.error;
-              errorMessage.value = _mapFailureToMessage(failure);
-              _logger.e("Error evaluating challenge: ${failure.message}");
-            },
-            (_) async {
-              // Recargar el reto para obtener datos actualizados
-              await _reloadAssignedChallenge(assignedChallengeId);
-
-              status.value = ChallengeStatus.success;
-              _logger.i("Challenge evaluated successfully");
-            },
-          );
         }
+        // else {
+        //   // Por compatibilidad con retos antiguos, usar el método legacy solo si no hay ejecuciones
+        //   _logger.i(
+        //       "Using legacy evaluation method for challenge without executions");
+
+        //   final result = await _challengeRepository.evaluateAssignedChallenge(
+        //     assignedChallengeId: assignedChallengeId,
+        //     status: newStatus,
+        //     points: points,
+        //     note: note,
+        //   );
+
+        //   result.fold(
+        //     (failure) {
+        //       status.value = ChallengeStatus.error;
+        //       errorMessage.value = _mapFailureToMessage(failure);
+        //       _logger.e("Error evaluating challenge: ${failure.message}");
+        //     },
+        //     (_) async {
+        //       // Recargar el reto para obtener datos actualizados
+        //       await _reloadAssignedChallenge(assignedChallengeId);
+
+        //       status.value = ChallengeStatus.success;
+        //       _logger.i("Challenge evaluated successfully");
+        //     },
+        //   );
+        // }
       },
     );
 
@@ -965,6 +1003,7 @@ class ChallengeController extends GetxController {
   }
 
   /// Crea la siguiente ejecución para un reto continuo
+  @Deprecated('The next execution is created automatically by the repository')
   Future<void> _createNextExecution(AssignedChallenge assignedChallenge) async {
     if (!assignedChallenge.isContinuous) return;
 

@@ -6,6 +6,7 @@ import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/challenge.dart';
 import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
 import 'package:kidsdo/presentation/widgets/challenges/challenge_icon_selector.dart';
+import 'package:kidsdo/presentation/widgets/challenges/duration_selector_widget.dart'; // NUEVO: Importar el widget
 
 class CreateEditChallengePage extends GetView<ChallengeController> {
   final bool isEditing;
@@ -106,7 +107,7 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                         ),
                         const SizedBox(height: AppDimensions.md),
 
-                        // Categoría (ahora en columna en lugar de fila)
+                        // Categoría
                         Text(
                           TrKeys.category.tr,
                           style: const TextStyle(
@@ -166,65 +167,16 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                             )),
                         const SizedBox(height: AppDimensions.md),
 
-                        // NUEVA SECCIÓN: Duración
-                        Text(
-                          TrKeys.challengeDuration.tr,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: AppDimensions.fontMd,
-                          ),
-                        ),
-                        const SizedBox(height: AppDimensions.sm),
-                        Obx(() => DropdownButtonFormField<ChallengeDuration>(
-                              value: controller.selectedDuration.value,
+                        // ACTUALIZADO: Selector de duración usando el nuevo widget
+                        Obx(() => DurationSelectorWidget(
+                              selectedDuration: controller.selectedDuration,
                               onChanged: (value) {
                                 if (value != null) {
                                   controller.selectedDuration.value = value;
                                 }
                               },
-                              items: ChallengeDuration.values.map((duration) {
-                                return DropdownMenuItem<ChallengeDuration>(
-                                  value: duration,
-                                  child: Text(_getDurationName(duration)),
-                                );
-                              }).toList(),
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                filled: true,
-                                fillColor: Color(0xFFF5F5F5),
-                              ),
-                            )),
-                        const SizedBox(height: AppDimensions.md),
-
-                        // Explicación de duración (ayuda contextual)
-                        Obx(() => Container(
-                              padding: const EdgeInsets.all(AppDimensions.sm),
-                              decoration: BoxDecoration(
-                                color: AppColors.infoLight,
-                                borderRadius: BorderRadius.circular(
-                                    AppDimensions.borderRadiusSm),
-                                border: Border.all(color: AppColors.info),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.info_outline,
-                                    color: AppColors.info,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      _getDurationExplanation(
-                                          controller.selectedDuration.value),
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: AppColors.info,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              isTemplate: controller.isTemplateChallenge.value,
+                              showExplanation: true,
                             )),
                         const SizedBox(height: AppDimensions.lg),
 
@@ -371,7 +323,7 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                               )
                             : const SizedBox.shrink()),
 
-                        // Añadir espacio adicional al final para evitar que el contenido sea cortado
+                        // Añadir espacio adicional al final
                         const SizedBox(height: AppDimensions.xl),
                       ],
                     ),
@@ -379,7 +331,7 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                 ),
               ),
 
-              // Botón de guardar (fuera del scroll, siempre visible al final)
+              // Botón de guardar
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: AppDimensions.md),
                 child: SizedBox(
@@ -393,10 +345,9 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                                   controller.updateChallenge();
                                 } else {
                                   controller.createChallenge().then((_) {
-                                    // Si la creación fue exitosa, mostramos diálogo con el reto recién seleccionado
+                                    // Si la creación fue exitosa, mostramos diálogo
                                     if (controller.status.value ==
                                         ChallengeStatus.success) {
-                                      // El reto recién creado estará en el registro de retos de familia
                                       final lastCreatedChallenge = controller
                                           .familyChallenges.lastOrNull;
                                       if (lastCreatedChallenge != null) {
@@ -435,7 +386,7 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
     );
   }
 
-  // Añadir este método a la clase _CreateEditChallengePageState
+  // Añadir este método
   void _showAssignDialog(Challenge challenge) {
     Get.dialog(
       AlertDialog(
@@ -528,38 +479,6 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
         return TrKeys.frequencyQuarterly.tr;
       case ChallengeFrequency.once:
         return TrKeys.frequencyOnce.tr;
-    }
-  }
-
-  // Nueva función para obtener el nombre de duración
-  String _getDurationName(ChallengeDuration duration) {
-    switch (duration) {
-      case ChallengeDuration.weekly:
-        return TrKeys.durationWeekly.tr;
-      case ChallengeDuration.monthly:
-        return TrKeys.durationMonthly.tr;
-      case ChallengeDuration.quarterly:
-        return TrKeys.durationQuarterly.tr;
-      case ChallengeDuration.yearly:
-        return TrKeys.durationYearly.tr;
-      case ChallengeDuration.punctual:
-        return TrKeys.durationPunctual.tr;
-    }
-  }
-
-  // Nueva función para obtener explicación de cada duración
-  String _getDurationExplanation(ChallengeDuration duration) {
-    switch (duration) {
-      case ChallengeDuration.weekly:
-        return TrKeys.durationWeeklyExplanation.tr;
-      case ChallengeDuration.monthly:
-        return TrKeys.durationMonthlyExplanation.tr;
-      case ChallengeDuration.quarterly:
-        return TrKeys.durationQuarterlyExplanation.tr;
-      case ChallengeDuration.yearly:
-        return TrKeys.durationYearlyExplanation.tr;
-      case ChallengeDuration.punctual:
-        return TrKeys.durationPunctualExplanation.tr;
     }
   }
 }

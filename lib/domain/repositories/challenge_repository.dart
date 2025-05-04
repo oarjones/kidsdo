@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:kidsdo/core/errors/failures.dart';
 import 'package:kidsdo/domain/entities/challenge.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
-import 'package:kidsdo/domain/entities/challenge_execution.dart';
 
 /// Interfaz para el repositorio de retos
 abstract class IChallengeRepository {

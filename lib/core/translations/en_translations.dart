@@ -693,8 +693,8 @@ final Map<String, String> enTranslations = {
   'inactive': 'Inactive',
 
   // Execution evaluation
-  'current_execution': 'Current Period',
-  'execution': 'Period',
+  //'current_execution': 'Current Period',
+  // 'execution': 'Period',
   'evaluating_execution': 'Evaluating Period',
   'evaluation_period': 'Period',
   'next_execution_info': 'Next Period',
@@ -704,4 +704,23 @@ final Map<String, String> enTranslations = {
   // Warnings
   'punctual_template_warning':
       'Custom date range challenges cannot be saved as templates',
+
+  // Agregar traducciones en inglés
+  'evaluate_execution': 'Evaluate Execution',
+  'select_execution_to_evaluate': 'Select execution to evaluate',
+  'execution': 'Execution',
+  'current_execution': 'Current Execution',
+  'evaluations': 'Evaluations',
+  'challenge_points_summary': 'Challenge Points Summary',
+  'total_points_accumulated': 'Total Points Accumulated',
+  'points_this_execution': 'Points this Execution',
+  'assign_points': 'Assign Points',
+  'original': 'Original',
+  'continuous_challenge_info': 'Continuous Challenge',
+  'next_execution_starts_at': 'Next execution will start on',
+  'day': 'day',
+  'week': 'week',
+  'weeks': 'weeks',
+  'month': 'month',
+  'months': 'months',
 };

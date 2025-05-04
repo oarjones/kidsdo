@@ -709,8 +709,8 @@ final Map<String, String> esTranslations = {
   'inactive': 'Inactivo',
 
   // Evaluación de ejecuciones
-  'current_execution': 'Período Actual',
-  'execution': 'Período',
+  // 'current_execution': 'Período Actual',
+  // 'execution': 'Período',
   'evaluating_execution': 'Evaluando Período',
   'evaluation_period': 'Período',
   'next_execution_info': 'Próximo Período',
@@ -720,4 +720,23 @@ final Map<String, String> esTranslations = {
   // Advertencias
   'punctual_template_warning':
       'Los retos con fechas específicas no pueden guardarse como plantillas',
+
+  // Agregar traducciones en español
+  'evaluate_execution': 'Evaluar Ejecución',
+  'select_execution_to_evaluate': 'Seleccionar ejecución a evaluar',
+  'execution': 'Ejecución',
+  'current_execution': 'Ejecución Actual',
+  'evaluations': 'Evaluaciones',
+  'challenge_points_summary': 'Resumen de Puntos del Reto',
+  'total_points_accumulated': 'Puntos Totales Acumulados',
+  'points_this_execution': 'Puntos esta Ejecución',
+  'assign_points': 'Asignar Puntos',
+  'original': 'Original',
+  'continuous_challenge_info': 'Reto Continuo',
+  'next_execution_starts_at': 'La siguiente ejecución comenzará el',
+  'day': 'día',
+  'week': 'semana',
+  'weeks': 'semanas',
+  'month': 'mes',
+  'months': 'meses',
 };

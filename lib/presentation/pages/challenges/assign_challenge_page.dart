@@ -9,6 +9,7 @@ import 'package:kidsdo/domain/entities/family_child.dart';
 import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
 import 'package:kidsdo/presentation/controllers/child_profile_controller.dart';
 import 'package:kidsdo/presentation/widgets/common/cached_avatar.dart';
+import 'package:kidsdo/presentation/widgets/challenges/celebration_animation.dart';
 
 class AssignChallengePage extends StatefulWidget {
   const AssignChallengePage({Key? key}) : super(key: key);
@@ -29,6 +30,7 @@ class _AssignChallengePageState extends State<AssignChallengePage> {
   String evaluationFrequency = 'daily';
   FamilyChild? selectedChild;
   bool isContinuous = false; // Nueva variable para retos continuos
+  bool showCelebration = false;
 
   @override
   void initState() {
@@ -69,313 +71,375 @@ class _AssignChallengePageState extends State<AssignChallengePage> {
       appBar: AppBar(
         title: Text(TrKeys.assignChallengeTitle.tr),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppDimensions.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Información del reto
-              _buildChallengeInfo(challenge),
-              const SizedBox(height: AppDimensions.lg),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppDimensions.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Información del reto
+                  _buildChallengeInfo(challenge),
+                  const SizedBox(height: AppDimensions.lg),
 
-              const Divider(),
-              const SizedBox(height: AppDimensions.lg),
+                  const Divider(),
+                  const SizedBox(height: AppDimensions.lg),
 
-              // Selector de niño
-              Text(
-                TrKeys.assignToChild.tr,
-                style: const TextStyle(
-                  fontSize: AppDimensions.fontLg,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: AppDimensions.md),
-              Obx(() {
-                if (childProfileController.isLoadingProfiles.value) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (childProfileController.childProfiles.isEmpty) {
-                  return _buildNoChildrenMessage();
-                }
-
-                return _buildChildSelector();
-              }),
-              const SizedBox(height: AppDimensions.lg),
-
-              // NUEVA SECCIÓN: Opción de reto continuo
-              Container(
-                padding: const EdgeInsets.all(AppDimensions.md),
-                decoration: BoxDecoration(
-                  color: isContinuous
-                      ? AppColors.primaryLight
-                      : Colors.grey.withValues(alpha: 20),
-                  borderRadius:
-                      BorderRadius.circular(AppDimensions.borderRadiusMd),
-                  border: Border.all(
-                    color: isContinuous
-                        ? AppColors.primary
-                        : Colors.grey.withValues(alpha: 50),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            TrKeys.continuousChallenge.tr,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: AppDimensions.fontMd,
-                            ),
-                          ),
-                        ),
-                        Switch(
-                          value: isContinuous,
-                          onChanged: (value) {
-                            setState(() {
-                              isContinuous = value;
-                            });
-                          },
-                          activeColor: AppColors.primary,
-                        ),
-                      ],
+                  // Selector de niño
+                  Text(
+                    TrKeys.assignToChild.tr,
+                    style: const TextStyle(
+                      fontSize: AppDimensions.fontLg,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Text(
-                      TrKeys.continuousChallengeExplanation.tr,
-                      style: TextStyle(
-                        fontSize: AppDimensions.fontSm,
+                  ),
+                  const SizedBox(height: AppDimensions.md),
+                  Obx(() {
+                    if (childProfileController.isLoadingProfiles.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (childProfileController.childProfiles.isEmpty) {
+                      return _buildNoChildrenMessage();
+                    }
+
+                    return _buildChildSelector();
+                  }),
+                  const SizedBox(height: AppDimensions.lg),
+
+                  // NUEVA SECCIÓN: Opción de reto continuo
+                  Container(
+                    padding: const EdgeInsets.all(AppDimensions.md),
+                    decoration: BoxDecoration(
+                      color: isContinuous
+                          ? AppColors.primaryLight
+                          : Colors.grey.withValues(alpha: 20),
+                      borderRadius:
+                          BorderRadius.circular(AppDimensions.borderRadiusMd),
+                      border: Border.all(
                         color: isContinuous
                             ? AppColors.primary
-                            : Colors.grey.shade600,
+                            : Colors.grey.withValues(alpha: 50),
                       ),
                     ),
-                    if (isContinuous) ...[
-                      const SizedBox(height: AppDimensions.sm),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.sm,
-                          vertical: AppDimensions.xs,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(
-                              AppDimensions.borderRadiusSm),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            const Icon(
-                              Icons.repeat,
-                              size: 16,
-                              color: AppColors.primary,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              _getDurationText(challenge.duration),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
+                            Expanded(
+                              child: Text(
+                                TrKeys.continuousChallenge.tr,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: AppDimensions.fontMd,
+                                ),
                               ),
+                            ),
+                            Switch(
+                              value: isContinuous,
+                              onChanged: (value) {
+                                setState(() {
+                                  isContinuous = value;
+                                });
+                              },
+                              activeColor: AppColors.primary,
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppDimensions.lg),
-
-              // Selector de fechas
-              Text(
-                TrKeys.startDate.tr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppDimensions.fontMd,
-                ),
-              ),
-              const SizedBox(height: AppDimensions.sm),
-              InkWell(
-                onTap: () => _selectStartDate(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.md,
-                    vertical: AppDimensions.md,
-                  ),
-                  decoration: BoxDecoration(
-                    border:
-                        Border.all(color: Colors.grey.withValues(alpha: 150)),
-                    borderRadius:
-                        BorderRadius.circular(AppDimensions.borderRadiusMd),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.calendar_today,
-                          color: AppColors.primary),
-                      const SizedBox(width: AppDimensions.md),
-                      Text(
-                        DateFormat('EEEE, MMMM d, yyyy').format(startDate),
-                        style: const TextStyle(fontSize: AppDimensions.fontMd),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppDimensions.lg),
-
-              // Fecha de fin (solo visible si no es continuo)
-              if (!isContinuous) ...[
-                Text(
-                  TrKeys.endDate.tr,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: AppDimensions.fontMd,
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.sm),
-                InkWell(
-                  onTap: () => _selectEndDate(context),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.md,
-                      vertical: AppDimensions.md,
-                    ),
-                    decoration: BoxDecoration(
-                      border:
-                          Border.all(color: Colors.grey.withValues(alpha: 150)),
-                      borderRadius:
-                          BorderRadius.circular(AppDimensions.borderRadiusMd),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.calendar_today,
-                            color: AppColors.primary),
-                        const SizedBox(width: AppDimensions.md),
                         Text(
-                          DateFormat('EEEE, MMMM d, yyyy').format(endDate),
-                          style:
-                              const TextStyle(fontSize: AppDimensions.fontMd),
+                          TrKeys.continuousChallengeExplanation.tr,
+                          style: TextStyle(
+                            fontSize: AppDimensions.fontSm,
+                            color: isContinuous
+                                ? AppColors.primary
+                                : Colors.grey.shade600,
+                          ),
                         ),
+                        if (isContinuous) ...[
+                          const SizedBox(height: AppDimensions.sm),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppDimensions.sm,
+                              vertical: AppDimensions.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(
+                                  AppDimensions.borderRadiusSm),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.repeat,
+                                  size: 16,
+                                  color: AppColors.primary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  _getDurationText(challenge.duration),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(height: AppDimensions.lg),
-              ] else ...[
-                // Si es continuo, mostrar mensaje informativo en lugar de fecha fin
-                Container(
-                  padding: const EdgeInsets.all(AppDimensions.sm),
-                  decoration: BoxDecoration(
-                    color: AppColors.infoLight,
-                    borderRadius:
-                        BorderRadius.circular(AppDimensions.borderRadiusSm),
-                    border: Border.all(
-                        color: AppColors.info.withValues(alpha: 100)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.info_outline,
-                        color: AppColors.info,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          TrKeys.neverEnds.tr,
-                          style: const TextStyle(
-                            color: AppColors.info,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.lg),
-              ],
+                  const SizedBox(height: AppDimensions.lg),
 
-              // Frecuencia de evaluación
-              Text(
-                TrKeys.selectEvaluationFrequency.tr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppDimensions.fontMd,
-                ),
-              ),
-              const SizedBox(height: AppDimensions.sm),
-              _buildEvaluationFrequencySelector(),
-              const SizedBox(height: AppDimensions.xl),
-
-              // Mensaje de error
-              Obx(() => challengeController.errorMessage.value.isNotEmpty
-                  ? Container(
-                      padding: const EdgeInsets.all(AppDimensions.md),
+                  // Selector de fechas
+                  Text(
+                    TrKeys.startDate.tr,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppDimensions.fontMd,
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.sm),
+                  InkWell(
+                    onTap: () => _selectStartDate(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppDimensions.md,
+                        vertical: AppDimensions.md,
+                      ),
                       decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 50),
+                        border: Border.all(
+                            color: Colors.grey.withValues(alpha: 150)),
                         borderRadius:
                             BorderRadius.circular(AppDimensions.borderRadiusMd),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.error_outline, color: Colors.red),
-                          const SizedBox(width: AppDimensions.sm),
+                          const Icon(Icons.calendar_today,
+                              color: AppColors.primary),
+                          const SizedBox(width: AppDimensions.md),
+                          Text(
+                            DateFormat('EEEE, MMMM d, yyyy').format(startDate),
+                            style:
+                                const TextStyle(fontSize: AppDimensions.fontMd),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.lg),
+
+                  // Fecha de fin (solo visible si no es continuo)
+                  if (!isContinuous) ...[
+                    Text(
+                      TrKeys.endDate.tr,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppDimensions.fontMd,
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.sm),
+                    InkWell(
+                      onTap: () => _selectEndDate(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppDimensions.md,
+                          vertical: AppDimensions.md,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.grey.withValues(alpha: 150)),
+                          borderRadius: BorderRadius.circular(
+                              AppDimensions.borderRadiusMd),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_today,
+                                color: AppColors.primary),
+                            const SizedBox(width: AppDimensions.md),
+                            Text(
+                              DateFormat('EEEE, MMMM d, yyyy').format(endDate),
+                              style: const TextStyle(
+                                  fontSize: AppDimensions.fontMd),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.lg),
+                  ] else ...[
+                    // Si es continuo, mostrar mensaje informativo en lugar de fecha fin
+                    Container(
+                      padding: const EdgeInsets.all(AppDimensions.sm),
+                      decoration: BoxDecoration(
+                        color: AppColors.infoLight,
+                        borderRadius:
+                            BorderRadius.circular(AppDimensions.borderRadiusSm),
+                        border: Border.all(
+                            color: AppColors.info.withValues(alpha: 100)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.info_outline,
+                            color: AppColors.info,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              challengeController.errorMessage.value,
-                              style: const TextStyle(color: Colors.red),
+                              TrKeys.neverEnds.tr,
+                              style: const TextStyle(
+                                color: AppColors.info,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    )
-                  : const SizedBox.shrink()),
+                    ),
+                    const SizedBox(height: AppDimensions.lg),
+                  ],
 
-              const SizedBox(height: AppDimensions.lg),
+                  // Frecuencia de evaluación
+                  Text(
+                    TrKeys.selectEvaluationFrequency.tr,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppDimensions.fontMd,
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.sm),
+                  _buildEvaluationFrequencySelector(),
+                  const SizedBox(height: AppDimensions.xl),
 
-              // Botón de asignar
-              SizedBox(
-                width: double.infinity,
-                child: Obx(() => ElevatedButton(
-                      onPressed: selectedChild != null &&
-                              !challengeController.isAssigningChallenge.value
-                          ? () => _assignChallenge(challenge)
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: AppDimensions.md),
-                        backgroundColor: AppColors.primary,
-                      ),
-                      child: challengeController.isAssigningChallenge.value
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                  // Mensaje de error
+                  Obx(() => challengeController.errorMessage.value.isNotEmpty
+                      ? Container(
+                          padding: const EdgeInsets.all(AppDimensions.md),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withValues(alpha: 50),
+                            borderRadius: BorderRadius.circular(
+                                AppDimensions.borderRadiusMd),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.error_outline,
+                                  color: Colors.red),
+                              const SizedBox(width: AppDimensions.sm),
+                              Expanded(
+                                child: Text(
+                                  challengeController.errorMessage.value,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
                               ),
-                            )
-                          : Text(
-                              TrKeys.assignChallenge.tr,
-                              style: const TextStyle(
-                                fontSize: AppDimensions.fontMd,
-                                color: Colors.white,
-                              ),
-                            ),
-                    )),
+                            ],
+                          ),
+                        )
+                      : const SizedBox.shrink()),
+
+                  const SizedBox(height: AppDimensions.lg),
+
+                  // Botón de asignar
+                  SizedBox(
+                    width: double.infinity,
+                    child: Obx(() => ElevatedButton(
+                          onPressed: selectedChild != null &&
+                                  !challengeController
+                                      .isAssigningChallenge.value
+                              ? () => _assignChallenge(challenge)
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: AppDimensions.md),
+                            backgroundColor: AppColors.primary,
+                          ),
+                          child: challengeController.isAssigningChallenge.value
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  ),
+                                )
+                              : Text(
+                                  TrKeys.assignChallenge.tr,
+                                  style: const TextStyle(
+                                    fontSize: AppDimensions.fontMd,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        )),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+
+          // Animación de celebración
+          if (showCelebration)
+            CelebrationAnimation(
+              points: challenge.points,
+              message: TrKeys.challengeAssignedMessage.tr,
+              onClose: () {
+                setState(() {
+                  showCelebration = false;
+                });
+                Get.back(); // Volver a la pantalla anterior
+              },
+            ),
+        ],
       ),
     );
   }
 
+  // Método para asignar el reto
+  Future<void> _assignChallenge(Challenge challenge) async {
+    if (selectedChild == null) {
+      return;
+    }
+
+    // Actualizar controlador de retos con los datos necesarios
+    challengeController.selectedChildId.value = selectedChild!.id;
+    challengeController.startDate.value = startDate;
+    challengeController.endDate.value = endDate;
+    challengeController.selectedEvaluationFrequency.value = evaluationFrequency;
+    challengeController.isContinuousChallenge.value =
+        isContinuous; // Nueva línea
+
+    // Asignar reto
+    await challengeController.assignChallengeToChild();
+
+    // Si no hay error, mostrar celebración
+    if (challengeController.errorMessage.value.isEmpty) {
+      setState(() {
+        showCelebration = true;
+      });
+    }
+  }
+
+  // Método para obtener texto descriptivo de la duración
+  String _getDurationText(ChallengeDuration duration) {
+    switch (duration) {
+      case ChallengeDuration.weekly:
+        return TrKeys.durationWeeklyRepeat.tr;
+      case ChallengeDuration.monthly:
+        return TrKeys.durationMonthlyRepeat.tr;
+      case ChallengeDuration.quarterly:
+        return TrKeys.durationQuarterlyRepeat.tr;
+      case ChallengeDuration.yearly:
+        return TrKeys.durationYearlyRepeat.tr;
+      case ChallengeDuration.punctual:
+        return TrKeys.durationPunctualRepeat.tr;
+    }
+  }
+
+  // ... resto de métodos existentes ...
   // Widget que muestra información del reto
   Widget _buildChallengeInfo(Challenge challenge) {
     return Container(
@@ -481,6 +545,48 @@ class _AssignChallengePageState extends State<AssignChallengePage> {
     );
   }
 
+  // Widget cuando no hay niños disponibles
+  Widget _buildNoChildrenMessage() {
+    return Container(
+      padding: const EdgeInsets.all(AppDimensions.lg),
+      decoration: BoxDecoration(
+        color: Colors.amber.withValues(alpha: 50),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
+      ),
+      child: Column(
+        children: [
+          const Icon(
+            Icons.warning_amber_rounded,
+            color: Colors.amber,
+            size: 48,
+          ),
+          const SizedBox(height: AppDimensions.md),
+          Text(
+            TrKeys.noChildrenAvailable.tr,
+            style: const TextStyle(
+              fontSize: AppDimensions.fontLg,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: AppDimensions.sm),
+          Text(
+            TrKeys.noChildrenAvailableMessage.tr,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppDimensions.md),
+          ElevatedButton.icon(
+            onPressed: () {
+              Get.back();
+              Get.toNamed('/create-child');
+            },
+            icon: const Icon(Icons.add),
+            label: Text(TrKeys.createChildProfileFirst.tr),
+          ),
+        ],
+      ),
+    );
+  }
+
   // Widget para seleccionar niño
   Widget _buildChildSelector() {
     return Container(
@@ -564,99 +670,6 @@ class _AssignChallengePageState extends State<AssignChallengePage> {
     );
   }
 
-  // Widget cuando no hay niños disponibles
-  Widget _buildNoChildrenMessage() {
-    return Container(
-      padding: const EdgeInsets.all(AppDimensions.lg),
-      decoration: BoxDecoration(
-        color: Colors.amber.withValues(alpha: 50),
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
-      ),
-      child: Column(
-        children: [
-          const Icon(
-            Icons.warning_amber_rounded,
-            color: Colors.amber,
-            size: 48,
-          ),
-          const SizedBox(height: AppDimensions.md),
-          Text(
-            TrKeys.noChildrenAvailable.tr,
-            style: const TextStyle(
-              fontSize: AppDimensions.fontLg,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: AppDimensions.sm),
-          Text(
-            TrKeys.noChildrenAvailableMessage.tr,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppDimensions.md),
-          ElevatedButton.icon(
-            onPressed: () {
-              Get.back();
-              Get.toNamed('/create-child');
-            },
-            icon: const Icon(Icons.add),
-            label: Text(TrKeys.createChildProfileFirst.tr),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Widget para seleccionar frecuencia de evaluación
-  Widget _buildEvaluationFrequencySelector() {
-    return Container(
-      padding: const EdgeInsets.all(AppDimensions.sm),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.withValues(alpha: 150)),
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
-      ),
-      child: Column(
-        children: [
-          RadioListTile<String>(
-            title: Text(TrKeys.dailyEvaluation.tr),
-            subtitle: Text(
-              'Evaluate challenge progress every day',
-              style: TextStyle(
-                  fontSize: AppDimensions.fontSm, color: Colors.grey.shade600),
-            ),
-            value: 'daily',
-            groupValue: evaluationFrequency,
-            onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  evaluationFrequency = value;
-                });
-              }
-            },
-            activeColor: AppColors.primary,
-          ),
-          RadioListTile<String>(
-            title: Text(TrKeys.weeklyEvaluation.tr),
-            subtitle: Text(
-              'Evaluate challenge progress once a week',
-              style: TextStyle(
-                  fontSize: AppDimensions.fontSm, color: Colors.grey.shade600),
-            ),
-            value: 'weekly',
-            groupValue: evaluationFrequency,
-            onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  evaluationFrequency = value;
-                });
-              }
-            },
-            activeColor: AppColors.primary,
-          ),
-        ],
-      ),
-    );
-  }
-
   // Método para seleccionar fecha de inicio
   Future<void> _selectStartDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -711,27 +724,55 @@ class _AssignChallengePageState extends State<AssignChallengePage> {
     }
   }
 
-  // Método para asignar el reto
-  Future<void> _assignChallenge(Challenge challenge) async {
-    if (selectedChild == null) {
-      return;
-    }
-
-    // Actualizar controlador de retos con los datos necesarios
-    challengeController.selectedChildId.value = selectedChild!.id;
-    challengeController.startDate.value = startDate;
-    challengeController.endDate.value = endDate;
-    challengeController.selectedEvaluationFrequency.value = evaluationFrequency;
-    challengeController.isContinuousChallenge.value =
-        isContinuous; // Nueva línea
-
-    // Asignar reto
-    await challengeController.assignChallengeToChild();
-
-    // Si no hay error, volver a la pantalla anterior
-    if (challengeController.errorMessage.value.isEmpty) {
-      Get.back();
-    }
+  // Widget para seleccionar frecuencia de evaluación
+  Widget _buildEvaluationFrequencySelector() {
+    return Container(
+      padding: const EdgeInsets.all(AppDimensions.sm),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.withValues(alpha: 150)),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
+      ),
+      child: Column(
+        children: [
+          RadioListTile<String>(
+            title: Text(TrKeys.dailyEvaluation.tr),
+            subtitle: Text(
+              'Evaluate challenge progress every day',
+              style: TextStyle(
+                  fontSize: AppDimensions.fontSm, color: Colors.grey.shade600),
+            ),
+            value: 'daily',
+            groupValue: evaluationFrequency,
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  evaluationFrequency = value;
+                });
+              }
+            },
+            activeColor: AppColors.primary,
+          ),
+          RadioListTile<String>(
+            title: Text(TrKeys.weeklyEvaluation.tr),
+            subtitle: Text(
+              'Evaluate challenge progress once a week',
+              style: TextStyle(
+                  fontSize: AppDimensions.fontSm, color: Colors.grey.shade600),
+            ),
+            value: 'weekly',
+            groupValue: evaluationFrequency,
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  evaluationFrequency = value;
+                });
+              }
+            },
+            activeColor: AppColors.primary,
+          ),
+        ],
+      ),
+    );
   }
 
   // Funciones auxiliares para traducir categorías, frecuencias, duraciones e íconos
@@ -800,22 +841,6 @@ class _AssignChallengePageState extends State<AssignChallengePage> {
         return Icons.celebration;
       case ChallengeCategory.sibling:
         return Icons.family_restroom;
-    }
-  }
-
-  // Método para obtener texto descriptivo de la duración
-  String _getDurationText(ChallengeDuration duration) {
-    switch (duration) {
-      case ChallengeDuration.weekly:
-        return TrKeys.durationWeeklyRepeat.tr;
-      case ChallengeDuration.monthly:
-        return TrKeys.durationMonthlyRepeat.tr;
-      case ChallengeDuration.quarterly:
-        return TrKeys.durationQuarterlyRepeat.tr;
-      case ChallengeDuration.yearly:
-        return TrKeys.durationYearlyRepeat.tr;
-      case ChallengeDuration.punctual:
-        return TrKeys.durationPunctualRepeat.tr;
     }
   }
 }

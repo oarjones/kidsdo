@@ -1,3 +1,4 @@
+// lib/presentation/widgets/challenges/assigned_challenge_card.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import 'package:kidsdo/domain/entities/assigned_challenge.dart';
 import 'package:kidsdo/domain/entities/challenge.dart';
 import 'package:kidsdo/domain/entities/challenge_execution.dart';
 import 'package:kidsdo/domain/entities/family_child.dart';
+import 'package:kidsdo/presentation/widgets/challenges/execution_summary_widget.dart';
 import 'package:kidsdo/presentation/widgets/common/cached_avatar.dart';
 
 class AssignedChallengeCard extends StatelessWidget {
@@ -57,341 +59,391 @@ class AssignedChallengeCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Cabecera con estado y asignación
-              Row(
-                children: [
-                  // Icono de estado
-                  Container(
-                    padding: const EdgeInsets.all(AppDimensions.sm),
-                    decoration: BoxDecoration(
-                      color: _getStatusColor(assignedChallenge.status)
-                          .withValues(alpha: 50),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      _getStatusIcon(assignedChallenge.status),
-                      color: _getStatusColor(assignedChallenge.status),
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: AppDimensions.sm),
+              _buildHeader(),
 
-                  // Estado
-                  Text(
-                    _getStatusName(assignedChallenge.status),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: _getStatusColor(assignedChallenge.status),
-                    ),
-                  ),
-
-                  // Indicador de reto continuo si aplica
-                  if (assignedChallenge.isContinuous) ...[
-                    const SizedBox(width: AppDimensions.sm),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.indigo.withValues(alpha: 50),
-                        borderRadius:
-                            BorderRadius.circular(AppDimensions.borderRadiusSm),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.repeat,
-                            color: Colors.indigo,
-                            size: 12,
-                          ),
-                          const SizedBox(width: 2),
-                          Text(
-                            TrKeys.continuousChallenge.tr,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Colors.indigo,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-
-                  const Spacer(),
-
-                  // Asignado a (niño)
-                  if (child != null) ...[
-                    child!.avatarUrl != null
-                        ? CachedAvatar(url: child!.avatarUrl, radius: 16)
-                        : CircleAvatar(
-                            radius: 16,
-                            backgroundColor: Colors.grey.withValues(alpha: 50),
-                            child: const Icon(Icons.person,
-                                size: 16, color: Colors.grey),
-                          ),
-                    const SizedBox(width: AppDimensions.xs),
-                    Text(
-                      child!.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
               const SizedBox(height: AppDimensions.sm),
-
               const Divider(),
 
               // Título y detalles del reto
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Icono de categoría
-                  Container(
-                    padding: const EdgeInsets.all(AppDimensions.sm),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 20),
-                      borderRadius:
-                          BorderRadius.circular(AppDimensions.borderRadiusMd),
-                    ),
-                    child: Icon(
-                      _getCategoryIcon(challenge.category),
-                      color: Colors.grey.shade700,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: AppDimensions.sm),
-
-                  // Título y categoría
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          challenge.title,
-                          style: const TextStyle(
-                            fontSize: AppDimensions.fontMd,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: AppDimensions.xs),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: _getCategoryColor(challenge.category)
-                                    .withValues(alpha: 50),
-                                borderRadius: BorderRadius.circular(
-                                    AppDimensions.borderRadiusSm),
-                              ),
-                              child: Text(
-                                _getCategoryName(challenge.category),
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: _getCategoryColor(challenge.category),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: AppDimensions.xs),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.secondaryLight,
-                                borderRadius: BorderRadius.circular(
-                                    AppDimensions.borderRadiusSm),
-                              ),
-                              child: Text(
-                                _getFrequencyName(challenge.frequency),
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  color: AppColors.secondary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Puntos
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppDimensions.sm,
-                          vertical: AppDimensions.xs,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.amber.withValues(alpha: 50),
-                          borderRadius: BorderRadius.circular(
-                              AppDimensions.borderRadiusSm),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 2),
-                            Text(
-                              "${assignedChallenge.pointsEarned}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.amber,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppDimensions.xs),
-
-                      // Si no es fecha nula, mostrar fecha de vencimiento
-                      if (endDate != null)
-                        Text(
-                          _formatDate(endDate),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: _isOverdue(endDate)
-                                ? Colors.red
-                                : Colors.grey.shade600,
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
+              _buildChallengeInfo(),
 
               // Si hay una ejecución actual, mostrar información
-              if (currentExecution != null &&
-                  assignedChallenge.isContinuous) ...[
-                const SizedBox(height: AppDimensions.sm),
-                Container(
-                  padding: const EdgeInsets.all(AppDimensions.sm),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withValues(alpha: 20),
-                    borderRadius:
-                        BorderRadius.circular(AppDimensions.borderRadiusSm),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.event,
-                        size: 16,
-                        color: Colors.grey.shade700,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        "${TrKeys.currentExecution.tr}: ${_formatDateRange(currentExecution.startDate, currentExecution.endDate)}",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(currentExecution.status)
-                              .withValues(alpha: 50),
-                          borderRadius: BorderRadius.circular(
-                              AppDimensions.borderRadiusSm),
-                        ),
-                        child: Text(
-                          _getStatusName(currentExecution.status),
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: _getStatusColor(currentExecution.status),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              if (currentExecution != null && assignedChallenge.isContinuous)
+                ..._buildExecutionInfo(currentExecution, startDate, endDate),
 
               const SizedBox(height: AppDimensions.md),
 
               // Mostrar ejecuciones o botón para evaluar
-              Row(
-                mainAxisAlignment: (assignedChallenge.evaluations.isNotEmpty ||
-                        (currentExecution?.evaluations.isNotEmpty ?? false))
-                    ? MainAxisAlignment.spaceBetween
-                    : MainAxisAlignment.end,
-                children: [
-                  // Última evaluación (si existe)
-                  if (assignedChallenge.evaluations.isNotEmpty ||
-                      (currentExecution?.evaluations.isNotEmpty ?? false))
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.history,
-                          size: 16,
-                          color: Colors.grey.shade600,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          "${TrKeys.lastEvaluation.tr}: ${_getLastEvaluationDate(assignedChallenge, currentExecution)}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
-                    ),
+              _buildEvaluationSection(currentExecution, startDate, endDate),
 
-                  // Botón para evaluar
-                  assignedChallenge.status ==
-                              AssignedChallengeStatus.completed ||
-                          assignedChallenge.status ==
-                              AssignedChallengeStatus.failed ||
-                          (currentExecution != null &&
-                              (currentExecution.status ==
-                                      AssignedChallengeStatus.completed ||
-                                  currentExecution.status ==
-                                      AssignedChallengeStatus.failed))
-                      ? TextButton.icon(
-                          onPressed: onEvaluate,
-                          icon: const Icon(Icons.rate_review, size: 16),
-                          label: Text(TrKeys.evaluateChallenge.tr),
-                          style: TextButton.styleFrom(
-                            visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                          ),
-                        )
-                      : ElevatedButton.icon(
-                          onPressed: onEvaluate,
-                          icon: const Icon(Icons.rate_review, size: 16),
-                          label: Text(TrKeys.evaluateChallenge.tr),
-                          style: ElevatedButton.styleFrom(
-                            visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                          ),
-                        ),
-                ],
-              ),
+              // Mostrar resumen de la ejecución actual
+              if (assignedChallenge.executions.isNotEmpty) ...[
+                const SizedBox(height: AppDimensions.sm),
+                ExecutionSummaryWidget(
+                  execution: assignedChallenge.currentExecution!,
+                  isCurrentExecution: true,
+                  challenge: challenge,
+                  assignedChallenge: assignedChallenge,
+                  showProgressBar: true,
+                ),
+              ],
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildHeader() {
+    final currentExecution = assignedChallenge.currentExecution;
+
+    return Row(
+      children: [
+        // Icono de estado
+        Container(
+          padding: const EdgeInsets.all(AppDimensions.sm),
+          decoration: BoxDecoration(
+            color:
+                _getStatusColor(assignedChallenge.status).withValues(alpha: 50),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            _getStatusIcon(assignedChallenge.status),
+            color: _getStatusColor(assignedChallenge.status),
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: AppDimensions.sm),
+
+        // Estado
+        Text(
+          _getStatusName(assignedChallenge.status),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: _getStatusColor(assignedChallenge.status),
+          ),
+        ),
+
+        // Indicador de reto continuo si aplica
+        if (assignedChallenge.isContinuous) ...[
+          const SizedBox(width: AppDimensions.sm),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 6,
+              vertical: 2,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.indigo.withValues(alpha: 50),
+              borderRadius: BorderRadius.circular(AppDimensions.borderRadiusSm),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.repeat,
+                  color: Colors.indigo,
+                  size: 12,
+                ),
+                const SizedBox(width: 2),
+                Text(
+                  TrKeys.continuousChallenge.tr,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.indigo,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+
+        const Spacer(),
+
+        // Asignado a (niño)
+        if (child != null) ...[
+          child!.avatarUrl != null
+              ? CachedAvatar(url: child!.avatarUrl, radius: 16)
+              : CircleAvatar(
+                  radius: 16,
+                  backgroundColor: Colors.grey.withValues(alpha: 50),
+                  child: const Icon(Icons.person, size: 16, color: Colors.grey),
+                ),
+          const SizedBox(width: AppDimensions.xs),
+          Text(
+            child!.name,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildChallengeInfo() {
+    final currentExecution = assignedChallenge.currentExecution;
+    final endDate = currentExecution?.endDate ?? assignedChallenge.endDate;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Icono de categoría
+        Container(
+          padding: const EdgeInsets.all(AppDimensions.sm),
+          decoration: BoxDecoration(
+            color: Colors.grey.withValues(alpha: 20),
+            borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
+          ),
+          child: Icon(
+            _getCategoryIcon(challenge.category),
+            color: Colors.grey.shade700,
+            size: 24,
+          ),
+        ),
+        const SizedBox(width: AppDimensions.sm),
+
+        // Título y categoría
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                challenge.title,
+                style: const TextStyle(
+                  fontSize: AppDimensions.fontMd,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: AppDimensions.xs),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _getCategoryColor(challenge.category)
+                          .withValues(alpha: 50),
+                      borderRadius:
+                          BorderRadius.circular(AppDimensions.borderRadiusSm),
+                    ),
+                    child: Text(
+                      _getCategoryName(challenge.category),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: _getCategoryColor(challenge.category),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppDimensions.xs),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryLight,
+                      borderRadius:
+                          BorderRadius.circular(AppDimensions.borderRadiusSm),
+                    ),
+                    child: Text(
+                      _getFrequencyName(challenge.frequency),
+                      style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.secondary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        // Puntos y fecha
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.sm,
+                vertical: AppDimensions.xs,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.amber.withValues(alpha: 50),
+                borderRadius:
+                    BorderRadius.circular(AppDimensions.borderRadiusSm),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 2),
+                  Text(
+                    "${assignedChallenge.pointsEarned}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.amber,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppDimensions.xs),
+
+            // Si no es fecha nula, mostrar fecha de vencimiento
+            if (endDate != null)
+              Text(
+                _formatDate(endDate),
+                style: TextStyle(
+                  fontSize: 12,
+                  color:
+                      _isOverdue(endDate) ? Colors.red : Colors.grey.shade600,
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildExecutionInfo(ChallengeExecution currentExecution,
+      DateTime startDate, DateTime? endDate) {
+    return [
+      const SizedBox(height: AppDimensions.sm),
+      Container(
+        padding: const EdgeInsets.all(AppDimensions.sm),
+        decoration: BoxDecoration(
+          color: Colors.grey.withValues(alpha: 20),
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadiusSm),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.event,
+                  size: 16,
+                  color: Colors.grey.shade700,
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    "${TrKeys.currentExecution.tr}: ${_formatDateRange(currentExecution.startDate, currentExecution.endDate)}",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDimensions.xs),
+            Row(
+              children: [
+                Icon(
+                  Icons.format_list_numbered,
+                  size: 16,
+                  color: Colors.grey.shade700,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Execution ${assignedChallenge.executions.indexOf(currentExecution) + 1} of ${assignedChallenge.executions.length}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                const SizedBox(width: AppDimensions.md),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(currentExecution.status)
+                        .withValues(alpha: 50),
+                    borderRadius:
+                        BorderRadius.circular(AppDimensions.borderRadiusSm),
+                  ),
+                  child: Text(
+                    _getStatusName(currentExecution.status),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: _getStatusColor(currentExecution.status),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ];
+  }
+
+  Widget _buildEvaluationSection(ChallengeExecution? currentExecution,
+      DateTime startDate, DateTime? endDate) {
+    final lastEvaluationDate =
+        _getLastEvaluationDate(assignedChallenge, currentExecution);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Última evaluación (si existe)
+        if (lastEvaluationDate.isNotEmpty)
+          Row(
+            children: [
+              Icon(
+                Icons.history,
+                size: 16,
+                color: Colors.grey.shade600,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                "${TrKeys.lastEvaluation.tr}: $lastEvaluationDate",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
+          )
+        else
+          const SizedBox(),
+
+        // Botón para evaluar
+        _shouldShowEvaluateButton(currentExecution)
+            ? ElevatedButton.icon(
+                onPressed: onEvaluate,
+                icon: const Icon(Icons.rate_review, size: 16),
+                label: Text(TrKeys.evaluateChallenge.tr),
+                style: ElevatedButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                ),
+              )
+            : const SizedBox(),
+      ],
+    );
+  }
+
+  bool _shouldShowEvaluateButton(ChallengeExecution? currentExecution) {
+    // Si hay una ejecución actual, verificar si está completada o fallida
+    if (currentExecution != null) {
+      return currentExecution.status == AssignedChallengeStatus.active ||
+          currentExecution.status == AssignedChallengeStatus.pending;
+    }
+
+    // Si no hay ejecución actual, verificar el estado general del reto
+    return assignedChallenge.status == AssignedChallengeStatus.active ||
+        assignedChallenge.status == AssignedChallengeStatus.pending;
   }
 
   // Obtener fecha de la última evaluación (de la ejecución actual o del reto completo)
@@ -407,7 +459,7 @@ class AssignedChallengeCard extends StatelessWidget {
       return DateFormat('MMM d').format(challenge.evaluations.last.date);
     }
 
-    return TrKeys.noEvaluationsYet.tr;
+    return '';
   }
 
   // Formatear rango de fechas
