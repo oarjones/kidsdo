@@ -1113,7 +1113,7 @@ class _ChildChallengesPageState extends State<ChildChallengesPage>
   String _formatDateRangeSimple(DateTime start, DateTime end) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final startDay = DateTime(start.year, start.month, start.day);
+    //final startDay = DateTime(start.year, start.month, start.day);
     final endDay = DateTime(end.year, end.month, end.day);
 
     // Calculate days remaining

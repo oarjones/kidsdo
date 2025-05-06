@@ -137,16 +137,6 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                             )),
                         const SizedBox(height: AppDimensions.md),
 
-                        // Frecuencia
-                        Text(
-                          TrKeys.frequency.tr,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: AppDimensions.fontMd,
-                          ),
-                        ),
-                        const SizedBox(height: AppDimensions.sm),
-
                         // ACTUALIZADO: Selector de duración usando el nuevo widget
                         Obx(() => DurationSelectorWidget(
                               selectedDuration: controller.selectedDuration,

@@ -11,7 +11,7 @@ import 'package:kidsdo/data/datasources/remote/challenge_remote_datasource.dart'
 import 'package:kidsdo/data/models/challenge_model.dart';
 import 'package:kidsdo/domain/entities/challenge.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
-import 'package:kidsdo/domain/entities/challenge_execution.dart';
+//import 'package:kidsdo/domain/entities/challenge_execution.dart';
 import 'package:kidsdo/domain/repositories/challenge_repository.dart';
 import 'package:kidsdo/presentation/controllers/session_controller.dart';
 import 'package:logger/logger.dart';
@@ -989,55 +989,55 @@ class ChallengeController extends GetxController {
   //   }
   // }
 
-  /// Crea la siguiente ejecución para un reto continuo
-  @Deprecated('The next execution is created automatically by the repository')
-  Future<void> _createNextExecution(AssignedChallenge assignedChallenge) async {
-    if (!assignedChallenge.isContinuous) return;
+  // /// Crea la siguiente ejecución para un reto continuo
+  // @Deprecated('The next execution is created automatically by the repository')
+  // Future<void> _createNextExecution(AssignedChallenge assignedChallenge) async {
+  //   if (!assignedChallenge.isContinuous) return;
 
-    isCreatingNextExecution.value = true;
+  //   isCreatingNextExecution.value = true;
 
-    try {
-      // Obtener el challenge original para calcular la duración de la nueva ejecución
-      final challengeResult = await _challengeRepository
-          .getChallengeById(assignedChallenge.challengeId);
+  //   try {
+  //     // Obtener el challenge original para calcular la duración de la nueva ejecución
+  //     final challengeResult = await _challengeRepository
+  //         .getChallengeById(assignedChallenge.challengeId);
 
-      await challengeResult.fold(
-        (failure) {
-          _logger.e("Error getting challenge: ${failure.message}");
-        },
-        (challenge) async {
-          // Obtener la última ejecución
-          final lastExecution = assignedChallenge.executions.last;
+  //     await challengeResult.fold(
+  //       (failure) {
+  //         _logger.e("Error getting challenge: ${failure.message}");
+  //       },
+  //       (challenge) async {
+  //         // Obtener la última ejecución
+  //         final lastExecution = assignedChallenge.executions.last;
 
-          // Calcular nuevas fechas basadas en la duración
-          final newStartDate =
-              lastExecution.endDate.add(const Duration(days: 1));
-          final newEndDate =
-              _calculateEndDate(newStartDate, challenge.duration);
+  //         // Calcular nuevas fechas basadas en la duración
+  //         final newStartDate =
+  //             lastExecution.endDate.add(const Duration(days: 1));
+  //         final newEndDate =
+  //             _calculateEndDate(newStartDate, challenge.duration);
 
-          // Crear nueva ejecución
-          final result = await _challengeRepository.createNextExecution(
-            assignedChallengeId: assignedChallenge.id,
-            startDate: newStartDate,
-            endDate: newEndDate,
-          );
+  //         // Crear nueva ejecución
+  //         final result = await _challengeRepository.createNextExecution(
+  //           assignedChallengeId: assignedChallenge.id,
+  //           startDate: newStartDate,
+  //           endDate: newEndDate,
+  //         );
 
-          result.fold(
-            (failure) {
-              _logger.e("Error creating next execution: ${failure.message}");
-            },
-            (_) {
-              _logger.i("Next execution created successfully");
-            },
-          );
-        },
-      );
-    } catch (e) {
-      _logger.e("Unexpected error creating next execution: $e");
-    } finally {
-      isCreatingNextExecution.value = false;
-    }
-  }
+  //         result.fold(
+  //           (failure) {
+  //             _logger.e("Error creating next execution: ${failure.message}");
+  //           },
+  //           (_) {
+  //             _logger.i("Next execution created successfully");
+  //           },
+  //         );
+  //       },
+  //     );
+  //   } catch (e) {
+  //     _logger.e("Unexpected error creating next execution: $e");
+  //   } finally {
+  //     isCreatingNextExecution.value = false;
+  //   }
+  // }
 
   /// Recarga un reto asignado para obtener datos actualizados
   Future<void> _reloadAssignedChallenge(String assignedChallengeId) async {
@@ -1474,39 +1474,39 @@ class ChallengeController extends GetxController {
     }
   }
 
-  /// Calcula la fecha de fin en función de la duración del reto
-  DateTime _calculateEndDate(DateTime startDate, ChallengeDuration duration) {
-    switch (duration) {
-      case ChallengeDuration.weekly:
-        // Obtener el próximo domingo
-        final int daysUntilSunday = 7 - startDate.weekday;
-        return startDate.add(Duration(days: daysUntilSunday));
+  // /// Calcula la fecha de fin en función de la duración del reto
+  // DateTime _calculateEndDate(DateTime startDate, ChallengeDuration duration) {
+  //   switch (duration) {
+  //     case ChallengeDuration.weekly:
+  //       // Obtener el próximo domingo
+  //       final int daysUntilSunday = 7 - startDate.weekday;
+  //       return startDate.add(Duration(days: daysUntilSunday));
 
-      case ChallengeDuration.monthly:
-        // Último día del mes
-        final nextMonth = startDate.month < 12
-            ? DateTime(startDate.year, startDate.month + 1, 1)
-            : DateTime(startDate.year + 1, 1, 1);
-        return nextMonth.subtract(const Duration(days: 1));
+  //     case ChallengeDuration.monthly:
+  //       // Último día del mes
+  //       final nextMonth = startDate.month < 12
+  //           ? DateTime(startDate.year, startDate.month + 1, 1)
+  //           : DateTime(startDate.year + 1, 1, 1);
+  //       return nextMonth.subtract(const Duration(days: 1));
 
-      case ChallengeDuration.quarterly:
-        // Último día del trimestre actual
-        final int currentQuarter = (startDate.month - 1) ~/ 3;
-        final int lastMonthOfQuarter = (currentQuarter + 1) * 3;
-        final nextQuarter = lastMonthOfQuarter < 12
-            ? DateTime(startDate.year, lastMonthOfQuarter + 1, 1)
-            : DateTime(startDate.year + 1, 1, 1);
-        return nextQuarter.subtract(const Duration(days: 1));
+  //     case ChallengeDuration.quarterly:
+  //       // Último día del trimestre actual
+  //       final int currentQuarter = (startDate.month - 1) ~/ 3;
+  //       final int lastMonthOfQuarter = (currentQuarter + 1) * 3;
+  //       final nextQuarter = lastMonthOfQuarter < 12
+  //           ? DateTime(startDate.year, lastMonthOfQuarter + 1, 1)
+  //           : DateTime(startDate.year + 1, 1, 1);
+  //       return nextQuarter.subtract(const Duration(days: 1));
 
-      case ChallengeDuration.yearly:
-        // Último día del año
-        return DateTime(startDate.year, 12, 31);
+  //     case ChallengeDuration.yearly:
+  //       // Último día del año
+  //       return DateTime(startDate.year, 12, 31);
 
-      case ChallengeDuration.punctual:
-        // Por defecto, una semana
-        return startDate.add(const Duration(days: 7));
-    }
-  }
+  //     case ChallengeDuration.punctual:
+  //       // Por defecto, una semana
+  //       return startDate.add(const Duration(days: 7));
+  //   }
+  // }
 
   // Métodos auxiliares para convertir enumeraciones a strings
   static String _categoryToString(ChallengeCategory category) {

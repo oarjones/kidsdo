@@ -74,10 +74,15 @@ class _ChallengeEvaluationDialogState extends State<ChallengeEvaluationDialog> {
     if (widget.assignedChallenge.executions.isNotEmpty) {
       // Seleccionar la ejecución actual (última activa o pendiente)
       selectedExecution = widget.assignedChallenge.currentExecution;
-      // Encontrar su índice
-      executionIndex = selectedExecution != null
-          ? widget.assignedChallenge.executions.indexOf(selectedExecution!)
-          : widget.assignedChallenge.executions.length - 1;
+      if (selectedExecution != null) {
+        // Encontrar su índice
+        executionIndex =
+            widget.assignedChallenge.executions.indexOf(selectedExecution!);
+      } else {
+        // Si no hay ejecución actual, usar la última
+        executionIndex = widget.assignedChallenge.executions.length - 1;
+        selectedExecution = widget.assignedChallenge.executions[executionIndex];
+      }
     }
   }
 
@@ -93,10 +98,8 @@ class _ChallengeEvaluationDialogState extends State<ChallengeEvaluationDialog> {
     final bool hasExecutions = widget.assignedChallenge.executions.isNotEmpty;
 
     // Determinar fechas relevantes para mostrar
-    final DateTime startDate =
-        selectedExecution?.startDate ?? widget.assignedChallenge.startDate;
-    final DateTime? endDate =
-        selectedExecution?.endDate ?? widget.assignedChallenge.endDate;
+    //final DateTime startDate = selectedExecution?.startDate ?? widget.assignedChallenge.startDate;
+    //final DateTime? endDate = selectedExecution?.endDate ?? widget.assignedChallenge.endDate;
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -290,8 +293,7 @@ class _ChallengeEvaluationDialogState extends State<ChallengeEvaluationDialog> {
   }
 
   String _getExecutionLabel(int index, ChallengeExecution execution) {
-    final isCurrentExecution =
-        execution == widget.assignedChallenge.currentExecution;
+    //final isCurrentExecution = execution == widget.assignedChallenge.currentExecution;
     final dateRange = _formatDateRange(execution.startDate, execution.endDate);
 
     String label;
@@ -309,7 +311,7 @@ class _ChallengeEvaluationDialogState extends State<ChallengeEvaluationDialog> {
   Widget _buildTotalPointsSummary() {
     final int totalPoints = widget.assignedChallenge.pointsEarned;
     final int pointsForThisExecution =
-        selectedExecution?.evaluation!.points ?? 0;
+        selectedExecution?.evaluation?.points ?? 0;
 
     return Container(
       padding: const EdgeInsets.all(AppDimensions.md),

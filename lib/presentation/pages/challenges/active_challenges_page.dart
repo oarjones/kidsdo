@@ -816,7 +816,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
   }
 
   List<Widget> _buildExecutionSection(AssignedChallenge assignedChallenge) {
-    final currentExecution = assignedChallenge.currentExecution;
+    //final currentExecution = assignedChallenge.currentExecution;
 
     return [
       // Indicador de ejecución actual

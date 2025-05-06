@@ -197,6 +197,11 @@ class ExecutionSummaryWidget extends StatelessWidget {
   }
 
   Widget _buildEvaluationsList() {
+    // Solo mostrar si hay una evaluación
+    if (execution.evaluation == null) {
+      return _buildNoEvaluationsPlaceholder();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -208,15 +213,7 @@ class ExecutionSummaryWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.xs),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: 1,
-          itemBuilder: (context, index) {
-            final evaluation = execution.evaluation!;
-            return _buildEvaluationItem(evaluation);
-          },
-        ),
+        _buildEvaluationItem(execution.evaluation!),
       ],
     );
   }
@@ -300,7 +297,6 @@ class ExecutionSummaryWidget extends StatelessWidget {
 
   Widget _buildPointsSummary() {
     final pointsEarned = execution.evaluation?.points ?? 0;
-
     final expectedPoints = challenge?.points ?? 0;
 
     return Container(
@@ -336,7 +332,7 @@ class ExecutionSummaryWidget extends StatelessWidget {
               color: Colors.grey.shade700,
             ),
           ),
-          if (expectedPoints > 0) ...[
+          if (expectedPoints > 0 && pointsEarned > 0) ...[
             const Spacer(),
             Text(
               "${(pointsEarned / expectedPoints * 100).toInt()}%",

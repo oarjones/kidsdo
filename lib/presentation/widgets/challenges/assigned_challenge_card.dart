@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:kidsdo/core/constants/colors.dart';
+//import 'package:kidsdo/core/constants/colors.dart';
 import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
@@ -95,7 +95,7 @@ class AssignedChallengeCard extends StatelessWidget {
   }
 
   Widget _buildHeader() {
-    final currentExecution = assignedChallenge.currentExecution;
+    //final currentExecution = assignedChallenge.currentExecution;
 
     return Row(
       children: [

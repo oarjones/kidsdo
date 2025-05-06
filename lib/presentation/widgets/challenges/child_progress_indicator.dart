@@ -337,7 +337,7 @@ class ChildProgressIndicator extends StatelessWidget {
     final remainingDuration = endDay.difference(today).inDays;
 
     // Calculate time progress
-    final timeProgress = elapsedDuration / totalDuration;
+    //final timeProgress = elapsedDuration / totalDuration;
 
     // Text based on time left
     String timeText;

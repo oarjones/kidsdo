@@ -121,11 +121,15 @@ class AssignedChallenge extends Equatable {
     if (executions.isEmpty) return null;
 
     // La ejecución actual es la más reciente en la lista
-    return executions.lastWhere(
-      (execution) =>
-          execution.status == AssignedChallengeStatus.active ||
-          execution.status == AssignedChallengeStatus.pending,
-      orElse: () => executions.last,
-    );
+    try {
+      return executions.lastWhere(
+        (execution) =>
+            execution.status == AssignedChallengeStatus.active ||
+            execution.status == AssignedChallengeStatus.pending,
+      );
+    } catch (e) {
+      // Si no hay ninguna ejecución activa o pendiente, devolver la última
+      return executions.isNotEmpty ? executions.last : null;
+    }
   }
 }
