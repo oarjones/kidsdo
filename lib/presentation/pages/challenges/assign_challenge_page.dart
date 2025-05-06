@@ -482,7 +482,7 @@ class _AssignChallengePageState extends State<AssignChallengePage> {
                     ),
                     const SizedBox(height: AppDimensions.xs),
                     Text(
-                      '${_getCategoryName(challenge.category)} · ${_getFrequencyName(challenge.frequency)} · ${_getDurationName(challenge.duration)}',
+                      '${_getCategoryName(challenge.category)} · ${_getDurationName(challenge.duration)}',
                       style: TextStyle(
                         fontSize: AppDimensions.fontSm,
                         color: Colors.grey.shade700,
@@ -792,21 +792,6 @@ class _AssignChallengePageState extends State<AssignChallengePage> {
         return TrKeys.categorySpecial.tr;
       case ChallengeCategory.sibling:
         return TrKeys.categorySibling.tr;
-    }
-  }
-
-  String _getFrequencyName(ChallengeFrequency frequency) {
-    switch (frequency) {
-      case ChallengeFrequency.daily:
-        return TrKeys.frequencyDaily.tr;
-      case ChallengeFrequency.weekly:
-        return TrKeys.frequencyWeekly.tr;
-      case ChallengeFrequency.monthly:
-        return TrKeys.frequencyMonthly.tr;
-      case ChallengeFrequency.quarterly:
-        return TrKeys.frequencyQuarterly.tr;
-      case ChallengeFrequency.once:
-        return TrKeys.frequencyOnce.tr;
     }
   }
 

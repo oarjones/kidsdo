@@ -13,7 +13,6 @@ class ChallengeModel extends Challenge {
     required super.description,
     required super.category,
     required super.points,
-    required super.frequency,
     required super.duration, // Nuevo campo obligatorio
     required super.ageRange,
     required super.isTemplate,
@@ -52,7 +51,6 @@ class ChallengeModel extends Challenge {
       description: description,
       category: _mapStringToCategory(data['category'] ?? 'hygiene'),
       points: data['points'] ?? 0,
-      frequency: _mapStringToFrequency(data['frequency'] ?? 'daily'),
       duration:
           _mapStringToDuration(data['duration'] ?? 'weekly'), // Nuevo campo
       ageRange:
@@ -74,7 +72,6 @@ class ChallengeModel extends Challenge {
       'description': description,
       'category': _categoryToString(category),
       'points': points,
-      //'frequency': _frequencyToString(frequency),
       'duration': _durationToString(duration), // Nuevo campo
       'ageRange': ageRange,
       'isTemplate': isTemplate,
@@ -106,7 +103,6 @@ class ChallengeModel extends Challenge {
         description: challenge.description,
         category: challenge.category,
         points: challenge.points,
-        frequency: challenge.frequency,
         duration: challenge.duration,
         ageRange: challenge.ageRange,
         isTemplate: challenge.isTemplate,
@@ -126,7 +122,6 @@ class ChallengeModel extends Challenge {
       description: challenge.description,
       category: challenge.category,
       points: challenge.points,
-      frequency: challenge.frequency,
       duration: challenge.duration,
       ageRange: challenge.ageRange,
       isTemplate: challenge.isTemplate,
@@ -175,38 +170,6 @@ class ChallengeModel extends Challenge {
         return 'special';
       case ChallengeCategory.sibling:
         return 'sibling';
-    }
-  }
-
-  static ChallengeFrequency _mapStringToFrequency(String frequency) {
-    switch (frequency) {
-      case 'daily':
-        return ChallengeFrequency.daily;
-      case 'weekly':
-        return ChallengeFrequency.weekly;
-      case 'monthly':
-        return ChallengeFrequency.monthly;
-      case 'quarterly':
-        return ChallengeFrequency.quarterly;
-      case 'once':
-        return ChallengeFrequency.once;
-      default:
-        return ChallengeFrequency.daily;
-    }
-  }
-
-  static String _frequencyToString(ChallengeFrequency frequency) {
-    switch (frequency) {
-      case ChallengeFrequency.daily:
-        return 'daily';
-      case ChallengeFrequency.weekly:
-        return 'weekly';
-      case ChallengeFrequency.monthly:
-        return 'monthly';
-      case ChallengeFrequency.quarterly:
-        return 'quarterly';
-      case ChallengeFrequency.once:
-        return 'once';
     }
   }
 

@@ -50,10 +50,8 @@ class AssignedChallenge extends Equatable {
   final String familyId;
   final AssignedChallengeStatus status;
   final DateTime startDate;
-  final DateTime? endDate; // Ahora puede ser nulo para retos continuos
-  final String evaluationFrequency; // 'daily', 'weekly'
+  final DateTime? endDate;
   final int pointsEarned;
-  final List<ChallengeEvaluation> evaluations;
   final DateTime createdAt;
   final bool isContinuous; // Indica si el reto se reinicia automáticamente
   final List<ChallengeExecution> executions; // Lista de ejecuciones del reto
@@ -65,10 +63,8 @@ class AssignedChallenge extends Equatable {
     required this.familyId,
     required this.status,
     required this.startDate,
-    this.endDate, // Ya no es required
-    required this.evaluationFrequency,
+    this.endDate,
     this.pointsEarned = 0,
-    this.evaluations = const [],
     required this.createdAt,
     this.isContinuous = false,
     this.executions = const [],
@@ -83,9 +79,7 @@ class AssignedChallenge extends Equatable {
         status,
         startDate,
         endDate,
-        evaluationFrequency,
         pointsEarned,
-        evaluations,
         createdAt,
         isContinuous,
         executions,
@@ -99,9 +93,7 @@ class AssignedChallenge extends Equatable {
     AssignedChallengeStatus? status,
     DateTime? startDate,
     DateTime? endDate,
-    String? evaluationFrequency,
     int? pointsEarned,
-    List<ChallengeEvaluation>? evaluations,
     DateTime? createdAt,
     bool? isContinuous,
     List<ChallengeExecution>? executions,
@@ -113,17 +105,15 @@ class AssignedChallenge extends Equatable {
       familyId: familyId ?? this.familyId,
       status: status ?? this.status,
       startDate: startDate ?? this.startDate,
-      endDate: endDate, // Manejo especial - puede establecerse a null
-      evaluationFrequency: evaluationFrequency ?? this.evaluationFrequency,
+      endDate: endDate, // Puede ser null
       pointsEarned: pointsEarned ?? this.pointsEarned,
-      evaluations: evaluations ?? this.evaluations,
       createdAt: createdAt ?? this.createdAt,
       isContinuous: isContinuous ?? this.isContinuous,
       executions: executions ?? this.executions,
     );
   }
 
-  /// Verifica si este es un reto continuo (sin fecha de fin)
+  /// Verifica si este es un reto continuo
   bool get isContinuousChallenge => isContinuous;
 
   /// Obtiene la ejecución actual del reto

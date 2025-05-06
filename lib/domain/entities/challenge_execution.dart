@@ -6,29 +6,30 @@ class ChallengeExecution extends Equatable {
   final DateTime startDate;
   final DateTime endDate;
   final AssignedChallengeStatus status;
-  final List<ChallengeEvaluation> evaluations;
+  final ChallengeEvaluation?
+      evaluation; // Cambio de lista a un solo objeto opcional
 
   const ChallengeExecution({
     required this.startDate,
     required this.endDate,
     required this.status,
-    this.evaluations = const [],
+    this.evaluation, // Ahora es opcional
   });
 
   @override
-  List<Object?> get props => [startDate, endDate, status, evaluations];
+  List<Object?> get props => [startDate, endDate, status, evaluation];
 
   ChallengeExecution copyWith({
     DateTime? startDate,
     DateTime? endDate,
     AssignedChallengeStatus? status,
-    List<ChallengeEvaluation>? evaluations,
+    ChallengeEvaluation? evaluation,
   }) {
     return ChallengeExecution(
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       status: status ?? this.status,
-      evaluations: evaluations ?? this.evaluations,
+      evaluation: evaluation, // No usamos ?? para permitir establecerlo a null
     );
   }
 }

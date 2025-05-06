@@ -140,7 +140,7 @@ class ChallengeExecutionIndicator extends StatelessWidget {
               ),
             ],
           ),
-          if (execution.evaluations.isNotEmpty) ...[
+          if (execution.evaluation != null) ...[
             const SizedBox(height: AppDimensions.xs),
             Row(
               children: [
@@ -151,7 +151,7 @@ class ChallengeExecutionIndicator extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  '${execution.evaluations.length} ${execution.evaluations.length == 1 ? 'evaluation' : 'evaluations'}',
+                  'evaluation',
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey.shade600,

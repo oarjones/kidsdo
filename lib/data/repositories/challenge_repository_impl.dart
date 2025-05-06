@@ -105,7 +105,6 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
     required String familyId,
     required DateTime startDate,
     DateTime? endDate,
-    required String evaluationFrequency,
     bool isContinuous = false,
   }) async {
     try {
@@ -116,7 +115,6 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
         familyId: familyId,
         startDate: startDate,
         endDate: endDate,
-        evaluationFrequency: evaluationFrequency,
         isContinuous: isContinuous,
       );
       return Right(assignedChallenge);
@@ -231,26 +229,26 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
     }
   }
 
-  @override
-  @Deprecated('Use evaluateExecution instead')
-  Future<Either<Failure, void>> evaluateAssignedChallenge({
-    required String assignedChallengeId,
-    required AssignedChallengeStatus status,
-    required int points,
-    String? note,
-  }) async {
-    try {
-      await _challengeRemoteDataSource.evaluateAssignedChallenge(
-        assignedChallengeId: assignedChallengeId,
-        status: status,
-        points: points,
-        note: note,
-      );
-      return const Right(null);
-    } on FirebaseException catch (e) {
-      return Left(ServerFailure(message: e.message ?? 'Error del servidor'));
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
-    }
-  }
+  // @override
+  // @Deprecated('Use evaluateExecution instead')
+  // Future<Either<Failure, void>> evaluateAssignedChallenge({
+  //   required String assignedChallengeId,
+  //   required AssignedChallengeStatus status,
+  //   required int points,
+  //   String? note,
+  // }) async {
+  //   try {
+  //     await _challengeRemoteDataSource.evaluateAssignedChallenge(
+  //       assignedChallengeId: assignedChallengeId,
+  //       status: status,
+  //       points: points,
+  //       note: note,
+  //     );
+  //     return const Right(null);
+  //   } on FirebaseException catch (e) {
+  //     return Left(ServerFailure(message: e.message ?? 'Error del servidor'));
+  //   } catch (e) {
+  //     return Left(ServerFailure(message: e.toString()));
+  //   }
+  // }
 }

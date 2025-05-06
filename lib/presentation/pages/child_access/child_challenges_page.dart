@@ -654,27 +654,6 @@ class _ChildChallengesPageState extends State<ChildChallengesPage>
 
                   const Divider(),
 
-                  // Frequency
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        TrKeys.frequency.tr,
-                        style: TextStyle(
-                          color: Colors.grey.shade700,
-                        ),
-                      ),
-                      Text(
-                        _getFrequencyName(challenge.frequency),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const Divider(),
-
                   // Current period info (for younger kids)
                   if (currentExecution != null && child.age <= 6)
                     Row(
@@ -874,9 +853,11 @@ class _ChildChallengesPageState extends State<ChildChallengesPage>
                             color: Colors.green,
                           ),
                         ),
-                        if (assignedChallenge.evaluations.isNotEmpty)
+                        if (assignedChallenge.executions.isNotEmpty &&
+                            assignedChallenge.executions.last.evaluation !=
+                                null)
                           Text(
-                            '${TrKeys.pointsEarned.tr}: ${assignedChallenge.evaluations.last.points}',
+                            '${TrKeys.pointsEarned.tr}: ${assignedChallenge.executions.last.evaluation!.points}',
                             style: const TextStyle(
                               color: Colors.green,
                             ),
@@ -1109,21 +1090,6 @@ class _ChildChallengesPageState extends State<ChildChallengesPage>
         return TrKeys.categorySpecial.tr;
       case ChallengeCategory.sibling:
         return TrKeys.categorySibling.tr;
-    }
-  }
-
-  String _getFrequencyName(ChallengeFrequency frequency) {
-    switch (frequency) {
-      case ChallengeFrequency.daily:
-        return TrKeys.frequencyDaily.tr;
-      case ChallengeFrequency.weekly:
-        return TrKeys.frequencyWeekly.tr;
-      case ChallengeFrequency.monthly:
-        return TrKeys.frequencyMonthly.tr;
-      case ChallengeFrequency.quarterly:
-        return TrKeys.frequencyQuarterly.tr;
-      case ChallengeFrequency.once:
-        return TrKeys.frequencyOnce.tr;
     }
   }
 

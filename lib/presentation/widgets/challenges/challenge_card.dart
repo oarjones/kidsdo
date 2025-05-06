@@ -90,8 +90,6 @@ class ChallengeCard extends StatelessWidget {
                         Row(
                           children: [
                             _buildCategoryChip(challenge.category),
-                            const SizedBox(width: 8),
-                            _buildFrequencyChip(challenge.frequency),
                           ],
                         ),
                       ],
@@ -221,24 +219,6 @@ class ChallengeCard extends StatelessWidget {
     );
   }
 
-  // Construir chip de frecuencia
-  Widget _buildFrequencyChip(ChallengeFrequency frequency) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: AppColors.secondaryLight,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        _getFrequencyName(frequency),
-        style: const TextStyle(
-          fontSize: 10,
-          color: AppColors.secondary,
-        ),
-      ),
-    );
-  }
-
   // Construir visualización de puntos
   Widget _buildPointsDisplay(
       int originalPoints, int adaptedPoints, bool pointsWereAdapted) {
@@ -310,22 +290,6 @@ class ChallengeCard extends StatelessWidget {
         return TrKeys.categorySpecial.tr;
       case ChallengeCategory.sibling:
         return TrKeys.categorySibling.tr;
-    }
-  }
-
-  // Obtener nombre de frecuencia
-  String _getFrequencyName(ChallengeFrequency frequency) {
-    switch (frequency) {
-      case ChallengeFrequency.daily:
-        return TrKeys.frequencyDaily.tr;
-      case ChallengeFrequency.weekly:
-        return TrKeys.frequencyWeekly.tr;
-      case ChallengeFrequency.monthly:
-        return TrKeys.frequencyMonthly.tr;
-      case ChallengeFrequency.quarterly:
-        return TrKeys.frequencyQuarterly.tr;
-      case ChallengeFrequency.once:
-        return TrKeys.frequencyOnce.tr;
     }
   }
 

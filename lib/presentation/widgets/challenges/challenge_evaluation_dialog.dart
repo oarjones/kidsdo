@@ -308,9 +308,8 @@ class _ChallengeEvaluationDialogState extends State<ChallengeEvaluationDialog> {
 
   Widget _buildTotalPointsSummary() {
     final int totalPoints = widget.assignedChallenge.pointsEarned;
-    final int pointsForThisExecution = selectedExecution?.evaluations
-            .fold<int>(0, (sum, eval) => sum + eval.points) ??
-        0;
+    final int pointsForThisExecution =
+        selectedExecution?.evaluation!.points ?? 0;
 
     return Container(
       padding: const EdgeInsets.all(AppDimensions.md),

@@ -203,38 +203,21 @@ class ChildChallengesController extends GetxController {
             .where((c) => c.status == AssignedChallengeStatus.completed));
         break;
 
-      case 'daily':
-        final challengeFrequencies = <String, ChallengeFrequency>{};
-
-        // Get frequency of each challenge
-        for (final assignedChallenge in filtered) {
-          final challenge = _findChallengeById(assignedChallenge.challengeId);
-          if (challenge != null) {
-            challengeFrequencies[assignedChallenge.challengeId] =
-                challenge.frequency;
-          }
-        }
-
-        // Filter by daily challenges
-        dailyChallenges.assignAll(filtered.where((c) =>
-            challengeFrequencies[c.challengeId] == ChallengeFrequency.daily));
-        break;
-
       case 'weekly':
-        final challengeFrequencies = <String, ChallengeFrequency>{};
+        final challengeFrequencies = <String, ChallengeDuration>{};
 
         // Get frequency of each challenge
         for (final assignedChallenge in filtered) {
           final challenge = _findChallengeById(assignedChallenge.challengeId);
           if (challenge != null) {
             challengeFrequencies[assignedChallenge.challengeId] =
-                challenge.frequency;
+                challenge.duration;
           }
         }
 
         // Filter by weekly challenges
         weeklyChallenges.assignAll(filtered.where((c) =>
-            challengeFrequencies[c.challengeId] == ChallengeFrequency.weekly));
+            challengeFrequencies[c.challengeId] == ChallengeDuration.weekly));
         break;
 
       case 'continuous':
@@ -253,20 +236,17 @@ class ChildChallengesController extends GetxController {
             .where((c) => c.status == AssignedChallengeStatus.completed));
 
         // Get frequency of each challenge
-        final challengeFrequencies = <String, ChallengeFrequency>{};
+        final challengeFrequencies = <String, ChallengeDuration>{};
         for (final assignedChallenge in filtered) {
           final challenge = _findChallengeById(assignedChallenge.challengeId);
           if (challenge != null) {
             challengeFrequencies[assignedChallenge.challengeId] =
-                challenge.frequency;
+                challenge.duration;
           }
         }
 
-        dailyChallenges.assignAll(filtered.where((c) =>
-            challengeFrequencies[c.challengeId] == ChallengeFrequency.daily));
-
         weeklyChallenges.assignAll(filtered.where((c) =>
-            challengeFrequencies[c.challengeId] == ChallengeFrequency.weekly));
+            challengeFrequencies[c.challengeId] == ChallengeDuration.weekly));
 
         // Filter continuous challenges for the new tab
         continuousChallenges.assignAll(filtered.where((c) => c.isContinuous));

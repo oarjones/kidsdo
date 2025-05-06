@@ -49,12 +49,6 @@ class ChallengeFilterDrawer extends GetView<ChallengeController> {
 
                     const SizedBox(height: 24),
 
-                    // Filtro por frecuencia
-                    _buildSectionTitle(TrKeys.frequency.tr),
-                    _buildFrequencyFilter(),
-
-                    const SizedBox(height: 24),
-
                     // Filtro por rango de edad
                     _buildSectionTitle(TrKeys.ageRange.tr),
                     _buildAgeRangeFilter(),
@@ -147,45 +141,6 @@ class ChallengeFilterDrawer extends GetView<ChallengeController> {
                   backgroundColor: Colors.grey.shade200,
                   selectedColor: AppColors.primaryLight,
                   checkmarkColor: AppColors.primary,
-                )),
-          ],
-        ));
-  }
-
-  // Filtro por frecuencia
-  Widget _buildFrequencyFilter() {
-    return Obx(() => Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            // Opción "Todas las frecuencias"
-            FilterChip(
-              label: Text(TrKeys.allFrequencies.tr),
-              selected: controller.filterFrequency.value == null,
-              onSelected: (selected) {
-                if (selected) {
-                  controller.setFilterFrequency(null);
-                }
-              },
-              backgroundColor: Colors.grey.shade200,
-              selectedColor: AppColors.secondaryLight,
-              checkmarkColor: AppColors.secondary,
-            ),
-
-            // Opciones para cada frecuencia
-            ...ChallengeFrequency.values.map((frequency) => FilterChip(
-                  label: Text(_getFrequencyName(frequency)),
-                  selected: controller.filterFrequency.value == frequency,
-                  onSelected: (selected) {
-                    if (selected) {
-                      controller.setFilterFrequency(frequency);
-                    } else if (controller.filterFrequency.value == frequency) {
-                      controller.setFilterFrequency(null);
-                    }
-                  },
-                  backgroundColor: Colors.grey.shade200,
-                  selectedColor: AppColors.secondaryLight,
-                  checkmarkColor: AppColors.secondary,
                 )),
           ],
         ));
@@ -317,22 +272,6 @@ class ChallengeFilterDrawer extends GetView<ChallengeController> {
         return TrKeys.categorySpecial.tr;
       case ChallengeCategory.sibling:
         return TrKeys.categorySibling.tr;
-    }
-  }
-
-  // Obtener nombre de frecuencia
-  String _getFrequencyName(ChallengeFrequency frequency) {
-    switch (frequency) {
-      case ChallengeFrequency.daily:
-        return TrKeys.frequencyDaily.tr;
-      case ChallengeFrequency.weekly:
-        return TrKeys.frequencyWeekly.tr;
-      case ChallengeFrequency.monthly:
-        return TrKeys.frequencyMonthly.tr;
-      case ChallengeFrequency.quarterly:
-        return TrKeys.frequencyQuarterly.tr;
-      case ChallengeFrequency.once:
-        return TrKeys.frequencyOnce.tr;
     }
   }
 }

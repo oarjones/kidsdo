@@ -52,7 +52,7 @@ class ExecutionSummaryWidget extends StatelessWidget {
             ],
 
             // Evaluaciones realizadas
-            if (execution.evaluations.isNotEmpty) ...[
+            if (execution.evaluation != null) ...[
               _buildEvaluationsList(),
             ] else ...[
               _buildNoEvaluationsPlaceholder(),
@@ -201,7 +201,7 @@ class ExecutionSummaryWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "${TrKeys.evaluations.tr} (${execution.evaluations.length})",
+          "${TrKeys.evaluations.tr} (1)",
           style: const TextStyle(
             fontSize: AppDimensions.fontSm,
             fontWeight: FontWeight.bold,
@@ -211,9 +211,9 @@ class ExecutionSummaryWidget extends StatelessWidget {
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: execution.evaluations.length,
+          itemCount: 1,
           itemBuilder: (context, index) {
-            final evaluation = execution.evaluations[index];
+            final evaluation = execution.evaluation!;
             return _buildEvaluationItem(evaluation);
           },
         ),
@@ -299,10 +299,7 @@ class ExecutionSummaryWidget extends StatelessWidget {
   }
 
   Widget _buildPointsSummary() {
-    final pointsEarned = execution.evaluations.fold<int>(
-      0,
-      (sum, evaluation) => sum + evaluation.points,
-    );
+    final pointsEarned = execution.evaluation?.points ?? 0;
 
     final expectedPoints = challenge?.points ?? 0;
 

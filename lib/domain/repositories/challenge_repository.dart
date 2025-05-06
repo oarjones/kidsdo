@@ -30,9 +30,8 @@ abstract class IChallengeRepository {
     required String childId,
     required String familyId,
     required DateTime startDate,
-    DateTime? endDate, // Ahora es opcional para soportar retos continuos
-    required String evaluationFrequency,
-    bool isContinuous = false, // Nuevo parámetro para indicar si es continuo
+    DateTime? endDate,
+    bool isContinuous = false,
   });
 
   /// Obtiene los retos asignados a un niño
@@ -54,7 +53,7 @@ abstract class IChallengeRepository {
   /// Evalúa una ejecución específica de un reto asignado
   Future<Either<Failure, void>> evaluateExecution({
     required String assignedChallengeId,
-    required int executionIndex, // Índice de la ejecución a evaluar
+    required int executionIndex,
     required AssignedChallengeStatus status,
     required int points,
     String? note,
@@ -67,12 +66,12 @@ abstract class IChallengeRepository {
     required DateTime endDate,
   });
 
-  /// Evalúa un reto asignado (método legacy para compatibilidad)
-  @Deprecated('Use evaluateExecution instead')
-  Future<Either<Failure, void>> evaluateAssignedChallenge({
-    required String assignedChallengeId,
-    required AssignedChallengeStatus status,
-    required int points,
-    String? note,
-  });
+  // /// Evalúa un reto asignado (método legacy para compatibilidad)
+  // @Deprecated('Use evaluateExecution instead')
+  // Future<Either<Failure, void>> evaluateAssignedChallenge({
+  //   required String assignedChallengeId,
+  //   required AssignedChallengeStatus status,
+  //   required int points,
+  //   String? note,
+  // });
 }

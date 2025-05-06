@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kidsdo/data/models/challenge_execution_model.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
+import 'package:kidsdo/domain/entities/challenge_execution.dart';
 
 /// Modelo para mapear los datos de un reto asignado desde/hacia Firebase
 class AssignedChallengeModel extends AssignedChallenge {
@@ -10,28 +12,23 @@ class AssignedChallengeModel extends AssignedChallenge {
     required super.familyId,
     required super.status,
     required super.startDate,
-    super.endDate, // Ya no es required
-    required super.evaluationFrequency,
+    super.endDate,
     super.pointsEarned = 0,
-    super.evaluations = const [],
     required super.createdAt,
+    super.isContinuous = false,
+    super.executions = const [],
   });
 
   /// Crea un AssignedChallengeModel desde un documento de Firestore
   factory AssignedChallengeModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
 
-    // Mapear las evaluaciones
-    List<ChallengeEvaluation> evaluations = [];
-    if (data['evaluations'] != null) {
-      final evalList = data['evaluations'] as List;
-      evaluations = evalList.map((e) {
-        return ChallengeEvaluation(
-          date: (e['date'] as Timestamp).toDate(),
-          status: _mapStringToStatus(e['status']),
-          points: e['points'] ?? 0,
-          note: e['note'],
-        );
+    // Mapear las ejecuciones
+    List<ChallengeExecution> executions = [];
+    if (data['executions'] != null) {
+      final execList = data['executions'] as List;
+      executions = execList.map((e) {
+        return ChallengeExecutionModel.fromFirestore(e as Map<String, dynamic>);
       }).toList();
     }
 
@@ -42,27 +39,24 @@ class AssignedChallengeModel extends AssignedChallenge {
       familyId: data['familyId'] ?? '',
       status: _mapStringToStatus(data['status'] ?? 'pending'),
       startDate: (data['startDate'] as Timestamp).toDate(),
-      // La fecha de fin ahora es opcional
       endDate: data['endDate'] != null
           ? (data['endDate'] as Timestamp).toDate()
           : null,
-      evaluationFrequency: data['evaluationFrequency'] ?? 'daily',
       pointsEarned: data['pointsEarned'] ?? 0,
-      evaluations: evaluations,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
+      isContinuous: data['isContinuous'] ?? false,
+      executions: executions,
     );
   }
 
   /// Convierte el modelo a un mapa para Firestore
   Map<String, dynamic> toFirestore() {
-    // Convertir las evaluaciones a lista de mapas
-    final List<Map<String, dynamic>> evaluationsList = evaluations.map((e) {
-      return {
-        'date': Timestamp.fromDate(e.date),
-        'status': _statusToString(e.status),
-        'points': e.points,
-        'note': e.note,
-      };
+    // Convertir las ejecuciones a lista de mapas
+    final List<Map<String, dynamic>> executionsList = executions.map((e) {
+      if (e is ChallengeExecutionModel) {
+        return e.toFirestore();
+      }
+      return ChallengeExecutionModel.fromEntity(e).toFirestore();
     }).toList();
 
     final Map<String, dynamic> data = {
@@ -71,10 +65,10 @@ class AssignedChallengeModel extends AssignedChallenge {
       'familyId': familyId,
       'status': _statusToString(status),
       'startDate': Timestamp.fromDate(startDate),
-      'evaluationFrequency': evaluationFrequency,
       'pointsEarned': pointsEarned,
-      'evaluations': evaluationsList,
       'createdAt': Timestamp.fromDate(createdAt),
+      'isContinuous': isContinuous,
+      'executions': executionsList,
     };
 
     // Solo añadir endDate si no es nulo
@@ -96,10 +90,10 @@ class AssignedChallengeModel extends AssignedChallenge {
       status: assignedChallenge.status,
       startDate: assignedChallenge.startDate,
       endDate: assignedChallenge.endDate,
-      evaluationFrequency: assignedChallenge.evaluationFrequency,
       pointsEarned: assignedChallenge.pointsEarned,
-      evaluations: assignedChallenge.evaluations,
       createdAt: assignedChallenge.createdAt,
+      isContinuous: assignedChallenge.isContinuous,
+      executions: assignedChallenge.executions,
     );
   }
 
@@ -114,6 +108,8 @@ class AssignedChallengeModel extends AssignedChallenge {
         return AssignedChallengeStatus.failed;
       case 'pending':
         return AssignedChallengeStatus.pending;
+      case 'inactive':
+        return AssignedChallengeStatus.inactive;
       default:
         return AssignedChallengeStatus.pending;
     }

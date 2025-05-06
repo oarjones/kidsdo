@@ -158,21 +158,6 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                           ),
                         ),
 
-                      // Chip para filtro actual de frecuencia
-                      if (controller.filterFrequency.value != null)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Chip(
-                            label: Text(_getFrequencyName(
-                                controller.filterFrequency.value!)),
-                            deleteIcon: const Icon(Icons.close, size: 18),
-                            onDeleted: () {
-                              controller.setFilterFrequency(null);
-                            },
-                            backgroundColor: AppColors.secondaryLight,
-                          ),
-                        ),
-
                       // Chip para rango de edad si está filtrado
                       if (controller.filterMinAge.value > 0 ||
                           controller.filterMaxAge.value < 18)
@@ -205,7 +190,6 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
 
                       // Mostrar chip para limpiar todos los filtros si hay alguno activo
                       if (controller.filterCategory.value != null ||
-                          controller.filterFrequency.value != null ||
                           controller.filterMinAge.value > 0 ||
                           controller.filterMaxAge.value < 18 ||
                           controller.showOnlyAgeAppropriate.value)
@@ -1262,8 +1246,6 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                       Row(
                         children: [
                           _buildCategoryChip(challenge.category),
-                          const SizedBox(width: 8),
-                          _buildFrequencyChip(challenge.frequency),
                         ],
                       ),
                     ],
@@ -1451,24 +1433,6 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
     );
   }
 
-  // Construir chip de frecuencia
-  Widget _buildFrequencyChip(ChallengeFrequency frequency) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColors.secondaryLight,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        _getFrequencyName(frequency),
-        style: const TextStyle(
-          fontSize: 12,
-          color: AppColors.secondary,
-        ),
-      ),
-    );
-  }
-
   // Obtener nombre de categoría
   String _getCategoryName(ChallengeCategory category) {
     switch (category) {
@@ -1486,22 +1450,6 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
         return TrKeys.categorySpecial.tr;
       case ChallengeCategory.sibling:
         return TrKeys.categorySibling.tr;
-    }
-  }
-
-  // Obtener nombre de frecuencia
-  String _getFrequencyName(ChallengeFrequency frequency) {
-    switch (frequency) {
-      case ChallengeFrequency.daily:
-        return TrKeys.frequencyDaily.tr;
-      case ChallengeFrequency.weekly:
-        return TrKeys.frequencyWeekly.tr;
-      case ChallengeFrequency.monthly:
-        return TrKeys.frequencyMonthly.tr;
-      case ChallengeFrequency.quarterly:
-        return TrKeys.frequencyQuarterly.tr;
-      case ChallengeFrequency.once:
-        return TrKeys.frequencyOnce.tr;
     }
   }
 

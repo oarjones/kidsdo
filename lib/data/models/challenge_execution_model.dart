@@ -8,51 +8,50 @@ class ChallengeExecutionModel extends ChallengeExecution {
     required super.startDate,
     required super.endDate,
     required super.status,
-    super.evaluations = const [],
+    super.evaluation,
   });
 
   /// Crea un ChallengeExecutionModel desde un mapa de Firestore
   factory ChallengeExecutionModel.fromFirestore(Map<String, dynamic> data) {
-    // Mapear las evaluaciones
-    List<ChallengeEvaluation> evaluations = [];
-    if (data['evaluations'] != null) {
-      final evalList = data['evaluations'] as List;
-      evaluations = evalList.map((e) {
-        return ChallengeEvaluation(
-          date: (e['date'] as Timestamp).toDate(),
-          status: _mapStringToStatus(e['status']),
-          points: e['points'] ?? 0,
-          note: e['note'],
-        );
-      }).toList();
+    // Extraer la evaluación si existe
+    ChallengeEvaluation? evaluation;
+    if (data['evaluation'] != null) {
+      final evalData = data['evaluation'] as Map<String, dynamic>;
+      evaluation = ChallengeEvaluation(
+        date: (evalData['date'] as Timestamp).toDate(),
+        status: _mapStringToStatus(evalData['status']),
+        points: evalData['points'] ?? 0,
+        note: evalData['note'],
+      );
     }
 
     return ChallengeExecutionModel(
       startDate: (data['startDate'] as Timestamp).toDate(),
       endDate: (data['endDate'] as Timestamp).toDate(),
       status: _mapStringToStatus(data['status'] ?? 'pending'),
-      evaluations: evaluations,
+      evaluation: evaluation,
     );
   }
 
   /// Convierte el modelo a un mapa para Firestore
   Map<String, dynamic> toFirestore() {
-    // Convertir las evaluaciones a lista de mapas
-    final List<Map<String, dynamic>> evaluationsList = evaluations.map((e) {
-      return {
-        'date': Timestamp.fromDate(e.date),
-        'status': _statusToString(e.status),
-        'points': e.points,
-        'note': e.note,
-      };
-    }).toList();
-
-    return {
+    final Map<String, dynamic> data = {
       'startDate': Timestamp.fromDate(startDate),
       'endDate': Timestamp.fromDate(endDate),
       'status': _statusToString(status),
-      'evaluations': evaluationsList,
     };
+
+    // Añadir evaluación solo si existe
+    if (evaluation != null) {
+      data['evaluation'] = {
+        'date': Timestamp.fromDate(evaluation!.date),
+        'status': _statusToString(evaluation!.status),
+        'points': evaluation!.points,
+        'note': evaluation!.note,
+      };
+    }
+
+    return data;
   }
 
   /// Crea un ChallengeExecutionModel desde ChallengeExecution
@@ -61,7 +60,7 @@ class ChallengeExecutionModel extends ChallengeExecution {
       startDate: execution.startDate,
       endDate: execution.endDate,
       status: execution.status,
-      evaluations: execution.evaluations,
+      evaluation: execution.evaluation,
     );
   }
 

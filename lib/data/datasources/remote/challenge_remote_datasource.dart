@@ -35,8 +35,7 @@ abstract class IChallengeRemoteDataSource {
     required String familyId,
     required DateTime startDate,
     DateTime? endDate,
-    required String evaluationFrequency,
-    bool isContinuous = false, // Nuevo parámetro para indicar si es continuo
+    bool isContinuous = false,
   });
 
   /// Obtiene los retos asignados a un niño
@@ -68,15 +67,6 @@ abstract class IChallengeRemoteDataSource {
     required String assignedChallengeId,
     required DateTime startDate,
     required DateTime endDate,
-  });
-
-  /// Evalúa un reto asignado (método legacy para compatibilidad)
-  @Deprecated('Use evaluateExecution instead')
-  Future<void> evaluateAssignedChallenge({
-    required String assignedChallengeId,
-    required AssignedChallengeStatus status,
-    required int points,
-    String? note,
   });
 
   Future<void> migrateLocalChallengesToFirestore(
@@ -231,7 +221,6 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
     required String familyId,
     required DateTime startDate,
     DateTime? endDate,
-    required String evaluationFrequency,
     bool isContinuous = false,
   }) async {
     // Obtener el reto original para conocer su duración
@@ -242,7 +231,7 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
       startDate: startDate,
       endDate: endDate ?? _calculateEndDate(startDate, challenge.duration),
       status: AssignedChallengeStatus.active,
-      evaluations: const [],
+      evaluation: null, // Sin evaluación inicial
     );
 
     // Crear datos del reto asignado
@@ -252,9 +241,7 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
       'familyId': familyId,
       'status': 'active',
       'startDate': Timestamp.fromDate(startDate),
-      'evaluationFrequency': evaluationFrequency,
       'pointsEarned': 0,
-      'evaluations': [],
       'createdAt': Timestamp.now(),
       'isContinuous': isContinuous,
       'executions': [firstExecution.toFirestore()],
@@ -351,7 +338,7 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
         List.from(assignedChallenge.executions);
     final execution = updatedExecutions[executionIndex];
 
-    // Crear nueva evaluación
+    // Crear evaluación
     final evaluation = ChallengeEvaluation(
       date: DateTime.now(),
       status: status,
@@ -359,10 +346,10 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
       note: note,
     );
 
-    // Actualizar estado de la ejecución y añadir evaluación
+    // Actualizar estado de la ejecución y asignar evaluación
     final updatedExecution = execution.copyWith(
       status: status,
-      evaluations: [...execution.evaluations, evaluation],
+      evaluation: evaluation, // Asignar directamente
     );
     updatedExecutions[executionIndex] = updatedExecution;
 
@@ -372,19 +359,24 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
     // Determinar el nuevo estado global del reto asignado
     AssignedChallengeStatus newStatus = assignedChallenge.status;
 
-    // Si es la ejecución actual (la última) y es completada/fallida
+    // Verificar si necesitamos crear una nueva ejecución
+    bool shouldCreateNextExecution = false;
+
     if (executionIndex == assignedChallenge.executions.length - 1) {
       if (status == AssignedChallengeStatus.completed ||
           status == AssignedChallengeStatus.failed) {
-        // Si es continuo, se mantiene activo para la siguiente ejecución
-        // Si no es continuo, toma el estado de la evaluación
-        newStatus = assignedChallenge.isContinuous
-            ? AssignedChallengeStatus.active
-            : status;
+        // Para retos continuos, mantener activo y crear nueva ejecución
+        if (assignedChallenge.isContinuous) {
+          newStatus = AssignedChallengeStatus.active;
+          shouldCreateNextExecution = true;
+        } else {
+          // Para retos no continuos, tomar el estado de la evaluación
+          newStatus = status;
+        }
       }
     }
 
-    // Crear modelo actualizado
+    // Actualizar el reto asignado
     final updatedAssignedChallenge = assignedChallenge.copyWith(
       status: newStatus,
       pointsEarned: totalPoints,
@@ -394,6 +386,22 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
     // Guardar en Firestore
     await updateAssignedChallenge(
         AssignedChallengeModel.fromEntity(updatedAssignedChallenge));
+
+    // Si es necesario, crear la siguiente ejecución para retos continuos
+    if (shouldCreateNextExecution) {
+      // Obtener el reto original para conocer la duración
+      final challenge = await getChallengeById(assignedChallenge.challengeId);
+
+      // Calcular fechas para la nueva ejecución
+      final nextStartDate = DateTime.now();
+      final nextEndDate = _calculateEndDate(nextStartDate, challenge.duration);
+
+      await createNextExecution(
+        assignedChallengeId: assignedChallengeId,
+        startDate: nextStartDate,
+        endDate: nextEndDate,
+      );
+    }
   }
 
   @override
@@ -421,7 +429,7 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
       startDate: startDate,
       endDate: endDate,
       status: AssignedChallengeStatus.active,
-      evaluations: const [],
+      evaluation: null, // Sin evaluación inicial
     );
 
     // Añadir la nueva ejecución a la lista
@@ -430,8 +438,7 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
     // Actualizar el reto asignado
     final updatedAssignedChallenge = assignedChallenge.copyWith(
       executions: updatedExecutions,
-      status:
-          AssignedChallengeStatus.active, // Asegurar que el reto está activo
+      status: AssignedChallengeStatus.active,
     );
 
     // Guardar en Firestore
@@ -439,65 +446,65 @@ class ChallengeRemoteDataSource implements IChallengeRemoteDataSource {
         AssignedChallengeModel.fromEntity(updatedAssignedChallenge));
   }
 
-  @override
-  @Deprecated('Use evaluateExecution instead')
-  Future<void> evaluateAssignedChallenge({
-    required String assignedChallengeId,
-    required AssignedChallengeStatus status,
-    required int points,
-    String? note,
-  }) async {
-    // Obtener reto asignado actual
-    final assignedChallenge =
-        await getAssignedChallengeById(assignedChallengeId);
+  // @override
+  // @Deprecated('Use evaluateExecution instead')
+  // Future<void> evaluateAssignedChallenge({
+  //   required String assignedChallengeId,
+  //   required AssignedChallengeStatus status,
+  //   required int points,
+  //   String? note,
+  // }) async {
+  //   // Obtener reto asignado actual
+  //   final assignedChallenge =
+  //       await getAssignedChallengeById(assignedChallengeId);
 
-    // Si tiene ejecuciones, evaluar la más reciente
-    if (assignedChallenge.executions.isNotEmpty) {
-      await evaluateExecution(
-        assignedChallengeId: assignedChallengeId,
-        executionIndex: assignedChallenge.executions.length - 1,
-        status: status,
-        points: points,
-        note: note,
-      );
-      return;
-    }
+  //   // Si tiene ejecuciones, evaluar la más reciente
+  //   if (assignedChallenge.executions.isNotEmpty) {
+  //     await evaluateExecution(
+  //       assignedChallengeId: assignedChallengeId,
+  //       executionIndex: assignedChallenge.executions.length - 1,
+  //       status: status,
+  //       points: points,
+  //       note: note,
+  //     );
+  //     return;
+  //   }
 
-    // Si no tiene ejecuciones (compatibilidad con versiones antiguas)
-    // Crear nueva evaluación
-    final evaluation = ChallengeEvaluation(
-      date: DateTime.now(),
-      status: status,
-      points: points,
-      note: note,
-    );
+  //   // Si no tiene ejecuciones (compatibilidad con versiones antiguas)
+  //   // Crear nueva evaluación
+  //   final evaluation = ChallengeEvaluation(
+  //     date: DateTime.now(),
+  //     status: status,
+  //     points: points,
+  //     note: note,
+  //   );
 
-    // Actualizar puntos totales ganados
-    final totalPoints = assignedChallenge.pointsEarned + points;
+  //   // Actualizar puntos totales ganados
+  //   final totalPoints = assignedChallenge.pointsEarned + points;
 
-    // Actualizar estado del reto asignado (si es necesario)
-    AssignedChallengeStatus newStatus = assignedChallenge.status;
-    if (status == AssignedChallengeStatus.completed ||
-        status == AssignedChallengeStatus.failed) {
-      newStatus = assignedChallenge.isContinuous
-          ? AssignedChallengeStatus.active
-          : status;
-    }
+  //   // Actualizar estado del reto asignado (si es necesario)
+  //   AssignedChallengeStatus newStatus = assignedChallenge.status;
+  //   if (status == AssignedChallengeStatus.completed ||
+  //       status == AssignedChallengeStatus.failed) {
+  //     newStatus = assignedChallenge.isContinuous
+  //         ? AssignedChallengeStatus.active
+  //         : status;
+  //   }
 
-    // Añadir la evaluación a la lista
-    final updatedEvaluations = [...assignedChallenge.evaluations, evaluation];
+  //   // Añadir la evaluación a la lista
+  //   final updatedEvaluations = [...assignedChallenge.evaluations, evaluation];
 
-    // Crear modelo actualizado
-    final updatedAssignedChallenge = assignedChallenge.copyWith(
-      status: newStatus,
-      pointsEarned: totalPoints,
-      evaluations: updatedEvaluations,
-    );
+  //   // Crear modelo actualizado
+  //   final updatedAssignedChallenge = assignedChallenge.copyWith(
+  //     status: newStatus,
+  //     pointsEarned: totalPoints,
+  //     evaluations: updatedEvaluations,
+  //   );
 
-    // Guardar en Firestore
-    await updateAssignedChallenge(
-        AssignedChallengeModel.fromEntity(updatedAssignedChallenge));
-  }
+  //   // Guardar en Firestore
+  //   await updateAssignedChallenge(
+  //       AssignedChallengeModel.fromEntity(updatedAssignedChallenge));
+  // }
 
   // Método auxiliar para calcular la fecha de fin según la duración
   DateTime _calculateEndDate(DateTime startDate, ChallengeDuration duration) {

@@ -921,19 +921,10 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
 
     for (int i = 0; i < assignedChallenge.executions.length; i++) {
       final execution = assignedChallenge.executions[i];
-      for (final evaluation in execution.evaluations) {
-        allEvaluations.add({
-          'evaluation': evaluation,
-          'executionIndex': i,
-        });
-      }
-    }
 
-    // Agregar evaluaciones legacy (sin ejecuciones)
-    for (final evaluation in assignedChallenge.evaluations) {
       allEvaluations.add({
-        'evaluation': evaluation,
-        'executionIndex': null,
+        'evaluation': execution.evaluation,
+        'executionIndex': i,
       });
     }
 

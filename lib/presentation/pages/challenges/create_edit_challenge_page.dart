@@ -146,26 +146,6 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
                           ),
                         ),
                         const SizedBox(height: AppDimensions.sm),
-                        Obx(() => DropdownButtonFormField<ChallengeFrequency>(
-                              value: controller.selectedFrequency.value,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  controller.selectedFrequency.value = value;
-                                }
-                              },
-                              items: ChallengeFrequency.values.map((frequency) {
-                                return DropdownMenuItem<ChallengeFrequency>(
-                                  value: frequency,
-                                  child: Text(_getFrequencyName(frequency)),
-                                );
-                              }).toList(),
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                filled: true,
-                                fillColor: Color(0xFFF5F5F5),
-                              ),
-                            )),
-                        const SizedBox(height: AppDimensions.md),
 
                         // ACTUALIZADO: Selector de duración usando el nuevo widget
                         Obx(() => DurationSelectorWidget(
@@ -464,21 +444,6 @@ class CreateEditChallengePage extends GetView<ChallengeController> {
         return TrKeys.categorySpecial.tr;
       case ChallengeCategory.sibling:
         return TrKeys.categorySibling.tr;
-    }
-  }
-
-  String _getFrequencyName(ChallengeFrequency frequency) {
-    switch (frequency) {
-      case ChallengeFrequency.daily:
-        return TrKeys.frequencyDaily.tr;
-      case ChallengeFrequency.weekly:
-        return TrKeys.frequencyWeekly.tr;
-      case ChallengeFrequency.monthly:
-        return TrKeys.frequencyMonthly.tr;
-      case ChallengeFrequency.quarterly:
-        return TrKeys.frequencyQuarterly.tr;
-      case ChallengeFrequency.once:
-        return TrKeys.frequencyOnce.tr;
     }
   }
 }

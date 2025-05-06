@@ -236,25 +236,6 @@ class AssignedChallengeCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: AppDimensions.xs),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondaryLight,
-                      borderRadius:
-                          BorderRadius.circular(AppDimensions.borderRadiusSm),
-                    ),
-                    child: Text(
-                      _getFrequencyName(challenge.frequency),
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: AppColors.secondary,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ],
@@ -450,13 +431,15 @@ class AssignedChallengeCard extends StatelessWidget {
   String _getLastEvaluationDate(
       AssignedChallenge challenge, ChallengeExecution? execution) {
     // Primero buscar en la ejecución actual
-    if (execution != null && execution.evaluations.isNotEmpty) {
-      return DateFormat('MMM d').format(execution.evaluations.last.date);
+    if (execution != null && execution.evaluation != null) {
+      return DateFormat('MMM d').format(execution.evaluation!.date);
     }
 
     // Si no hay evaluaciones en la ejecución actual, buscar en el reto completo
-    if (challenge.evaluations.isNotEmpty) {
-      return DateFormat('MMM d').format(challenge.evaluations.last.date);
+    if (challenge.executions.isNotEmpty &&
+        challenge.executions.last.evaluation != null) {
+      return DateFormat('MMM d')
+          .format(challenge.executions.last.evaluation!.date);
     }
 
     return '';
@@ -606,22 +589,6 @@ class AssignedChallengeCard extends StatelessWidget {
         return Icons.celebration;
       case ChallengeCategory.sibling:
         return Icons.family_restroom;
-    }
-  }
-
-  // Obtener nombre de frecuencia
-  String _getFrequencyName(ChallengeFrequency frequency) {
-    switch (frequency) {
-      case ChallengeFrequency.daily:
-        return TrKeys.frequencyDaily.tr;
-      case ChallengeFrequency.weekly:
-        return TrKeys.frequencyWeekly.tr;
-      case ChallengeFrequency.monthly:
-        return TrKeys.frequencyMonthly.tr;
-      case ChallengeFrequency.quarterly:
-        return TrKeys.frequencyQuarterly.tr;
-      case ChallengeFrequency.once:
-        return TrKeys.frequencyOnce.tr;
     }
   }
 }

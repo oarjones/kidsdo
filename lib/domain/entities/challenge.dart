@@ -11,15 +11,6 @@ enum ChallengeCategory {
   sibling, // Retos para hermanos
 }
 
-/// Enumeración de frecuencias de retos
-enum ChallengeFrequency {
-  daily, // Diario
-  weekly, // Semanal
-  monthly, // Mensual
-  quarterly, // Trimestral
-  once, // Una sola vez
-}
-
 /// Enumeración de duraciones de retos
 enum ChallengeDuration {
   weekly, // Semanal
@@ -36,7 +27,6 @@ class Challenge extends Equatable {
   final String description;
   final ChallengeCategory category;
   final int points;
-  final ChallengeFrequency frequency;
   final ChallengeDuration duration; // Nueva propiedad: duración del reto
   final Map<String, dynamic> ageRange; // {'min': 3, 'max': 12}
   final bool isTemplate;
@@ -51,7 +41,6 @@ class Challenge extends Equatable {
     required this.description,
     required this.category,
     required this.points,
-    required this.frequency,
     required this.duration, // Nuevo campo obligatorio
     required this.ageRange,
     required this.isTemplate,
@@ -68,7 +57,6 @@ class Challenge extends Equatable {
         description,
         category,
         points,
-        frequency,
         duration,
         ageRange,
         isTemplate,
@@ -84,7 +72,6 @@ class Challenge extends Equatable {
     String? description,
     ChallengeCategory? category,
     int? points,
-    ChallengeFrequency? frequency,
     ChallengeDuration? duration,
     Map<String, dynamic>? ageRange,
     bool? isTemplate,
@@ -99,7 +86,6 @@ class Challenge extends Equatable {
       description: description ?? this.description,
       category: category ?? this.category,
       points: points ?? this.points,
-      frequency: frequency ?? this.frequency,
       duration: duration ?? this.duration,
       ageRange: ageRange ?? this.ageRange,
       isTemplate: isTemplate ?? this.isTemplate,

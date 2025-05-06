@@ -64,8 +64,6 @@ class ChallengeController extends GetxController {
   // Campos seleccionables
   final Rx<ChallengeCategory> selectedCategory =
       Rx<ChallengeCategory>(ChallengeCategory.hygiene);
-  final Rx<ChallengeFrequency> selectedFrequency =
-      Rx<ChallengeFrequency>(ChallengeFrequency.daily);
   final Rx<ChallengeDuration> selectedDuration =
       Rx<ChallengeDuration>(ChallengeDuration.weekly);
   final RxMap<String, dynamic> selectedAgeRange =
@@ -88,7 +86,7 @@ class ChallengeController extends GetxController {
   final RxInt filterMinAge = RxInt(0);
   final RxInt filterMaxAge = RxInt(18);
   final RxBool showOnlyAgeAppropriate = RxBool(false);
-  final Rx<ChallengeFrequency?> filterFrequency = Rx<ChallengeFrequency?>(null);
+  final Rx<ChallengeDuration?> filterDuration = Rx<ChallengeDuration?>(null);
   final TextEditingController searchController = TextEditingController();
 
   // Para la adaptación de dificultad por edad
@@ -128,7 +126,6 @@ class ChallengeController extends GetxController {
             description: challenge.descriptionKey?.tr ?? challenge.description,
             category: challenge.category,
             points: challenge.points,
-            frequency: challenge.frequency,
             ageRange: challenge.ageRange,
             isTemplate: challenge.isTemplate,
             createdBy: challenge.createdBy,
@@ -159,7 +156,6 @@ class ChallengeController extends GetxController {
               selectedChallengeModel.description,
           category: selectedChallengeModel.category,
           points: selectedChallengeModel.points,
-          frequency: selectedChallengeModel.frequency,
           ageRange: selectedChallengeModel.ageRange,
           isTemplate: selectedChallengeModel.isTemplate,
           createdBy: selectedChallengeModel.createdBy,
@@ -358,7 +354,6 @@ class ChallengeController extends GetxController {
                       challenge.descriptionKey?.tr ?? challenge.description,
                   category: challenge.category,
                   points: challenge.points,
-                  frequency: challenge.frequency,
                   ageRange: challenge.ageRange,
                   isTemplate: challenge.isTemplate,
                   createdBy: challenge.createdBy,
@@ -402,7 +397,6 @@ class ChallengeController extends GetxController {
           description: challenge.descriptionKey?.tr ?? challenge.description,
           category: challenge.category,
           points: challenge.points,
-          frequency: challenge.frequency,
           ageRange: challenge.ageRange,
           isTemplate: challenge.isTemplate,
           createdBy: challenge.createdBy,
@@ -439,9 +433,7 @@ class ChallengeController extends GetxController {
       childId: childId,
       familyId: familyId,
       startDate: startDate,
-      endDate:
-          isContinuous ? null : endDate, // Si es continuo, no tiene fecha fin
-      evaluationFrequency: evaluationFrequency,
+      endDate: endDate,
       isContinuous: isContinuous,
     );
   }
@@ -597,7 +589,6 @@ class ChallengeController extends GetxController {
       description: descriptionController.text.trim(),
       category: selectedCategory.value,
       points: int.parse(pointsController.text.trim()),
-      frequency: selectedFrequency.value,
       duration: selectedDuration.value, // Nuevo campo de duración
       ageRange: selectedAgeRange,
       isTemplate: isTemplateChallenge.value,
@@ -666,7 +657,6 @@ class ChallengeController extends GetxController {
       description: descriptionController.text.trim(),
       category: selectedCategory.value,
       points: int.parse(pointsController.text.trim()),
-      frequency: selectedFrequency.value,
       duration: selectedDuration.value, // Nuevo campo de duración
       ageRange: selectedAgeRange,
       isTemplate: isTemplateChallenge.value,
@@ -803,10 +793,7 @@ class ChallengeController extends GetxController {
       childId: selectedChildId.value,
       familyId: currentUser.familyId!,
       startDate: startDate.value,
-      endDate: isContinuousChallenge.value
-          ? null
-          : endDate.value, // Nulo si es continuo
-      evaluationFrequency: selectedEvaluationFrequency.value,
+      endDate: endDate.value,
       isContinuous: isContinuousChallenge.value, // Nuevo parámetro
     );
 
@@ -902,105 +889,105 @@ class ChallengeController extends GetxController {
 
   /// Evalúa un reto asignado
 
-  Future<void> evaluateAssignedChallenge({
-    required String assignedChallengeId,
-    required AssignedChallengeStatus newStatus,
-    required int points,
-    String? note,
-  }) async {
-    isEvaluatingChallenge.value = true;
-    status.value = ChallengeStatus.loading;
-    errorMessage.value = '';
+  // Future<void> evaluateAssignedChallenge({
+  //   required String assignedChallengeId,
+  //   required AssignedChallengeStatus newStatus,
+  //   required int points,
+  //   String? note,
+  // }) async {
+  //   isEvaluatingChallenge.value = true;
+  //   status.value = ChallengeStatus.loading;
+  //   errorMessage.value = '';
 
-    _logger.i(
-        "Evaluating challenge: $assignedChallengeId with status: ${newStatus.toString()}");
+  //   _logger.i(
+  //       "Evaluating challenge: $assignedChallengeId with status: ${newStatus.toString()}");
 
-    // Obtener el reto asignado para determinar cómo evaluarlo
-    final assignedChallengeResult = await _challengeRepository
-        .getAssignedChallengeById(assignedChallengeId);
+  //   // Obtener el reto asignado para determinar cómo evaluarlo
+  //   final assignedChallengeResult = await _challengeRepository
+  //       .getAssignedChallengeById(assignedChallengeId);
 
-    await assignedChallengeResult.fold(
-      (failure) {
-        status.value = ChallengeStatus.error;
-        errorMessage.value = _mapFailureToMessage(failure);
-        isEvaluatingChallenge.value = false;
-        _logger.e("Error getting assigned challenge: ${failure.message}");
-      },
-      (assignedChallenge) async {
-        // Si tiene ejecuciones, usar el nuevo método para evaluar la última ejecución
-        if (assignedChallenge.executions.isNotEmpty) {
-          // Evaluar la ejecución actual (última)
-          final executionIndex = assignedChallenge.executions.length - 1;
+  //   await assignedChallengeResult.fold(
+  //     (failure) {
+  //       status.value = ChallengeStatus.error;
+  //       errorMessage.value = _mapFailureToMessage(failure);
+  //       isEvaluatingChallenge.value = false;
+  //       _logger.e("Error getting assigned challenge: ${failure.message}");
+  //     },
+  //     (assignedChallenge) async {
+  //       // Si tiene ejecuciones, usar el nuevo método para evaluar la última ejecución
+  //       if (assignedChallenge.executions.isNotEmpty) {
+  //         // Evaluar la ejecución actual (última)
+  //         final executionIndex = assignedChallenge.executions.length - 1;
 
-          final result = await _challengeRepository.evaluateExecution(
-            assignedChallengeId: assignedChallengeId,
-            executionIndex: executionIndex,
-            status: newStatus,
-            points: points,
-            note: note,
-          );
+  //         final result = await _challengeRepository.evaluateExecution(
+  //           assignedChallengeId: assignedChallengeId,
+  //           executionIndex: executionIndex,
+  //           status: newStatus,
+  //           points: points,
+  //           note: note,
+  //         );
 
-          result.fold(
-            (failure) {
-              status.value = ChallengeStatus.error;
-              errorMessage.value = _mapFailureToMessage(failure);
-              _logger.e("Error evaluating execution: ${failure.message}");
-            },
-            (_) async {
-              // Si es un reto continuo y se completó/falló, ya se creará automáticamente la siguiente ejecución
-              // No necesitamos hacer nada adicional aquí
+  //         result.fold(
+  //           (failure) {
+  //             status.value = ChallengeStatus.error;
+  //             errorMessage.value = _mapFailureToMessage(failure);
+  //             _logger.e("Error evaluating execution: ${failure.message}");
+  //           },
+  //           (_) async {
+  //             // Si es un reto continuo y se completó/falló, ya se creará automáticamente la siguiente ejecución
+  //             // No necesitamos hacer nada adicional aquí
 
-              // Recargar el reto para obtener datos actualizados
-              await _reloadAssignedChallenge(assignedChallengeId);
+  //             // Recargar el reto para obtener datos actualizados
+  //             await _reloadAssignedChallenge(assignedChallengeId);
 
-              status.value = ChallengeStatus.success;
-              _logger.i("Challenge execution evaluated successfully");
-            },
-          );
-        }
-        // else {
-        //   // Por compatibilidad con retos antiguos, usar el método legacy solo si no hay ejecuciones
-        //   _logger.i(
-        //       "Using legacy evaluation method for challenge without executions");
+  //             status.value = ChallengeStatus.success;
+  //             _logger.i("Challenge execution evaluated successfully");
+  //           },
+  //         );
+  //       }
+  //       // else {
+  //       //   // Por compatibilidad con retos antiguos, usar el método legacy solo si no hay ejecuciones
+  //       //   _logger.i(
+  //       //       "Using legacy evaluation method for challenge without executions");
 
-        //   final result = await _challengeRepository.evaluateAssignedChallenge(
-        //     assignedChallengeId: assignedChallengeId,
-        //     status: newStatus,
-        //     points: points,
-        //     note: note,
-        //   );
+  //       //   final result = await _challengeRepository.evaluateAssignedChallenge(
+  //       //     assignedChallengeId: assignedChallengeId,
+  //       //     status: newStatus,
+  //       //     points: points,
+  //       //     note: note,
+  //       //   );
 
-        //   result.fold(
-        //     (failure) {
-        //       status.value = ChallengeStatus.error;
-        //       errorMessage.value = _mapFailureToMessage(failure);
-        //       _logger.e("Error evaluating challenge: ${failure.message}");
-        //     },
-        //     (_) async {
-        //       // Recargar el reto para obtener datos actualizados
-        //       await _reloadAssignedChallenge(assignedChallengeId);
+  //       //   result.fold(
+  //       //     (failure) {
+  //       //       status.value = ChallengeStatus.error;
+  //       //       errorMessage.value = _mapFailureToMessage(failure);
+  //       //       _logger.e("Error evaluating challenge: ${failure.message}");
+  //       //     },
+  //       //     (_) async {
+  //       //       // Recargar el reto para obtener datos actualizados
+  //       //       await _reloadAssignedChallenge(assignedChallengeId);
 
-        //       status.value = ChallengeStatus.success;
-        //       _logger.i("Challenge evaluated successfully");
-        //     },
-        //   );
-        // }
-      },
-    );
+  //       //       status.value = ChallengeStatus.success;
+  //       //       _logger.i("Challenge evaluated successfully");
+  //       //     },
+  //       //   );
+  //       // }
+  //     },
+  //   );
 
-    isEvaluatingChallenge.value = false;
+  //   isEvaluatingChallenge.value = false;
 
-    // Mostrar mensaje de éxito si no hay errores
-    if (status.value == ChallengeStatus.success) {
-      Get.snackbar(
-        'challenge_evaluated_title'.tr,
-        'challenge_evaluated_message'.tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green.shade50,
-        colorText: Colors.green,
-      );
-    }
-  }
+  //   // Mostrar mensaje de éxito si no hay errores
+  //   if (status.value == ChallengeStatus.success) {
+  //     Get.snackbar(
+  //       'challenge_evaluated_title'.tr,
+  //       'challenge_evaluated_message'.tr,
+  //       snackPosition: SnackPosition.BOTTOM,
+  //       backgroundColor: Colors.green.shade50,
+  //       colorText: Colors.green,
+  //     );
+  //   }
+  // }
 
   /// Crea la siguiente ejecución para un reto continuo
   @Deprecated('The next execution is created automatically by the repository')
@@ -1123,7 +1110,6 @@ class ChallengeController extends GetxController {
     descriptionController.text = challenge.description;
     pointsController.text = challenge.points.toString();
     selectedCategory.value = challenge.category;
-    selectedFrequency.value = challenge.frequency;
     selectedDuration.value = challenge.duration; // Nuevo campo
     selectedAgeRange.value = challenge.ageRange;
     isTemplateChallenge.value = challenge.isTemplate;
@@ -1179,7 +1165,6 @@ class ChallengeController extends GetxController {
     descriptionController.clear();
     pointsController.text = '10';
     selectedCategory.value = ChallengeCategory.hygiene;
-    selectedFrequency.value = ChallengeFrequency.daily;
     selectedDuration.value = ChallengeDuration.weekly; // Valor predeterminado
     selectedAgeRange.value = {'min': 3, 'max': 12};
     isTemplateChallenge.value = false;
@@ -1261,7 +1246,6 @@ class ChallengeController extends GetxController {
     filterCategory.value = null;
     filterMinAge.value = 0;
     filterMaxAge.value = 18;
-    filterFrequency.value = null;
     searchQuery.value = '';
     searchController.text = '';
 
@@ -1282,9 +1266,9 @@ class ChallengeController extends GetxController {
     }
 
     // Filtrar por frecuencia si está seleccionada
-    if (filterFrequency.value != null) {
+    if (filterDuration.value != null) {
       challenges = challenges
-          .where((challenge) => challenge.frequency == filterFrequency.value)
+          .where((challenge) => challenge.duration == filterDuration.value)
           .toList();
     }
 
@@ -1328,8 +1312,8 @@ class ChallengeController extends GetxController {
   }
 
   /// Cambia la frecuencia de filtro
-  void setFilterFrequency(ChallengeFrequency? frequency) {
-    filterFrequency.value = frequency;
+  void setFilterFrequency(ChallengeDuration? durtation) {
+    filterDuration.value = durtation;
     applyFilters();
   }
 
@@ -1446,7 +1430,7 @@ class ChallengeController extends GetxController {
           'title': challenge.title,
           'description': challenge.description,
           'category': _categoryToString(challenge.category),
-          'frequency': _frequencyToString(challenge.frequency),
+          'duration': _durationToString(challenge.duration),
           'points': challenge.points,
           'ageRange': challenge.ageRange,
           'icon': challenge.icon,
@@ -1472,6 +1456,21 @@ class ChallengeController extends GetxController {
       );
 
       return '';
+    }
+  }
+
+  static String _durationToString(ChallengeDuration duration) {
+    switch (duration) {
+      case ChallengeDuration.weekly:
+        return 'weekly';
+      case ChallengeDuration.monthly:
+        return 'monthly';
+      case ChallengeDuration.quarterly:
+        return 'quarterly';
+      case ChallengeDuration.yearly:
+        return 'yearly';
+      case ChallengeDuration.punctual:
+        return 'punctual';
     }
   }
 
@@ -1526,21 +1525,6 @@ class ChallengeController extends GetxController {
         return 'special';
       case ChallengeCategory.sibling:
         return 'sibling';
-    }
-  }
-
-  static String _frequencyToString(ChallengeFrequency frequency) {
-    switch (frequency) {
-      case ChallengeFrequency.daily:
-        return 'daily';
-      case ChallengeFrequency.weekly:
-        return 'weekly';
-      case ChallengeFrequency.monthly:
-        return 'monthly';
-      case ChallengeFrequency.quarterly:
-        return 'quarterly';
-      case ChallengeFrequency.once:
-        return 'once';
     }
   }
 
