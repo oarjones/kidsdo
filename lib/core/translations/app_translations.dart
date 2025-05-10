@@ -649,4 +649,12 @@ class TrKeys {
   // static const day = 'day';
   static const noContinuousChallengesYet = 'no_continuous_challenges_yet';
   static const manyDaysLeft = 'many_days_left';
+  static const noChildSelected = 'no_child_selected';
+
+  static const batchEvaluationPageTitle = 'batch_evaluation_page_title';
+  static const batchEvaluationPageDescription =
+      'batch_evaluation_page_description';
+  static const evaluationNoteOptionalHint = 'evaluation_note_optional_hint';
+  static void batchEvaluationFilterChildSelected =
+      'batch_evaluation_filter_child_selected';
 }

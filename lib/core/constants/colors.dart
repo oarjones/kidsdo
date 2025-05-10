@@ -61,4 +61,13 @@ class AppColors {
   static const warningLight = Color(0xFFFFF3E0); // Naranja 50
   static const errorLight = Color(0xFFFFEBEE); // Rojo 50
   static const infoLight = Color(0xFFE3F2FD); // Azul 50
+
+  // Colores de estado para retos asignados (AssignedChallengeStatus)
+  static const Color statusActive = Color(0xFF007BFF); // Azul brillante
+  static const Color statusCompleted = Color(0xFF28A745); // Verde éxito
+  static const Color statusFailed = Color(0xFFDC3545); // Rojo peligro
+  static const Color statusPending =
+      Color(0xFFFFC107); // Naranja/Amarillo advertencia
+  static const Color statusInactive =
+      Color(0xFF6c757d); // Gris para inactivo (ejemplo)
 }

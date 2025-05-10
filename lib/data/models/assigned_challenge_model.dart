@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kidsdo/data/models/challenge_execution_model.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
 import 'package:kidsdo/domain/entities/challenge_execution.dart';
+import 'package:kidsdo/domain/entities/challenge.dart'; // Importar Challenge para las enumeraciones
 
 /// Modelo para mapear los datos de un reto asignado desde/hacia Firebase
 class AssignedChallengeModel extends AssignedChallenge {
@@ -17,6 +18,15 @@ class AssignedChallengeModel extends AssignedChallenge {
     required super.createdAt,
     super.isContinuous = false,
     super.executions = const [],
+    // --- Inicialización de nuevos campos heredados ---
+    required super.originalChallengeTitle,
+    required super.originalChallengeDescription,
+    required super.originalChallengePoints,
+    required super.originalChallengeDuration,
+    required super.originalChallengeCategory,
+    super.originalChallengeIcon,
+    required super.originalChallengeAgeRange,
+    // ------------------------------------------------
   });
 
   /// Crea un AssignedChallengeModel desde un documento de Firestore
@@ -46,6 +56,19 @@ class AssignedChallengeModel extends AssignedChallenge {
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       isContinuous: data['isContinuous'] ?? false,
       executions: executions,
+      // --- Mapeo de nuevos campos desde Firestore ---
+      originalChallengeTitle: data['originalChallengeTitle'] ?? '',
+      originalChallengeDescription: data['originalChallengeDescription'] ?? '',
+      originalChallengePoints: data['originalChallengePoints'] ?? 0,
+      originalChallengeDuration:
+          _mapStringToDuration(data['originalChallengeDuration'] ?? 'weekly'),
+      originalChallengeCategory:
+          _mapStringToCategory(data['originalChallengeCategory'] ?? 'hygiene'),
+      originalChallengeIcon: data['originalChallengeIcon'],
+      originalChallengeAgeRange:
+          data['originalChallengeAgeRange'] as Map<String, dynamic>? ??
+              {'min': 0, 'max': 18},
+      // ---------------------------------------------
     );
   }
 
@@ -69,6 +92,15 @@ class AssignedChallengeModel extends AssignedChallenge {
       'createdAt': Timestamp.fromDate(createdAt),
       'isContinuous': isContinuous,
       'executions': executionsList,
+      // --- Mapeo de nuevos campos hacia Firestore ---
+      'originalChallengeTitle': originalChallengeTitle,
+      'originalChallengeDescription': originalChallengeDescription,
+      'originalChallengePoints': originalChallengePoints,
+      'originalChallengeDuration': _durationToString(originalChallengeDuration),
+      'originalChallengeCategory': _categoryToString(originalChallengeCategory),
+      'originalChallengeIcon': originalChallengeIcon,
+      'originalChallengeAgeRange': originalChallengeAgeRange,
+      // --------------------------------------------
     };
 
     // Solo añadir endDate si no es nulo
@@ -82,6 +114,7 @@ class AssignedChallengeModel extends AssignedChallenge {
   /// Crea un AssignedChallengeModel desde AssignedChallenge
   factory AssignedChallengeModel.fromEntity(
       AssignedChallenge assignedChallenge) {
+    // Al crear desde una entidad, poblamos los campos originales
     return AssignedChallengeModel(
       id: assignedChallenge.id,
       challengeId: assignedChallenge.challengeId,
@@ -94,10 +127,20 @@ class AssignedChallengeModel extends AssignedChallenge {
       createdAt: assignedChallenge.createdAt,
       isContinuous: assignedChallenge.isContinuous,
       executions: assignedChallenge.executions,
+      // --- Poblar nuevos campos desde la entidad ---
+      originalChallengeTitle: assignedChallenge.originalChallengeTitle,
+      originalChallengeDescription:
+          assignedChallenge.originalChallengeDescription,
+      originalChallengePoints: assignedChallenge.originalChallengePoints,
+      originalChallengeDuration: assignedChallenge.originalChallengeDuration,
+      originalChallengeCategory: assignedChallenge.originalChallengeCategory,
+      originalChallengeIcon: assignedChallenge.originalChallengeIcon,
+      originalChallengeAgeRange: assignedChallenge.originalChallengeAgeRange,
+      // ---------------------------------------------
     );
   }
 
-  // Métodos de ayuda para mapear enumeraciones
+  // Métodos de ayuda para mapear enumeraciones (ya existen en ChallengeModel, podemos copiarlos o refactorizar)
   static AssignedChallengeStatus _mapStringToStatus(String status) {
     switch (status) {
       case 'active':
@@ -127,6 +170,79 @@ class AssignedChallengeModel extends AssignedChallenge {
         return 'pending';
       case AssignedChallengeStatus.inactive:
         return 'inactive';
+    }
+  }
+
+  // Nuevos métodos para mapear ChallengeCategory y ChallengeDuration
+  static ChallengeCategory _mapStringToCategory(String category) {
+    switch (category) {
+      case 'hygiene':
+        return ChallengeCategory.hygiene;
+      case 'school':
+        return ChallengeCategory.school;
+      case 'order':
+        return ChallengeCategory.order;
+      case 'responsibility':
+        return ChallengeCategory.responsibility;
+      case 'help':
+        return ChallengeCategory.help;
+      case 'special':
+        return ChallengeCategory.special;
+      case 'sibling':
+        return ChallengeCategory.sibling;
+      default:
+        return ChallengeCategory.hygiene;
+    }
+  }
+
+  static String _categoryToString(ChallengeCategory category) {
+    switch (category) {
+      case ChallengeCategory.hygiene:
+        return 'hygiene';
+      case ChallengeCategory.school:
+        return 'school';
+      case ChallengeCategory.order:
+        return 'order';
+      case ChallengeCategory.responsibility:
+        return 'responsibility';
+      case ChallengeCategory.help:
+        return 'help';
+      case ChallengeCategory.special:
+        return 'special';
+      case ChallengeCategory.sibling:
+        return 'sibling';
+    }
+  }
+
+  static ChallengeDuration _mapStringToDuration(String duration) {
+    switch (duration) {
+      case 'weekly':
+        return ChallengeDuration.weekly;
+      case 'monthly':
+        return ChallengeDuration.monthly;
+      case 'quarterly':
+        return ChallengeDuration.quarterly;
+      case 'yearly':
+        return ChallengeDuration.yearly;
+      case 'punctual':
+        return ChallengeDuration.punctual;
+      default:
+        return ChallengeDuration.weekly;
+    }
+  }
+
+  static String _durationToString(ChallengeDuration duration) {
+    switch (duration) {
+      case ChallengeDuration.weekly:
+        return 'weekly';
+      case ChallengeDuration.monthly:
+        return 'monthly';
+      case ChallengeDuration.quarterly:
+        return 'quarterly';
+      case ChallengeDuration.yearly:
+        return 'yearly';
+      case ChallengeDuration.punctual:
+        return 'punctual';
     }
   }
 }

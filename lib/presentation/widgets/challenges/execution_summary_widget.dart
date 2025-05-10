@@ -58,7 +58,7 @@ class ExecutionSummaryWidget extends StatelessWidget {
               _buildNoEvaluationsPlaceholder(),
             ],
 
-            // Puntos ganados
+            // Puntos ganados - Ajustado para mejor contraste
             _buildPointsSummary(),
           ],
         ),
@@ -170,6 +170,7 @@ class ExecutionSummaryWidget extends StatelessWidget {
     );
   }
 
+  // Método _buildProgressIndicator añadido
   Widget _buildProgressIndicator() {
     final progress = _calculateProgress();
     final progressColor = _getProgressColor();
@@ -186,11 +187,22 @@ class ExecutionSummaryWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 4),
-        LinearProgressIndicator(
-          value: progress,
-          backgroundColor: Colors.grey.withValues(alpha: 50),
-          valueColor: AlwaysStoppedAnimation<Color>(progressColor),
-          minHeight: 8,
+        ClipRRect(
+          borderRadius: BorderRadius.circular(AppDimensions.borderRadiusSm),
+          child: LinearProgressIndicator(
+            value: progress,
+            backgroundColor: Colors.grey.withValues(alpha: 50),
+            valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+            minHeight: 8,
+          ),
+        ),
+        const SizedBox(height: AppDimensions.xs),
+        Text(
+          '${(progress * 100).toInt()}% complete', // Traducción pendiente
+          style: TextStyle(
+            fontSize: 11,
+            color: Colors.grey.shade600,
+          ),
         ),
       ],
     );
@@ -305,15 +317,20 @@ class ExecutionSummaryWidget extends StatelessWidget {
         vertical: AppDimensions.xs,
       ),
       decoration: BoxDecoration(
-        color: Colors.amber.withValues(alpha: 10),
+        // Color de fondo de puntos - Ajustado para mejor contraste
+        color: Colors.blueGrey
+            .withValues(alpha: 10), // Cambiado de amber a blueGrey
         borderRadius: BorderRadius.circular(AppDimensions.borderRadiusSm),
-        border: Border.all(color: Colors.amber.withValues(alpha: 100)),
+        border: Border.all(
+            color: Colors.blueGrey
+                .withValues(alpha: 100)), // Cambiado de amber a blueGrey
       ),
       child: Row(
         children: [
+          // Color del icono de puntos - Ajustado para mejor contraste
           const Icon(
             Icons.star,
-            color: Colors.amber,
+            color: Colors.blueGrey, // Cambiado de amber a blueGrey
             size: 16,
           ),
           const SizedBox(width: 4),
@@ -321,7 +338,8 @@ class ExecutionSummaryWidget extends StatelessWidget {
             "$pointsEarned",
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.amber,
+              // Color del texto de puntos - Ajustado para mejor contraste
+              color: Colors.blueGrey, // Cambiado de amber a blueGrey
             ),
           ),
           const SizedBox(width: 4),

@@ -749,4 +749,23 @@ final Map<String, String> enTranslations = {
   "no_continuous_challenges_yet":
       "You don't have any continuous challenges yet",
   "many_days_left": "Many days left",
+  "no_child_selected": "No child selected",
+  'batch_evaluation_page_title':
+      'Challenge Evaluation', // Or 'Batch Evaluation'
+  'batch_evaluation_page_description':
+      'Quickly evaluate challenges assigned to your children.',
+
+  'batch_evaluation_filter_child': 'Filter by child',
+  'batch_evaluation_filter_child_all': 'All children',
+  'batch_evaluation_filter_duration': 'Filter by duration',
+  'batch_evaluation_empty_title': 'No challenges to evaluate',
+  'batch_evaluation_empty_message':
+      'Apply different filters or assign new challenges to evaluate them later.',
+  'batch_evaluation_empty_button': 'Go to Challenges',
+  'batch_evaluation_adjust_points': 'Points:',
+  'batch_evaluation_toolbar_title': 'Evaluate @count selected challenges',
+  'batch_evaluation_status': 'Status:',
+  'batch_evaluation_button_text': 'Evaluate @count challenges',
+  'evaluationNoteOptionalHint': 'Optional evaluation note',
+  'batch_evaluation_filter_child_selected': '@count child/s',
 };

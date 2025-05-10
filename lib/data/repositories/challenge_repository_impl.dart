@@ -108,7 +108,8 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
     bool isContinuous = false,
   }) async {
     try {
-      final assignedChallenge =
+      // El datasource ahora maneja obtener los detalles originales
+      final assignedChallengeModel =
           await _challengeRemoteDataSource.assignChallengeToChild(
         challengeId: challengeId,
         childId: childId,
@@ -117,7 +118,7 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
         endDate: endDate,
         isContinuous: isContinuous,
       );
-      return Right(assignedChallenge);
+      return Right(assignedChallengeModel);
     } on FirebaseException catch (e) {
       return Left(ServerFailure(message: e.message ?? 'Error del servidor'));
     } catch (e) {
@@ -129,9 +130,11 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
   Future<Either<Failure, List<AssignedChallenge>>> getAssignedChallengesByChild(
       String childId) async {
     try {
-      final assignedChallenges = await _challengeRemoteDataSource
+      // El datasource devuelve AssignedChallengeModel que ya contiene los detalles originales
+      final assignedChallengesModels = await _challengeRemoteDataSource
           .getAssignedChallengesByChild(childId);
-      return Right(assignedChallenges);
+      return Right(
+          assignedChallengesModels); // Devolver la lista de modelos directamente (ya son entidades válidas)
     } on FirebaseException catch (e) {
       return Left(ServerFailure(message: e.message ?? 'Error del servidor'));
     } catch (e) {
@@ -143,9 +146,10 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
   Future<Either<Failure, AssignedChallenge>> getAssignedChallengeById(
       String assignedChallengeId) async {
     try {
-      final assignedChallenge = await _challengeRemoteDataSource
+      // El datasource devuelve AssignedChallengeModel que ya contiene los detalles originales
+      final assignedChallengeModel = await _challengeRemoteDataSource
           .getAssignedChallengeById(assignedChallengeId);
-      return Right(assignedChallenge);
+      return Right(assignedChallengeModel); // Devolver el modelo directamente
     } on FirebaseException catch (e) {
       if (e.code == 'not-found') {
         return const Left(
@@ -161,6 +165,7 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
   Future<Either<Failure, void>> updateAssignedChallenge(
       AssignedChallenge assignedChallenge) async {
     try {
+      // Convertir a modelo antes de pasar al datasource
       await _challengeRemoteDataSource.updateAssignedChallenge(
           AssignedChallengeModel.fromEntity(assignedChallenge));
       return const Right(null);
@@ -194,6 +199,7 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
     String? note,
   }) async {
     try {
+      // El datasource maneja la lógica interna de actualización del documento
       await _challengeRemoteDataSource.evaluateExecution(
         assignedChallengeId: assignedChallengeId,
         executionIndex: executionIndex,
@@ -216,6 +222,7 @@ class ChallengeRepositoryImpl implements IChallengeRepository {
     required DateTime endDate,
   }) async {
     try {
+      // El datasource maneja la lógica interna
       await _challengeRemoteDataSource.createNextExecution(
         assignedChallengeId: assignedChallengeId,
         startDate: startDate,

@@ -1,4 +1,4 @@
-// File: kidsdo_gemini/lib/presentation/pages/challenges/active_challenges_page.dart
+// lib/presentation/pages/challenges/active_challenges_page.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -32,7 +32,8 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
   String? selectedChildId;
   AssignedChallengeStatus? selectedStatus;
   final TextEditingController searchController = TextEditingController();
-  // Eliminado el filtro filterContinuous
+  bool?
+      filterContinuous; // true: solo continuos, false: solo no continuos, null: todos
 
   @override
   void initState() {
@@ -101,40 +102,14 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
                     // Encontrar el niño correspondiente
                     final child = _findChildById(assignedChallenge.childId);
 
-                    // Determinar color de fondo de la tarjeta (alternando)
-                    final cardBackgroundColor = index.isEven
-                        ? Colors.white // Fondo blanco para tarjetas pares
-                        : Colors.grey.withValues(
-                            alpha: 30); // Gris claro para tarjetas impares
-
-                    return Card(
-                      // Envuelve el AssignedChallengeCard en un Card para el fondo alternado
-                      color: cardBackgroundColor,
-                      elevation: 2, // Mantener elevación sutil
-                      margin: const EdgeInsets.only(
-                          bottom: AppDimensions.md), // Margen inferior
-                      shape: RoundedRectangleBorder(
-                        // Forma con borde redondeado
-                        borderRadius:
-                            BorderRadius.circular(AppDimensions.borderRadiusMd),
-                        side: BorderSide(
-                          // Borde sutil basado en el estado
-                          color: _getStatusColor(assignedChallenge.status)
-                              .withValues(alpha: 50),
-                          width: 1,
-                        ),
-                      ),
-                      clipBehavior: Clip
-                          .antiAlias, // Recortar contenido si se sale del borde
-                      child: AssignedChallengeCard(
-                        assignedChallenge: assignedChallenge,
-                        challenge: challenge,
-                        child: child,
-                        onTap: () => _showChallengeDetails(
-                            assignedChallenge, challenge, child),
-                        onEvaluate: () => _showEvaluationDialog(
-                            assignedChallenge, challenge, child),
-                      ),
+                    return AssignedChallengeCard(
+                      assignedChallenge: assignedChallenge,
+                      challenge: challenge,
+                      child: child,
+                      onTap: () => _showChallengeDetails(
+                          assignedChallenge, challenge, child),
+                      onEvaluate: () => _showEvaluationDialog(
+                          assignedChallenge, challenge, child),
                     );
                   },
                 );
@@ -197,7 +172,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
 
           const SizedBox(height: AppDimensions.md),
 
-          // Fila de filtros de niño y estado
+          // Primera fila: Filtros de niño y estado
           Row(
             children: [
               // Filtro por niño
@@ -214,10 +189,22 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
             ],
           ),
 
-          // Eliminado el filtro de tipo de reto continuo/fixed
+          const SizedBox(height: AppDimensions.md),
+
+          // Segunda fila: Filtro de tipo de reto
+          Row(
+            children: [
+              // Filtro por tipo de reto (continuo/no continuo)
+              Expanded(
+                child: _buildContinuousFilter(),
+              ),
+            ],
+          ),
 
           // Chips de filtros activos y botón de limpiar
-          if (selectedChildId != null || selectedStatus != null)
+          if (selectedChildId != null ||
+              selectedStatus != null ||
+              filterContinuous != null)
             Padding(
               padding: const EdgeInsets.only(top: AppDimensions.sm),
               child: Row(
@@ -254,6 +241,25 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
                         visualDensity: VisualDensity.compact,
                       ),
                     ),
+                  if (filterContinuous != null)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Chip(
+                        label: Text(filterContinuous!
+                            ? TrKeys.continuousChallenge.tr
+                            : 'Fixed Challenge'),
+                        deleteIcon: const Icon(Icons.close, size: 18),
+                        onDeleted: () {
+                          setState(() {
+                            filterContinuous = null;
+                          });
+                        },
+                        backgroundColor: filterContinuous!
+                            ? Colors.indigo.withValues(alpha: 50)
+                            : Colors.teal.withValues(alpha: 50),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    ),
                   const Spacer(),
                   TextButton.icon(
                     onPressed: _clearFilters,
@@ -282,8 +288,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
       ),
       child: Obx(() => DropdownButton<String?>(
             value: selectedChildId,
-            // Texto del hint modificado
-            hint: Text(TrKeys.children.tr), // Cambiado a "Niño/s"
+            hint: Text(TrKeys.filterByChild.tr),
             onChanged: (value) {
               setState(() {
                 selectedChildId = value;
@@ -292,8 +297,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
             items: [
               DropdownMenuItem<String?>(
                 value: null,
-                // Texto modificado
-                child: Text(TrKeys.all.tr),
+                child: Text(TrKeys.allCategories.tr),
               ),
               ...childProfileController.childProfiles.map((child) {
                 return DropdownMenuItem<String?>(
@@ -332,8 +336,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
       ),
       child: DropdownButton<AssignedChallengeStatus?>(
         value: selectedStatus,
-        // Texto del hint modificado
-        hint: Text(TrKeys.status.tr), // Cambiado a "Estado"
+        hint: Text(TrKeys.filterByStatus.tr),
         onChanged: (value) {
           setState(() {
             selectedStatus = value;
@@ -342,8 +345,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
         items: [
           DropdownMenuItem<AssignedChallengeStatus?>(
             value: null,
-            // Texto modificado
-            child: Text(TrKeys.all.tr),
+            child: Text(TrKeys.allCategories.tr),
           ),
           DropdownMenuItem<AssignedChallengeStatus?>(
             value: AssignedChallengeStatus.active,
@@ -385,14 +387,51 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
               ],
             ),
           ),
-          DropdownMenuItem<AssignedChallengeStatus?>(
-            value: AssignedChallengeStatus.inactive,
+        ],
+        isExpanded: true,
+        underline: const SizedBox.shrink(),
+        icon: const Icon(Icons.filter_list),
+      ),
+    );
+  }
+
+  Widget _buildContinuousFilter() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.sm),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.withValues(alpha: 150)),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
+      ),
+      child: DropdownButton<bool?>(
+        value: filterContinuous,
+        hint: const Text('Challenge Type'),
+        onChanged: (value) {
+          setState(() {
+            filterContinuous = value;
+          });
+        },
+        items: [
+          DropdownMenuItem<bool?>(
+            value: null,
+            child: Text(TrKeys.allCategories.tr),
+          ),
+          DropdownMenuItem<bool?>(
+            value: true,
             child: Row(
               children: [
-                const Icon(Icons.disabled_by_default,
-                    color: Colors.grey, size: 16),
+                const Icon(Icons.repeat, color: Colors.indigo, size: 16),
                 const SizedBox(width: 8),
-                Text(TrKeys.inactive.tr),
+                Text(TrKeys.continuousChallenge.tr),
+              ],
+            ),
+          ),
+          const DropdownMenuItem<bool?>(
+            value: false,
+            child: Row(
+              children: [
+                Icon(Icons.done, color: Colors.teal, size: 16),
+                SizedBox(width: 8),
+                Text('Fixed Challenge'),
               ],
             ),
           ),
@@ -403,8 +442,6 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
       ),
     );
   }
-
-  // Eliminado el widget _buildContinuousFilter
 
   Widget _buildEmptyState() {
     return Center(
@@ -420,7 +457,9 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
             ),
             const SizedBox(height: AppDimensions.md),
             Text(
-              selectedChildId != null || selectedStatus != null
+              selectedChildId != null ||
+                      selectedStatus != null ||
+                      filterContinuous != null
                   ? TrKeys.noAssignedChallenges.tr
                   : TrKeys.activeChallengesEmpty.tr,
               style: const TextStyle(
@@ -431,7 +470,9 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
             ),
             const SizedBox(height: AppDimensions.sm),
             Text(
-              selectedChildId != null || selectedStatus != null
+              selectedChildId != null ||
+                      selectedStatus != null ||
+                      filterContinuous != null
                   ? TrKeys.noAssignedChallengesMessage.tr
                   : TrKeys.activeChallengesEmptyMessage.tr,
               style: TextStyle(
@@ -440,7 +481,9 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppDimensions.lg),
-            if (selectedChildId != null || selectedStatus != null)
+            if (selectedChildId != null ||
+                selectedStatus != null ||
+                filterContinuous != null)
               ElevatedButton.icon(
                 onPressed: _clearFilters,
                 icon: const Icon(Icons.filter_list_off),
@@ -466,6 +509,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
     setState(() {
       selectedChildId = null;
       selectedStatus = null;
+      filterContinuous = null;
       searchController.clear();
     });
   }
@@ -497,7 +541,12 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
           .toList();
     }
 
-    // Eliminado el filtro por tipo de reto (continuo/no continuo)
+    // Filtrar por tipo de reto (continuo/no continuo)
+    if (filterContinuous != null) {
+      filtered = filtered
+          .where((challenge) => challenge.isContinuous == filterContinuous)
+          .toList();
+    }
 
     // Filtrar por búsqueda
     if (searchController.text.isNotEmpty) {
@@ -510,9 +559,6 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
             challenge.description.toLowerCase().contains(search);
       }).toList();
     }
-
-    // Ordenar por fecha de inicio descendente (los más recientes primero)
-    filtered.sort((a, b) => b.startDate.compareTo(a.startDate));
 
     return filtered;
   }
@@ -640,7 +686,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
+                      horizontal: AppDimensions.xs,
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
@@ -820,7 +866,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
           child: Text(
             '${index + 1}',
             style: TextStyle(
-              fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+              fontWeight: FontWeight.bold,
               color: isCurrent
                   ? AppColors.primary
                   : execution.status == AssignedChallengeStatus.completed
@@ -853,15 +899,15 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
           ),
         ],
       ),
-      trailing: execution.evaluation != null
-          ? const Column(
+      trailing: execution.evaluations.isNotEmpty
+          ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Icon(Icons.assessment, size: 16),
+                const Icon(Icons.assessment, size: 16),
                 Text(
-                  '1 evaluation', // Assuming one evaluation per execution
-                  style: TextStyle(fontSize: 12),
+                  '${execution.evaluations.length} evaluations',
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             )
@@ -876,13 +922,10 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
     for (int i = 0; i < assignedChallenge.executions.length; i++) {
       final execution = assignedChallenge.executions[i];
 
-      // Solo añadir si hay una evaluación para esta ejecución
-      if (execution.evaluation != null) {
-        allEvaluations.add({
-          'evaluation': execution.evaluation,
-          'executionIndex': i,
-        });
-      }
+      allEvaluations.add({
+        'evaluation': execution.evaluation,
+        'executionIndex': i,
+      });
     }
 
     // Ordenar por fecha (más reciente primero)
@@ -893,7 +936,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          TrKeys.evaluations.tr, // Título "Evaluaciones"
+          TrKeys.lastEvaluation.tr,
           style: const TextStyle(
             fontSize: AppDimensions.fontMd,
             fontWeight: FontWeight.bold,
@@ -905,18 +948,19 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
           _buildEvaluationItem(
             allEvaluations.first['evaluation'],
             allEvaluations.first['executionIndex'],
+            true,
           ),
 
           // Mostrar las demás evaluaciones en un ExpansionTile si hay más de una
           if (allEvaluations.length > 1)
             ExpansionTile(
-              title: Text(
-                  'All Evaluations (${allEvaluations.length})'), // Traducción pendiente
+              title: Text('All Evaluations (${allEvaluations.length})'),
               children: allEvaluations
                   .skip(1)
                   .map((evalData) => _buildEvaluationItem(
                         evalData['evaluation'],
                         evalData['executionIndex'],
+                        false,
                       ))
                   .toList(),
             ),
@@ -941,8 +985,8 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
     );
   }
 
-  Widget _buildEvaluationItem(dynamic evaluation, int? executionIndex) {
-    // Eliminado isLatest parameter
+  Widget _buildEvaluationItem(
+      dynamic evaluation, int? executionIndex, bool isLatest) {
     if (evaluation == null) {
       return Container(
         margin: const EdgeInsets.only(bottom: AppDimensions.sm),
@@ -955,7 +999,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
           ),
         ),
         child: Text(
-          'El reto no ha sido evaluado aún.', // Traducción pendiente
+          'El reto no ha sido evaluado aún.',
           style: TextStyle(
             color: Colors.grey.shade600,
             fontStyle: FontStyle.italic,
@@ -1008,7 +1052,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
                             BorderRadius.circular(AppDimensions.borderRadiusSm),
                       ),
                       child: Text(
-                        'Execution ${executionIndex + 1}', // Traducción pendiente
+                        'Execution ${executionIndex + 1}',
                         style: const TextStyle(
                           fontSize: 10,
                           color: Colors.grey,
@@ -1019,8 +1063,7 @@ class _ActiveChallengesPageState extends State<ActiveChallengesPage> {
                 ],
               ),
               Text(
-                DateFormat('MMM d,yyyy')
-                    .format(evaluation.date), // Formato de fecha ajustado
+                DateFormat('MMM d, yyyy').format(evaluation.date),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey.shade600,

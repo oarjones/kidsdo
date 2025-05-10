@@ -1,8 +1,7 @@
-// lib/presentation/widgets/challenges/assigned_challenge_card.dart
+// File: kidsdo_gemini/lib/presentation/widgets/challenges/assigned_challenge_card.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-//import 'package:kidsdo/core/constants/colors.dart';
 import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
@@ -39,56 +38,45 @@ class AssignedChallengeCard extends StatelessWidget {
     final DateTime? endDate =
         currentExecution?.endDate ?? assignedChallenge.endDate;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.md),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
-        side: BorderSide(
-          color:
-              _getStatusColor(assignedChallenge.status).withValues(alpha: 50),
-          width: 1,
-        ),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Cabecera con estado y asignación
-              _buildHeader(),
+    // Eliminado el Card principal para que el Card alternado esté en la página principal
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMd),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDimensions.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Cabecera con estado y asignación
+            _buildHeader(),
 
+            const SizedBox(height: AppDimensions.sm),
+            const Divider(),
+
+            // Título y detalles del reto
+            _buildChallengeInfo(),
+
+            // Si hay una ejecución actual, mostrar información
+            if (currentExecution != null && assignedChallenge.isContinuous)
+              ..._buildExecutionInfo(currentExecution, startDate, endDate),
+
+            const SizedBox(height: AppDimensions.md),
+
+            // Mostrar ejecuciones o botón para evaluar
+            _buildEvaluationSection(currentExecution, startDate, endDate),
+
+            // Mostrar resumen de la ejecución actual
+            if (assignedChallenge.executions.isNotEmpty) ...[
               const SizedBox(height: AppDimensions.sm),
-              const Divider(),
-
-              // Título y detalles del reto
-              _buildChallengeInfo(),
-
-              // Si hay una ejecución actual, mostrar información
-              if (currentExecution != null && assignedChallenge.isContinuous)
-                ..._buildExecutionInfo(currentExecution, startDate, endDate),
-
-              const SizedBox(height: AppDimensions.md),
-
-              // Mostrar ejecuciones o botón para evaluar
-              _buildEvaluationSection(currentExecution, startDate, endDate),
-
-              // Mostrar resumen de la ejecución actual
-              if (assignedChallenge.executions.isNotEmpty) ...[
-                const SizedBox(height: AppDimensions.sm),
-                ExecutionSummaryWidget(
-                  execution: assignedChallenge.currentExecution!,
-                  isCurrentExecution: true,
-                  challenge: challenge,
-                  assignedChallenge: assignedChallenge,
-                  showProgressBar: true,
-                ),
-              ],
+              ExecutionSummaryWidget(
+                execution: assignedChallenge.currentExecution!,
+                isCurrentExecution: true,
+                challenge: challenge,
+                assignedChallenge: assignedChallenge,
+                showProgressBar: true,
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );
@@ -223,6 +211,7 @@ class AssignedChallengeCard extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
+                      // Color del chip de categoría - Ajustado para mejor contraste
                       color: _getCategoryColor(challenge.category)
                           .withValues(alpha: 50),
                       borderRadius:
@@ -232,6 +221,7 @@ class AssignedChallengeCard extends StatelessWidget {
                       _getCategoryName(challenge.category),
                       style: TextStyle(
                         fontSize: 10,
+                        // Color del texto del chip - Ajustado para mejor contraste
                         color: _getCategoryColor(challenge.category),
                       ),
                     ),
@@ -252,16 +242,19 @@ class AssignedChallengeCard extends StatelessWidget {
                 vertical: AppDimensions.xs,
               ),
               decoration: BoxDecoration(
-                color: Colors.amber.withValues(alpha: 50),
+                // Color de fondo de puntos - Ajustado para mejor contraste
+                color: Colors.blueGrey
+                    .withValues(alpha: 50), // Cambiado de amber a blueGrey
                 borderRadius:
                     BorderRadius.circular(AppDimensions.borderRadiusSm),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Color del icono de puntos - Ajustado para mejor contraste
                   const Icon(
                     Icons.star,
-                    color: Colors.amber,
+                    color: Colors.blueGrey, // Cambiado de amber a blueGrey
                     size: 16,
                   ),
                   const SizedBox(width: 2),
@@ -269,7 +262,8 @@ class AssignedChallengeCard extends StatelessWidget {
                     "${assignedChallenge.pointsEarned}",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.amber,
+                      // Color del texto de puntos - Ajustado para mejor contraste
+                      color: Colors.blueGrey, // Cambiado de amber a blueGrey
                     ),
                   ),
                 ],
@@ -516,7 +510,6 @@ class AssignedChallengeCard extends StatelessWidget {
     }
   }
 
-  // Obtener icono de estado
   IconData _getStatusIcon(AssignedChallengeStatus status) {
     switch (status) {
       case AssignedChallengeStatus.active:
@@ -528,11 +521,10 @@ class AssignedChallengeCard extends StatelessWidget {
       case AssignedChallengeStatus.pending:
         return Icons.pending;
       case AssignedChallengeStatus.inactive:
-        return Icons.disabled_by_default;
+        return Icons.cancel_outlined;
     }
   }
 
-  // Obtener nombre de categoría
   String _getCategoryName(ChallengeCategory category) {
     switch (category) {
       case ChallengeCategory.hygiene:

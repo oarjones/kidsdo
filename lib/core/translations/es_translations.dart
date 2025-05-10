@@ -764,4 +764,25 @@ final Map<String, String> esTranslations = {
   // "day": "Día",
   "no_continuous_challenges_yet": "Aún no tienes retos continuos",
   "many_days_left": "Muchos días restantes",
+  "no_child_selected":
+      "No se ha seleccionado ningún niño. Selecciona un niño para continuar",
+
+  'batch_evaluation_page_title':
+      'Evaluación de Retos', // O 'Evaluación en Lote' si prefieres
+  'batch_evaluation_page_description':
+      'Evalúa rápidamente los retos asignados a tus hijos.',
+
+  'batch_evaluation_filter_child': 'Filtrar por niño',
+  'batch_evaluation_filter_child_all': 'Todos los niños',
+  'batch_evaluation_filter_duration': 'Filtrar por duración',
+  'batch_evaluation_empty_title': 'No hay retos para evaluar',
+  'batch_evaluation_empty_message':
+      'Aplica filtros diferentes o asigna nuevos retos para evaluarlos más tarde.',
+  'batch_evaluation_empty_button': 'Ir a Retos',
+  'batch_evaluation_adjust_points': 'Puntos:',
+  'batch_evaluation_toolbar_title': 'Evaluar @count retos seleccionados',
+  'batch_evaluation_status': 'Estado:',
+  'batch_evaluation_button_text': 'Evaluar @count retos',
+  'evaluationNoteOptionalHint': 'Nota de evaluación (opcional)',
+  'batch_evaluation_filter_child_selected': '@count niño/s',
 };

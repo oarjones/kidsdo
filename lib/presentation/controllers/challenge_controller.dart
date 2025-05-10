@@ -11,8 +11,10 @@ import 'package:kidsdo/data/datasources/remote/challenge_remote_datasource.dart'
 import 'package:kidsdo/data/models/challenge_model.dart';
 import 'package:kidsdo/domain/entities/challenge.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
+import 'package:kidsdo/domain/entities/challenge_execution.dart';
 //import 'package:kidsdo/domain/entities/challenge_execution.dart';
 import 'package:kidsdo/domain/repositories/challenge_repository.dart';
+import 'package:kidsdo/presentation/controllers/child_profile_controller.dart';
 import 'package:kidsdo/presentation/controllers/session_controller.dart';
 import 'package:logger/logger.dart';
 
@@ -55,6 +57,26 @@ class ChallengeController extends GetxController {
   final RxBool isLoadingAssignedChallenges = RxBool(false);
   final RxBool isEvaluatingChallenge = RxBool(false);
   final RxBool isCreatingNextExecution = RxBool(false);
+
+  // Nuevo estado para filtros de evaluación en lote
+  final RxList<String> selectedChildrenIdsForEvaluation = RxList<String>([]);
+  final Rx<ChallengeDuration?> filterDurationForEvaluation =
+      Rx<ChallengeDuration?>(null);
+  final RxString evaluationSearchQuery =
+      RxString(''); // Búsqueda para la página de evaluación
+
+// Nuevo estado para retos asignados filtrados para evaluación
+  final RxList<AssignedChallenge> assignedChallengesForEvaluation =
+      RxList<AssignedChallenge>([]);
+
+// Nuevo estado para la selección de retos asignados en la página de evaluación en lote
+  final RxList<String> selectedAssignedChallengeIdsForEvaluation =
+      RxList<String>([]);
+// Nuevo estado para almacenar los puntos ajustados por reto asignado seleccionado
+  final RxMap<String, int> adjustedPointsForEvaluation = RxMap<String, int>({});
+// Nuevo estado para la nota unificada de evaluación
+  final TextEditingController unifiedEvaluationNoteController =
+      TextEditingController();
 
   // Form controllers
   late TextEditingController titleController;
@@ -193,6 +215,8 @@ class ChallengeController extends GetxController {
     ever(_sessionController.currentUser, (user) {
       if (user != null && user.familyId != null) {
         loadFamilyChallenges(user.familyId!);
+        // Cargar todos los retos asignados de la familia al iniciar el controlador si hay usuario
+        loadAllAssignedChallengesForFamily(user.familyId!);
       } else {
         // Clear challenges when user logs out or has no family
         familyChallenges.clear();
@@ -207,6 +231,7 @@ class ChallengeController extends GetxController {
     final currentUser = _sessionController.currentUser.value;
     if (currentUser != null && currentUser.familyId != null) {
       loadFamilyChallenges(currentUser.familyId!);
+      loadAllAssignedChallengesForFamily(currentUser.familyId!);
     }
 
     // Inicializar filtros
@@ -252,6 +277,295 @@ class ChallengeController extends GetxController {
     if (errorMessage.isNotEmpty) {
       errorMessage.value = '';
     }
+  }
+
+  /// Aplica los filtros de niño y duración a la lista de retos asignados para evaluación
+  void applyEvaluationFilters() {
+    List<AssignedChallenge> filtered =
+        List.from(assignedChallenges); // Parte de todos los retos asignados
+
+    // 1. Filtrar por niños seleccionados
+    if (selectedChildrenIdsForEvaluation.isNotEmpty) {
+      filtered = filtered
+          .where((assignedChallenge) => selectedChildrenIdsForEvaluation
+              .contains(assignedChallenge.childId))
+          .toList();
+    }
+
+    // 2. Filtrar por duración si está seleccionada
+    if (filterDurationForEvaluation.value != null) {
+      filtered = filtered.where((assignedChallenge) {
+        // Ahora obtenemos la duración directamente del assignedChallenge
+        // Usando el nuevo campo originalChallengeDuration
+        return assignedChallenge.originalChallengeDuration ==
+            filterDurationForEvaluation.value;
+      }).toList();
+    }
+
+    // 3. Filtrar por búsqueda si hay texto
+    if (evaluationSearchQuery.value.isNotEmpty) {
+      final query = evaluationSearchQuery.value.toLowerCase();
+      filtered = filtered.where((assignedChallenge) {
+        // Ahora buscamos en el título y descripción guardados en el assignedChallenge
+        // Usando los nuevos campos originalChallengeTitle y originalChallengeDescription
+        return assignedChallenge.originalChallengeTitle
+                .toLowerCase()
+                .contains(query) ||
+            assignedChallenge.originalChallengeDescription
+                .toLowerCase()
+                .contains(query);
+      }).toList();
+    }
+
+    // Ordenar por fecha de inicio descendente por defecto
+    filtered.sort((a, b) => b.startDate.compareTo(a.startDate));
+
+    assignedChallengesForEvaluation.assignAll(filtered);
+  }
+
+// Método para cambiar el filtro de duración para evaluación
+  void setFilterDurationForEvaluation(ChallengeDuration? duration) {
+    filterDurationForEvaluation.value = duration;
+    applyEvaluationFilters();
+  }
+
+  // Método para actualizar la consulta de búsqueda para evaluación
+  void updateEvaluationSearchQuery(String query) {
+    evaluationSearchQuery.value = query;
+    applyEvaluationFilters();
+  }
+
+  // Método para seleccionar/deseleccionar un niño para filtrar en la evaluación
+  void toggleChildForEvaluationFilter(String childId) {
+    if (selectedChildrenIdsForEvaluation.contains(childId)) {
+      selectedChildrenIdsForEvaluation.remove(childId);
+    } else {
+      selectedChildrenIdsForEvaluation.add(childId);
+    }
+    applyEvaluationFilters();
+  }
+
+  // Método para borrar todos los filtros de evaluación
+  void clearEvaluationFilters() {
+    selectedChildrenIdsForEvaluation.clear();
+    filterDurationForEvaluation.value = null;
+    evaluationSearchQuery.value = '';
+    // Limpiar el controlador de texto de búsqueda también
+    // Esto se manejará mejor desde la UI de la página de evaluación
+    // searchController.clear(); // Este es el controlador de búsqueda de la biblioteca
+    applyEvaluationFilters();
+  }
+
+  /// Alternar la selección de un reto asignado para evaluación
+  void toggleAssignedChallengeSelectionForEvaluation(
+      String assignedChallengeId) {
+    if (selectedAssignedChallengeIdsForEvaluation
+        .contains(assignedChallengeId)) {
+      selectedAssignedChallengeIdsForEvaluation.remove(assignedChallengeId);
+      // Remover puntos ajustados si se deselecciona
+      adjustedPointsForEvaluation.remove(assignedChallengeId);
+    } else {
+      selectedAssignedChallengeIdsForEvaluation.add(assignedChallengeId);
+      // Inicializar puntos ajustados con los puntos del reto original al seleccionar
+      final assignedChallenge =
+          assignedChallengesForEvaluation // <--- Usamos la lista correcta de retos filtrados para evaluación
+              .firstWhereOrNull((ac) => ac.id == assignedChallengeId);
+      if (assignedChallenge != null) {
+        // Ahora accedemos a los puntos originales directamente desde el assignedChallenge
+        // usando el nuevo campo originalChallengePoints
+        adjustedPointsForEvaluation[assignedChallengeId] =
+            assignedChallenge.originalChallengePoints; // <--- ¡CORRECCIÓN AQUÍ!
+
+        // La siguiente línea ya no es necesaria porque obtenemos los puntos directamente:
+        // final challenge = challenges
+        //      .firstWhereOrNull((c) => c.id == assignedChallenge.challengeId);
+        // if (challenge != null) {
+        //    adjustedPointsForEvaluation[assignedChallengeId] = challenge.points;
+        // }
+      }
+    }
+  }
+
+  /// Verificar si un reto asignado está seleccionado para evaluación
+  bool isAssignedChallengeSelectedForEvaluation(String assignedChallengeId) {
+    return selectedAssignedChallengeIdsForEvaluation
+        .contains(assignedChallengeId);
+  }
+
+  /// Limpiar la selección de retos asignados para evaluación
+  void clearAssignedChallengeSelectionForEvaluation() {
+    selectedAssignedChallengeIdsForEvaluation.clear();
+    adjustedPointsForEvaluation.clear();
+    unifiedEvaluationNoteController
+        .clear(); // Limpiar también la nota unificada
+  }
+
+  /// Actualizar los puntos ajustados para un reto asignado seleccionado
+  void updateAdjustedPointsForEvaluation(
+      String assignedChallengeId, int points) {
+    if (selectedAssignedChallengeIdsForEvaluation
+        .contains(assignedChallengeId)) {
+      adjustedPointsForEvaluation[assignedChallengeId] = points;
+    }
+  }
+
+  /// Obtener los puntos ajustados para un reto asignado seleccionado
+  int getAdjustedPointsForEvaluation(String assignedChallengeId) {
+    return adjustedPointsForEvaluation[assignedChallengeId] ??
+        0; // Devolver 0 si no está en el mapa (aunque debería estar si está seleccionado)
+  }
+
+  /// Evalúa los retos asignados seleccionados
+  Future<void> evaluateSelectedChallenges(
+      {required AssignedChallengeStatus status}) async {
+    if (selectedAssignedChallengeIdsForEvaluation.isEmpty) {
+      // Mostrar mensaje de advertencia si no hay retos seleccionados
+      Get.snackbar(
+        TrKeys.warning.tr,
+        'Por favor, selecciona al menos un reto para evaluar.', // Traducción pendiente
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.amber.withValues(alpha: 40),
+        colorText: Colors.amber.shade900,
+      );
+      return;
+    }
+
+    isEvaluatingChallenge.value = true;
+    errorMessage.value = '';
+
+    int successCount = 0;
+    int failureCount = 0;
+
+    // Recorrer los retos asignados seleccionados
+    for (final assignedChallengeId
+        in selectedAssignedChallengeIdsForEvaluation) {
+      final assignedChallenge = assignedChallenges
+          .firstWhereOrNull((ac) => ac.id == assignedChallengeId);
+
+      if (assignedChallenge == null) {
+        _logger.w(
+            "Assigned challenge not found for evaluation: $assignedChallengeId");
+        failureCount++;
+        continue; // Saltar a la siguiente iteración
+      }
+
+      // Encontrar la ejecución actual (la última que no ha sido evaluada)
+      // O la última si no hay ninguna activa/pendiente (puede ocurrir si el estado general no se actualizó correctamente)
+      ChallengeExecution? executionToEvaluate;
+      int executionIndexToEvaluate = -1;
+
+      // Buscar la última ejecución no evaluada
+      for (int i = assignedChallenge.executions.length - 1; i >= 0; i--) {
+        if (assignedChallenge.executions[i].evaluation == null) {
+          executionToEvaluate = assignedChallenge.executions[i];
+          executionIndexToEvaluate = i;
+          break; // Encontramos la última no evaluada
+        }
+      }
+
+      // Si no se encontró ninguna ejecución no evaluada, usar la última (como fallback)
+      if (executionToEvaluate == null &&
+          assignedChallenge.executions.isNotEmpty) {
+        executionToEvaluate = assignedChallenge.executions.last;
+        executionIndexToEvaluate = assignedChallenge.executions.length - 1;
+      }
+
+      if (executionToEvaluate == null || executionIndexToEvaluate == -1) {
+        _logger.w(
+            "No unevaluated execution found for assigned challenge: ${assignedChallenge.id}");
+        failureCount++;
+        continue; // Saltar a la siguiente iteración
+      }
+
+      // Obtener los puntos ajustados para este reto
+      // Ahora obtenemos los puntos originales directamente del assignedChallenge
+      // Usando el nuevo campo originalChallengePoints como valor por defecto
+      final points = adjustedPointsForEvaluation[assignedChallengeId] ??
+          assignedChallenge.originalChallengePoints;
+
+      // Obtener la nota unificada
+      final note = unifiedEvaluationNoteController.text.isNotEmpty
+          ? unifiedEvaluationNoteController.text
+          : null;
+
+      // Llamar al método del repositorio para evaluar la ejecución
+      final result = await _challengeRepository.evaluateExecution(
+        assignedChallengeId: assignedChallengeId,
+        executionIndex: executionIndexToEvaluate, // Usar el índice encontrado
+        status: status, // Estado de evaluación seleccionado por el padre
+        points: points,
+        note: note,
+      );
+
+      result.fold(
+        (failure) {
+          _logger.e(
+              "Error evaluating challenge ${assignedChallenge.id}: ${failure.message}");
+          // Puedes almacenar los errores para mostrarlos al final si quieres
+          failureCount++;
+        },
+        (_) {
+          _logger.i("Challenge ${assignedChallenge.id} evaluated successfully");
+          successCount++;
+          // No recargamos todos los retos aquí, se actualizarán localmente
+          // Esto sucederá automáticamente a través de la actualización local de assignedChallenges
+        },
+      );
+
+      // Recargar todos los retos asignados de la familia para reflejar los cambios y aplicar filtros
+      final currentUser = _sessionController.currentUser.value;
+      if (currentUser != null && currentUser.familyId != null) {
+        await loadAllAssignedChallengesForFamily(currentUser.familyId!);
+        applyEvaluationFilters(); // Aplicar filtros después de recargar
+      }
+    }
+
+    // Después de procesar todos los retos seleccionados
+    isEvaluatingChallenge.value = false;
+    clearAssignedChallengeSelectionForEvaluation(); // Limpiar selección después de evaluar
+
+    // Mostrar mensaje de resumen
+    if (successCount > 0) {
+      Get.snackbar(
+        TrKeys.success.tr,
+        '$successCount retos evaluados con éxito.', // Traducción pendiente
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.withValues(alpha: 40),
+        colorText: Colors.green,
+      );
+      // Recargar la lista de retos asignados para reflejar los cambios en las UIs
+      // Esto se hace cargando los retos asignados del usuario actual
+      final currentUser = _sessionController.currentUser.value;
+      if (currentUser != null && currentUser.familyId != null) {
+        // Asumo que loadFamilyChallenges recarga los retos asignados para el usuario logueado
+        // Si no, necesitarías un método específico como loadAssignedChallengesForCurrentParent
+        _logger.i("Recargando retos asignados después de evaluación en lote.");
+        loadFamilyChallenges(
+            currentUser.familyId!); // O un método más específico
+      }
+    }
+
+    if (failureCount > 0) {
+      Get.snackbar(
+        TrKeys.error.tr,
+        '$failureCount retos no pudieron ser evaluados.', // Traducción pendiente (Podrías mostrar detalles de los errores)
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withValues(alpha: 40),
+        colorText: Colors.red,
+      );
+    }
+  }
+
+  /// Limpia el estado específico de la página de evaluación en lote
+  void clearBatchEvaluationState() {
+    selectedChildrenIdsForEvaluation.clear();
+    filterDurationForEvaluation.value = null;
+    assignedChallengesForEvaluation.clear();
+    selectedAssignedChallengeIdsForEvaluation.clear();
+    adjustedPointsForEvaluation.clear();
+    unifiedEvaluationNoteController.clear();
+    evaluationSearchQuery.value = ''; // Limpiar la búsqueda también
+    // Si el controlador de texto de búsqueda de evaluación existe, limpiarlo desde la UI de la página
   }
 
   /// Carga los retos de una familia específica
@@ -878,11 +1192,20 @@ class ChallengeController extends GetxController {
         _logger.e("Error loading assigned challenges: ${failure.message}");
       },
       (challenges) {
-        assignedChallenges.assignAll(challenges);
+        // Asegurarse de no añadir duplicados si se carga desde múltiples lugares
+        final newChallenges = challenges.where((challenge) =>
+            !assignedChallenges.any(
+                (existing) => existing.id == challenge.id)); // Comparar por ID
+        if (newChallenges.isNotEmpty) {
+          assignedChallenges.addAll(newChallenges);
+          // Después de cargar nuevos retos, aplicar los filtros de evaluación
+          applyEvaluationFilters(); // <--- Importante
+        }
+
         status.value = ChallengeStatus.success;
         isLoadingAssignedChallenges.value = false;
-        _logger
-            .i("Assigned challenges loaded successfully: ${challenges.length}");
+        _logger.i(
+            "Assigned challenges loaded successfully: ${challenges.length} total, ${newChallenges.length} new added");
       },
     );
   }
@@ -1542,5 +1865,70 @@ class ChallengeController extends GetxController {
       default:
         return TrKeys.unexpectedErrorMessage.tr;
     }
+  }
+
+  /// Carga todos los retos asignados para una familia específica.
+  /// Este método actualiza la lista `assignedChallenges`.
+  Future<void> loadAllAssignedChallengesForFamily(String familyId) async {
+    isLoadingAssignedChallenges.value = true;
+    errorMessage.value = '';
+    _logger
+        .i("Attempting to load all assigned challenges for family: $familyId");
+
+    final ChildProfileController childProfileController =
+        Get.find<ChildProfileController>();
+
+    // Asegurar que los perfiles de los niños de la familia actual estén cargados.
+    if (childProfileController.childProfiles.isEmpty ||
+        (childProfileController.childProfiles.isNotEmpty &&
+            childProfileController.childProfiles.first.familyId != familyId)) {
+      _logger.i(
+          "Child profiles are empty or not for the specified family $familyId. Loading them...");
+      // Asumimos que loadChildProfiles carga los perfiles para el familyId del usuario actual (que debería ser el mismo que `familyId` aquí)
+      // o que se pasa el familyId a loadChildProfiles si es necesario.
+      await childProfileController.loadChildProfiles();
+
+      if (childProfileController.childProfiles.isEmpty ||
+          (childProfileController.childProfiles.isNotEmpty &&
+              childProfileController.childProfiles.first.familyId !=
+                  familyId)) {
+        _logger.w(
+            "No child profiles found for family $familyId after attempting to load.");
+        assignedChallenges.clear();
+        isLoadingAssignedChallenges.value = false;
+        // Opcionalmente, establecer un mensaje de error si es relevante para la UI
+        // errorMessage.value = "No se encontraron perfiles de niños para la familia.";
+        return;
+      }
+    }
+
+    List<AssignedChallenge> allChallengesForFamily = [];
+    final Set<String> uniqueAssignedChallengeIds = {};
+
+    for (final childProfile in childProfileController.childProfiles
+        .where((c) => c.familyId == familyId)) {
+      final result = await _challengeRepository
+          .getAssignedChallengesByChild(childProfile.id);
+      result.fold((failure) {
+        _logger.e(
+            "Failed to load challenges for child ${childProfile.id}: ${failure.message}");
+        // Considerar acumular errores para mostrarlos
+      }, (childAssignedChallenges) {
+        for (var challenge in childAssignedChallenges) {
+          if (uniqueAssignedChallengeIds.add(challenge.id)) {
+            allChallengesForFamily.add(challenge);
+          }
+        }
+        _logger.d(
+            "Loaded ${childAssignedChallenges.length} challenges for child ${childProfile.id}");
+      });
+    }
+
+    assignedChallenges.assignAll(allChallengesForFamily);
+    _logger.i(
+        "Total unique assigned challenges loaded for family $familyId: ${assignedChallenges.length}");
+    isLoadingAssignedChallenges.value = false;
+    // Es crucial llamar a applyEvaluationFilters DESPUÉS de que assignedChallenges se haya actualizado.
+    // Esto se hará desde el `initState` de `BatchEvaluationPage` después de que esta función complete.
   }
 }

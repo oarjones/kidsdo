@@ -58,7 +58,7 @@
 - Ajustes de interfaz por edad
 - Navegación diferenciada para niños
 
-### Sesión 8: Seguridad y Control Parental
+### Sesión 8: Seguridad y Control Parental ✅ (COMPLETADO)
 - Sistema de PIN para acceso de padres
 - Restricciones de acceso por perfil
 - Bloqueo temporal de funciones
@@ -66,25 +66,25 @@
 
 ## Módulo 3: Gestión de Retos
 
-### Sesión 9: Modelos de Retos
+### Sesión 9: Modelos de Retos ✅ (COMPLETADO)
 - Entidades y modelos para retos/tareas
 - Categorías de retos y frecuencias
 - Controlador de retos con GetX
 - CRUD para retos en Firestore
 
-### Sesión 10: Biblioteca de Retos Predefinidos
+### Sesión 10: Biblioteca de Retos Predefinidos ✅ (COMPLETADO)
 - Implementación de retos predefinidos por categoría
 - Filtrado y búsqueda de retos
 - Adaptación de dificultad por edad
 - Importación/exportación de retos
 
-### Sesión 11: UI de Gestión de Retos para Padres
+### Sesión 11: UI de Gestión de Retos para Padres ✅ (COMPLETADO)
 - Pantalla de creación/edición de retos
 - Asignación de retos a niños
 - Configuración de periodicidad y puntos
 - Panel de control de retos activos
 
-### Sesión 12: UI de Retos para Niños
+### Sesión 12: UI de Retos para Niños ✅ (COMPLETADO)
 - Visualización adaptada de retos pendientes
 - Marcado de retos completados
 - Indicadores visuales de progreso

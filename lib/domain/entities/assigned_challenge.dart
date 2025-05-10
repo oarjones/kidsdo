@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'challenge_execution.dart';
+import 'challenge.dart'; // Asegúrate de importar la entidad Challenge si aún no está
 
 /// Enumeración de estados de retos asignados
 enum AssignedChallengeStatus {
@@ -45,7 +46,7 @@ class ChallengeEvaluation extends Equatable {
 /// Entidad que representa un reto asignado a un niño
 class AssignedChallenge extends Equatable {
   final String id;
-  final String challengeId;
+  final String challengeId; // ID del reto original
   final String childId;
   final String familyId;
   final AssignedChallengeStatus status;
@@ -55,6 +56,17 @@ class AssignedChallenge extends Equatable {
   final DateTime createdAt;
   final bool isContinuous; // Indica si el reto se reinicia automáticamente
   final List<ChallengeExecution> executions; // Lista de ejecuciones del reto
+
+  // --- NUEVOS CAMPOS: Detalles del reto original sincronizados ---
+  final String originalChallengeTitle;
+  final String originalChallengeDescription;
+  final int originalChallengePoints; // Puntos base del reto original
+  final ChallengeDuration originalChallengeDuration;
+  final ChallengeCategory originalChallengeCategory;
+  final String? originalChallengeIcon; // Icono del reto original
+  final Map<String, dynamic>
+      originalChallengeAgeRange; // Rango de edad original
+  // ------------------------------------------------------------
 
   const AssignedChallenge({
     required this.id,
@@ -68,6 +80,15 @@ class AssignedChallenge extends Equatable {
     required this.createdAt,
     this.isContinuous = false,
     this.executions = const [],
+    // --- Inicialización de nuevos campos ---
+    required this.originalChallengeTitle,
+    required this.originalChallengeDescription,
+    required this.originalChallengePoints,
+    required this.originalChallengeDuration,
+    required this.originalChallengeCategory,
+    this.originalChallengeIcon,
+    required this.originalChallengeAgeRange,
+    // -------------------------------------
   });
 
   @override
@@ -83,6 +104,15 @@ class AssignedChallenge extends Equatable {
         createdAt,
         isContinuous,
         executions,
+        // --- Añadir nuevos campos a props ---
+        originalChallengeTitle,
+        originalChallengeDescription,
+        originalChallengePoints,
+        originalChallengeDuration,
+        originalChallengeCategory,
+        originalChallengeIcon,
+        originalChallengeAgeRange,
+        // ---------------------------------
       ];
 
   AssignedChallenge copyWith({
@@ -97,6 +127,15 @@ class AssignedChallenge extends Equatable {
     DateTime? createdAt,
     bool? isContinuous,
     List<ChallengeExecution>? executions,
+    // --- copyWith para nuevos campos ---
+    String? originalChallengeTitle,
+    String? originalChallengeDescription,
+    int? originalChallengePoints,
+    ChallengeDuration? originalChallengeDuration,
+    ChallengeCategory? originalChallengeCategory,
+    String? originalChallengeIcon,
+    Map<String, dynamic>? originalChallengeAgeRange,
+    // ---------------------------------
   }) {
     return AssignedChallenge(
       id: id ?? this.id,
@@ -110,6 +149,22 @@ class AssignedChallenge extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       isContinuous: isContinuous ?? this.isContinuous,
       executions: executions ?? this.executions,
+      // --- Copiar nuevos campos ---
+      originalChallengeTitle:
+          originalChallengeTitle ?? this.originalChallengeTitle,
+      originalChallengeDescription:
+          originalChallengeDescription ?? this.originalChallengeDescription,
+      originalChallengePoints:
+          originalChallengePoints ?? this.originalChallengePoints,
+      originalChallengeDuration:
+          originalChallengeDuration ?? this.originalChallengeDuration,
+      originalChallengeCategory:
+          originalChallengeCategory ?? this.originalChallengeCategory,
+      originalChallengeIcon:
+          originalChallengeIcon ?? this.originalChallengeIcon,
+      originalChallengeAgeRange:
+          originalChallengeAgeRange ?? this.originalChallengeAgeRange,
+      // ---------------------------
     );
   }
 
@@ -120,7 +175,7 @@ class AssignedChallenge extends Equatable {
   ChallengeExecution? get currentExecution {
     if (executions.isEmpty) return null;
 
-    // La ejecución actual es la más reciente en la lista
+    // La ejecución actual es la última que no ha sido evaluada (estado active o pending)
     try {
       return executions.lastWhere(
         (execution) =>
@@ -128,8 +183,27 @@ class AssignedChallenge extends Equatable {
             execution.status == AssignedChallengeStatus.pending,
       );
     } catch (e) {
-      // Si no hay ninguna ejecución activa o pendiente, devolver la última
+      // Si no hay ninguna ejecución activa o pendiente, puede que sea la última
+      // evaluada si ya terminó el ciclo o el reto no es continuo.
+      // En este contexto, 'currentExecution' para UI de padres debería ser la
+      // que necesita evaluación o la última si ya se evaluó.
+      // Si no hay activas/pendientes, devolver la última (esté evaluada o no)
       return executions.isNotEmpty ? executions.last : null;
     }
+  }
+
+  /// Obtiene el último resultado de evaluación para la ejecución actual
+  ChallengeEvaluation? get latestEvaluationForCurrentExecution {
+    return currentExecution?.evaluation;
+  }
+
+  /// Obtiene el estado de la ejecución actual (o del reto asignado si no hay ejecuciones)
+  AssignedChallengeStatus get currentStatus {
+    return currentExecution?.status ?? status;
+  }
+
+  /// Calcula la fecha de fin de la ejecución actual
+  DateTime? get currentEndDate {
+    return currentExecution?.endDate;
   }
 }

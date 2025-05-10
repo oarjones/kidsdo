@@ -3,6 +3,7 @@ import 'package:kidsdo/core/middleware/auth_middleware.dart';
 import 'package:kidsdo/presentation/pages/challenges/active_challenges_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/assign_challenge_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/batch_assign_challenges_page.dart';
+import 'package:kidsdo/presentation/pages/challenges/batch_evaluation_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/challenges_library_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/challenges_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/create_edit_challenge_page.dart';
@@ -57,6 +58,7 @@ abstract class Routes {
   static const assignChallenge = '/assign-challenge';
   static const activeChallenges = '/active-challenges';
   static const batchAssignChallenges = '/batch-assign-challenges';
+  static const batchEvaluation = '/batch-evaluation';
 }
 
 class AppPages {
@@ -212,6 +214,12 @@ class AppPages {
     GetPage(
       name: Routes.batchAssignChallenges,
       page: () => const BatchAssignChallengesPage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.batchEvaluation,
+      page: () => const BatchEvaluationPage(),
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
     ),

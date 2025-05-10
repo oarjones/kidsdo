@@ -96,12 +96,12 @@ class ChallengeCard extends StatelessWidget {
                     ),
                   ),
 
-                  // Checkbox para selección
-                  Obx(() => Checkbox(
-                        value: isSelected.value,
-                        onChanged: (_) => onSelect(),
-                        activeColor: AppColors.primary,
-                      )),
+                  // Checkbox para selección (comentado, ya no se permite seleccionar)
+                  // Obx(() => Checkbox(
+                  //       value: isSelected.value,
+                  //       onChanged: (_) => onSelect(),
+                  //       activeColor: AppColors.primary,
+                  //     )),
                 ],
               ),
 
@@ -169,17 +169,17 @@ class ChallengeCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  // Botón para convertir a reto familiar
-                  TextButton.icon(
-                    icon: const Icon(Icons.add_circle_outline, size: 18),
-                    label: Text(TrKeys.addToFamily.tr),
-                    onPressed: onConvert,
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                  ),
+                  // Botón para convertir a reto familiar (comentado, no se permite)
+                  // TextButton.icon(
+                  //   icon: const Icon(Icons.add_circle_outline, size: 18),
+                  //   label: Text(TrKeys.addToFamily.tr),
+                  //   onPressed: onConvert,
+                  //   style: TextButton.styleFrom(
+                  //     padding: const EdgeInsets.symmetric(
+                  //         horizontal: 12, vertical: 8),
+                  //     visualDensity: VisualDensity.compact,
+                  //   ),
+                  // ),
 
                   // Botón para ver detalles
                   TextButton.icon(

@@ -1,6 +1,9 @@
+// File: kidsdo_gemini/lib/presentation/pages/challenges/challenges_library_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kidsdo/core/constants/colors.dart';
+import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/challenge.dart';
 import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
@@ -20,6 +23,7 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
           IconButton(
             icon: const Icon(Icons.filter_list),
             onPressed: () {
+              // Abrir el Drawer de filtros
               Scaffold.of(context).openEndDrawer();
             },
             tooltip: TrKeys.filterChallenges.tr,
@@ -52,20 +56,15 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                     controller.loadPredefinedChallenges();
                   },
                 )),
+          // Menú de opciones (Importar/Exportar) - Simplificado
           PopupMenuButton<String>(
             onSelected: (value) {
               switch (value) {
                 case 'import':
                   _showImportDialog(context);
                   break;
-                case 'export':
+                case 'export_all': // Exportar todos los retos filtrados
                   _handleExport(context);
-                  break;
-                case 'select_all':
-                  _selectAll();
-                  break;
-                case 'clear_selection':
-                  controller.clearSelection();
                   break;
               }
             },
@@ -78,39 +77,31 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                 ),
               ),
               PopupMenuItem(
-                value: 'export',
+                // Cambiado para exportar todos los filtrados
+                value: 'export_all',
                 child: ListTile(
                   leading: const Icon(Icons.upload),
-                  title: Text(TrKeys.exportChallenges.tr),
+                  title: Text(TrKeys.exportFiltered.tr),
+                  // Opcional: mostrar el número de retos filtrados
+                  trailing: Obx(() => Text(
+                        controller.filteredChallenges.length.toString(),
+                        style: const TextStyle(color: Colors.grey),
+                      )),
                 ),
               ),
-              const PopupMenuDivider(),
-              PopupMenuItem(
-                value: 'select_all',
-                child: ListTile(
-                  leading: const Icon(Icons.select_all),
-                  title: Text(TrKeys.selectAll.tr),
-                ),
-              ),
-              PopupMenuItem(
-                value: 'clear_selection',
-                child: ListTile(
-                  leading: const Icon(Icons.clear_all),
-                  title: Text(TrKeys.clearSelection.tr),
-                ),
-              ),
+              // Se eliminan opciones de selección múltiple
             ],
           ),
         ],
       ),
       endDrawer: const ChallengeFilterDrawer(),
-      // Añadido SafeArea aquí
       body: SafeArea(
         child: Column(
           children: [
             // Barra de búsqueda
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding:
+                  const EdgeInsets.all(AppDimensions.md), // Padding ajustado
               child: TextField(
                 controller: controller.searchController,
                 decoration: InputDecoration(
@@ -130,6 +121,9 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                   ),
                   filled: true,
                   fillColor: Colors.grey.shade100,
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: AppDimensions.md,
+                      horizontal: AppDimensions.md), // Ajustar padding interno
                 ),
                 onChanged: (value) {
                   controller.updateSearchQuery(value);
@@ -140,13 +134,15 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
             // Chips para filtros rápidos
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.md), // Padding ajustado
               child: Obx(() => Row(
                     children: [
                       // Chip para filtro actual de categoría
                       if (controller.filterCategory.value != null)
                         Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: const EdgeInsets.only(
+                              right: AppDimensions.xs), // Espacio ajustado
                           child: Chip(
                             label: Text(_getCategoryName(
                                 controller.filterCategory.value!)),
@@ -155,6 +151,8 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                               controller.setFilterCategory(null);
                             },
                             backgroundColor: AppColors.primaryLight,
+                            visualDensity:
+                                VisualDensity.compact, // Compactar chip
                           ),
                         ),
 
@@ -162,7 +160,8 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                       if (controller.filterMinAge.value > 0 ||
                           controller.filterMaxAge.value < 18)
                         Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: const EdgeInsets.only(
+                              right: AppDimensions.xs), // Espacio ajustado
                           child: Chip(
                             label: Text(
                                 "${controller.filterMinAge.value}-${controller.filterMaxAge.value} ${TrKeys.years.tr}"),
@@ -171,13 +170,16 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                               controller.setAgeRange(0, 18);
                             },
                             backgroundColor: AppColors.infoLight,
+                            visualDensity:
+                                VisualDensity.compact, // Compactar chip
                           ),
                         ),
 
                       // Chip para mostrar solo apropiados por edad
                       if (controller.showOnlyAgeAppropriate.value)
                         Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: const EdgeInsets.only(
+                              right: AppDimensions.xs), // Espacio ajustado
                           child: Chip(
                             label: Text(TrKeys.ageAppropriate.tr),
                             deleteIcon: const Icon(Icons.close, size: 18),
@@ -185,6 +187,8 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                               controller.toggleAgeAppropriate(false);
                             },
                             backgroundColor: AppColors.successLight,
+                            visualDensity:
+                                VisualDensity.compact, // Compactar chip
                           ),
                         ),
 
@@ -198,17 +202,20 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                           onPressed: () {
                             controller.clearFilters();
                           },
-                          avatar: const Icon(Icons.clear_all, size: 18),
+                          avatar: const Icon(Icons.filter_list_off, size: 18),
+                          visualDensity:
+                              VisualDensity.compact, // Compactar chip
                         ),
                     ],
                   )),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: AppDimensions.sm), // Espacio ajustado
 
             // Contador de resultados y adaptación de edad
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.md), // Padding ajustado
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -220,9 +227,11 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.grey,
+                              fontSize: AppDimensions.fontSm, // Tamaño ajustado
                             ),
                           )),
-                      const SizedBox(width: 8),
+                      const SizedBox(
+                          width: AppDimensions.xs), // Espacio ajustado
                       // Indicador de origen de datos
                       Obx(() {
                         Widget icon;
@@ -263,6 +272,10 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                               onPressed: () {
                                 controller.loadPredefinedChallenges();
                               },
+                              visualDensity:
+                                  VisualDensity.compact, // Compactar botón
+                              padding: EdgeInsets
+                                  .zero, // Eliminar padding por defecto
                             )
                           : const SizedBox.shrink()),
                     ],
@@ -272,8 +285,11 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                   Row(
                     children: [
                       Text(TrKeys.childAge.tr,
-                          style: const TextStyle(fontSize: 14)),
-                      const SizedBox(width: 8),
+                          style: const TextStyle(
+                              fontSize:
+                                  AppDimensions.fontSm)), // Tamaño ajustado
+                      const SizedBox(
+                          width: AppDimensions.xs), // Espacio ajustado
                       Obx(() => DropdownButton<int>(
                             value: controller.selectedChildAge.value,
                             items: List.generate(
@@ -289,7 +305,8 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                                 controller.applyFilters();
                               }
                             },
-                            isDense: true,
+                            isDense: true, // Compactar dropdown
+                            iconSize: 18, // Tamaño ajustado
                           )),
                     ],
                   ),
@@ -297,7 +314,7 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: AppDimensions.sm), // Espacio ajustado
 
             // Lista de retos
             Expanded(
@@ -308,68 +325,76 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
 
                 if (controller.errorMessage.value.isNotEmpty) {
                   return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.error_outline,
-                            size: 48, color: Colors.red),
-                        const SizedBox(height: 16),
-                        Text(
-                          controller.errorMessage.value,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            controller.loadPredefinedChallenges();
-                          },
-                          icon: const Icon(Icons.refresh),
-                          label: Text(TrKeys.retry.tr),
-                        ),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppDimensions.lg),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error_outline,
+                              size: 48, color: Colors.red),
+                          const SizedBox(height: 16),
+                          Text(
+                            controller.errorMessage.value,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              controller.loadPredefinedChallenges();
+                            },
+                            icon: const Icon(Icons.refresh),
+                            label: Text(TrKeys.retry.tr),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }
 
                 if (controller.filteredChallenges.isEmpty) {
                   return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.search_off,
-                            size: 48, color: Colors.grey),
-                        const SizedBox(height: 16),
-                        Text(
-                          TrKeys.noChallengesFound.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
+                    child: Padding(
+                      padding: const EdgeInsets.all(
+                          AppDimensions.lg), // Padding ajustado
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.search_off,
+                              size: 48, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          Text(
+                            TrKeys.noChallengesFound.tr,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          TrKeys.tryChangingFilters.tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            controller.clearFilters();
-                          },
-                          icon: const Icon(Icons.filter_list_off),
-                          label: Text(TrKeys.clearAllFilters.tr),
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                          Text(
+                            TrKeys.tryChangingFilters.tr,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              controller.clearFilters();
+                            },
+                            icon: const Icon(Icons.filter_list_off),
+                            label: Text(TrKeys.clearAllFilters.tr),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }
 
                 return ListView.builder(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(
+                      AppDimensions.md), // Padding ajustado
                   itemCount: controller.filteredChallenges.length,
                   itemBuilder: (context, index) {
                     final challenge = controller.filteredChallenges[index];
@@ -386,12 +411,12 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                       challenge: challenge,
                       adaptedPoints: adaptedPoints,
                       childAge: controller.selectedChildAge.value,
-                      isSelected: Rx<bool>(
-                          controller.isChallengeSelected(challenge.id)),
-                      onSelect: () =>
-                          controller.toggleChallengeSelection(challenge.id),
-                      onConvert: () => controller
-                          .convertTemplateToFamilyChallenge(challenge),
+                      // Ya no hay selección múltiple
+                      isSelected: false.obs, // Siempre false
+                      onSelect: () {}, // No hace nada
+                      // Eliminado el botón "Añadir a mi Familia"
+                      onConvert: () => {}, // No hace nada aquí
+                      // Al pulsar la tarjeta o el botón "Detalles" se muestra el modal
                       onTap: () => _showChallengeDetail(
                           context, challenge, adaptedPoints),
                     );
@@ -402,585 +427,33 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
           ],
         ),
       ),
-      // Botón flotante para acciones con selección
-      // Reemplazar el FloatingActionButton.extended actual
-      floatingActionButton: Obx(() {
-        if (controller.selectedChallengeIds.isEmpty) {
-          return const SizedBox.shrink();
-        }
+      // Se elimina el FloatingActionButton para selección múltiple
+      // floatingActionButton: Obx(() {
+      //   if (controller.selectedChallengeIds.isEmpty) {
+      //     return const SizedBox.shrink();
+      //   }
 
-        return FloatingActionButton.extended(
-          onPressed: () => _showSelectionOptions(context),
-          label: Text(
-            "${TrKeys.assignChallenge.tr}: ${controller.selectedChallengeIds.length} ${controller.selectedChallengeIds.length == 1 ? TrKeys.challengeSingular.tr : TrKeys.challengesPlural.tr}",
-            style: const TextStyle(fontSize: 16),
-          ),
-          icon: const Icon(Icons.assignment_ind),
-          backgroundColor: AppColors.primary,
-          extendedPadding: const EdgeInsets.symmetric(horizontal: 20),
-        );
-      }),
+      //   return FloatingActionButton.extended(
+      //     onPressed: () => _showSelectionOptions(context),
+      //     label: Text(
+      //       "${TrKeys.assignChallenge.tr}: ${controller.selectedChallengeIds.length} ${controller.selectedChallengeIds.length == 1 ? TrKeys.challengeSingular.tr : TrKeys.challengesPlural.tr}",
+      //       style: const TextStyle(fontSize: 16),
+      //     ),
+      //     icon: const Icon(Icons.assignment_ind),
+      //     backgroundColor: AppColors.primary,
+      //     extendedPadding: const EdgeInsets.symmetric(horizontal: 20),
+      //   );
+      // }),
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: Text(TrKeys.challengeLibrary.tr),
-  //       actions: [
-  //         IconButton(
-  //           icon: const Icon(Icons.filter_list),
-  //           onPressed: () {
-  //             Scaffold.of(context).openEndDrawer();
-  //           },
-  //           tooltip: TrKeys.filterChallenges.tr,
-  //         ),
-  //         Obx(() => controller.dataSource.value == 'firestore'
-  //             ? IconButton(
-  //                 icon: const Icon(Icons.cloud_done),
-  //                 tooltip: TrKeys.cloudSyncActive.tr,
-  //                 onPressed: () {
-  //                   // Mostrar diálogo informativo
-  //                   Get.dialog(
-  //                     AlertDialog(
-  //                       title: Text(TrKeys.cloudSync.tr),
-  //                       content: Text(TrKeys.cloudSyncInfo.tr),
-  //                       actions: [
-  //                         TextButton(
-  //                           onPressed: () => Get.back(),
-  //                           child: Text(TrKeys.ok.tr),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   );
-  //                 },
-  //               )
-  //             : IconButton(
-  //                 icon: const Icon(Icons.cloud_sync),
-  //                 tooltip: TrKeys.syncWithCloud.tr,
-  //                 onPressed: () {
-  //                   // Intentar sincronizar
-  //                   controller.loadPredefinedChallenges();
-  //                 },
-  //               )),
-  //         PopupMenuButton<String>(
-  //           onSelected: (value) {
-  //             switch (value) {
-  //               case 'import':
-  //                 _showImportDialog(context);
-  //                 break;
-  //               case 'export':
-  //                 _handleExport(context);
-  //                 break;
-  //               case 'select_all':
-  //                 _selectAll();
-  //                 break;
-  //               case 'clear_selection':
-  //                 controller.clearSelection();
-  //                 break;
-  //             }
-  //           },
-  //           itemBuilder: (context) => [
-  //             PopupMenuItem(
-  //               value: 'import',
-  //               child: ListTile(
-  //                 leading: const Icon(Icons.download),
-  //                 title: Text(TrKeys.importChallenges.tr),
-  //               ),
-  //             ),
-  //             PopupMenuItem(
-  //               value: 'export',
-  //               child: ListTile(
-  //                 leading: const Icon(Icons.upload),
-  //                 title: Text(TrKeys.exportChallenges.tr),
-  //               ),
-  //             ),
-  //             const PopupMenuDivider(),
-  //             PopupMenuItem(
-  //               value: 'select_all',
-  //               child: ListTile(
-  //                 leading: const Icon(Icons.select_all),
-  //                 title: Text(TrKeys.selectAll.tr),
-  //               ),
-  //             ),
-  //             PopupMenuItem(
-  //               value: 'clear_selection',
-  //               child: ListTile(
-  //                 leading: const Icon(Icons.clear_all),
-  //                 title: Text(TrKeys.clearSelection.tr),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //     endDrawer: const ChallengeFilterDrawer(),
-  //     body: Column(
-  //       children: [
-  //         // Barra de búsqueda
-  //         Padding(
-  //           padding: const EdgeInsets.all(16.0),
-  //           child: TextField(
-  //             controller: controller.searchController,
-  //             decoration: InputDecoration(
-  //               hintText: TrKeys.searchChallenges.tr,
-  //               prefixIcon: const Icon(Icons.search),
-  //               suffixIcon: Obx(() => controller.searchQuery.value.isNotEmpty
-  //                   ? IconButton(
-  //                       icon: const Icon(Icons.clear),
-  //                       onPressed: () {
-  //                         controller.searchController.clear();
-  //                         controller.updateSearchQuery('');
-  //                       },
-  //                     )
-  //                   : const SizedBox.shrink()),
-  //               border: OutlineInputBorder(
-  //                 borderRadius: BorderRadius.circular(12.0),
-  //               ),
-  //               filled: true,
-  //               fillColor: Colors.grey.shade100,
-  //             ),
-  //             onChanged: (value) {
-  //               controller.updateSearchQuery(value);
-  //             },
-  //           ),
-  //         ),
+  // Se elimina _showSelectionOptions ya que no hay selección múltiple
 
-  //         // Chips para filtros rápidos
-  //         SingleChildScrollView(
-  //           scrollDirection: Axis.horizontal,
-  //           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //           child: Obx(() => Row(
-  //                 children: [
-  //                   // Chip para filtro actual de categoría
-  //                   if (controller.filterCategory.value != null)
-  //                     Padding(
-  //                       padding: const EdgeInsets.only(right: 8.0),
-  //                       child: Chip(
-  //                         label: Text(_getCategoryName(
-  //                             controller.filterCategory.value!)),
-  //                         deleteIcon: const Icon(Icons.close, size: 18),
-  //                         onDeleted: () {
-  //                           controller.setFilterCategory(null);
-  //                         },
-  //                         backgroundColor: AppColors.primaryLight,
-  //                       ),
-  //                     ),
+  // Se elimina _importSelectedToFamily
 
-  //                   // Chip para filtro actual de frecuencia
-  //                   if (controller.filterFrequency.value != null)
-  //                     Padding(
-  //                       padding: const EdgeInsets.only(right: 8.0),
-  //                       child: Chip(
-  //                         label: Text(_getFrequencyName(
-  //                             controller.filterFrequency.value!)),
-  //                         deleteIcon: const Icon(Icons.close, size: 18),
-  //                         onDeleted: () {
-  //                           controller.setFilterFrequency(null);
-  //                         },
-  //                         backgroundColor: AppColors.secondaryLight,
-  //                       ),
-  //                     ),
+  // Se elimina _exportSelected
 
-  //                   // Chip para rango de edad si está filtrado
-  //                   if (controller.filterMinAge.value > 0 ||
-  //                       controller.filterMaxAge.value < 18)
-  //                     Padding(
-  //                       padding: const EdgeInsets.only(right: 8.0),
-  //                       child: Chip(
-  //                         label: Text(
-  //                             "${controller.filterMinAge.value}-${controller.filterMaxAge.value} ${TrKeys.years.tr}"),
-  //                         deleteIcon: const Icon(Icons.close, size: 18),
-  //                         onDeleted: () {
-  //                           controller.setAgeRange(0, 18);
-  //                         },
-  //                         backgroundColor: AppColors.infoLight,
-  //                       ),
-  //                     ),
-
-  //                   // Chip para mostrar solo apropiados por edad
-  //                   if (controller.showOnlyAgeAppropriate.value)
-  //                     Padding(
-  //                       padding: const EdgeInsets.only(right: 8.0),
-  //                       child: Chip(
-  //                         label: Text(TrKeys.ageAppropriate.tr),
-  //                         deleteIcon: const Icon(Icons.close, size: 18),
-  //                         onDeleted: () {
-  //                           controller.toggleAgeAppropriate(false);
-  //                         },
-  //                         backgroundColor: AppColors.successLight,
-  //                       ),
-  //                     ),
-
-  //                   // Mostrar chip para limpiar todos los filtros si hay alguno activo
-  //                   if (controller.filterCategory.value != null ||
-  //                       controller.filterFrequency.value != null ||
-  //                       controller.filterMinAge.value > 0 ||
-  //                       controller.filterMaxAge.value < 18 ||
-  //                       controller.showOnlyAgeAppropriate.value)
-  //                     ActionChip(
-  //                       label: Text(TrKeys.clearAllFilters.tr),
-  //                       onPressed: () {
-  //                         controller.clearFilters();
-  //                       },
-  //                       avatar: const Icon(Icons.clear_all, size: 18),
-  //                     ),
-  //                 ],
-  //               )),
-  //         ),
-
-  //         const SizedBox(height: 8),
-
-  //         // Contador de resultados y adaptación de edad
-  //         Padding(
-  //           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //           child: Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             children: [
-  //               // Contador de resultados con indicador de origen
-  //               Row(
-  //                 children: [
-  //                   Obx(() => Text(
-  //                         "${controller.filteredChallenges.length} ${controller.filteredChallenges.length == 1 ? TrKeys.challengeFound.tr : TrKeys.challengesFound.tr}",
-  //                         style: const TextStyle(
-  //                           fontWeight: FontWeight.bold,
-  //                           color: Colors.grey,
-  //                         ),
-  //                       )),
-  //                   const SizedBox(width: 8),
-  //                   // Indicador de origen de datos
-  //                   Obx(() {
-  //                     Widget icon;
-  //                     String tooltip;
-
-  //                     switch (controller.dataSource.value) {
-  //                       case 'firestore':
-  //                         icon = const Icon(Icons.cloud_done,
-  //                             size: 18, color: Colors.green);
-  //                         tooltip = TrKeys.cloudDataSource.tr;
-  //                         break;
-  //                       case 'local':
-  //                         icon = const Icon(Icons.smartphone,
-  //                             size: 18, color: Colors.orange);
-  //                         tooltip = TrKeys.localDataSource.tr;
-  //                         break;
-  //                       case 'loading':
-  //                       default:
-  //                         icon = const SizedBox(
-  //                           width: 18,
-  //                           height: 18,
-  //                           child: CircularProgressIndicator(strokeWidth: 2),
-  //                         );
-  //                         tooltip = TrKeys.loadingDataSource.tr;
-  //                     }
-
-  //                     return Tooltip(
-  //                       message: tooltip,
-  //                       child: icon,
-  //                     );
-  //                   }),
-
-  //                   // Botón para sincronizar si es necesario
-  //                   Obx(() => controller.dataSource.value == 'local'
-  //                       ? IconButton(
-  //                           icon: const Icon(Icons.sync, size: 18),
-  //                           tooltip: TrKeys.syncWithCloud.tr,
-  //                           onPressed: () {
-  //                             controller.loadPredefinedChallenges();
-  //                           },
-  //                         )
-  //                       : const SizedBox.shrink()),
-  //                 ],
-  //               ),
-
-  //               // Selector de edad para adaptación
-  //               Row(
-  //                 children: [
-  //                   Text(TrKeys.childAge.tr,
-  //                       style: const TextStyle(fontSize: 14)),
-  //                   const SizedBox(width: 8),
-  //                   Obx(() => DropdownButton<int>(
-  //                         value: controller.selectedChildAge.value,
-  //                         items: List.generate(
-  //                                 16, (index) => index + 3) // De 3 a 18 años
-  //                             .map((age) => DropdownMenuItem<int>(
-  //                                   value: age,
-  //                                   child: Text(age.toString()),
-  //                                 ))
-  //                             .toList(),
-  //                         onChanged: (value) {
-  //                           if (value != null) {
-  //                             controller.selectedChildAge.value = value;
-  //                             controller.applyFilters();
-  //                           }
-  //                         },
-  //                         isDense: true,
-  //                       )),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-
-  //         const SizedBox(height: 8),
-
-  //         // Lista de retos
-  //         Expanded(
-  //           child: Obx(() {
-  //             if (controller.isLoadingPredefinedChallenges.value) {
-  //               return const Center(child: CircularProgressIndicator());
-  //             }
-
-  //             if (controller.errorMessage.value.isNotEmpty) {
-  //               return Center(
-  //                 child: Column(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: [
-  //                     const Icon(Icons.error_outline,
-  //                         size: 48, color: Colors.red),
-  //                     const SizedBox(height: 16),
-  //                     Text(
-  //                       controller.errorMessage.value,
-  //                       textAlign: TextAlign.center,
-  //                       style: const TextStyle(color: Colors.red),
-  //                     ),
-  //                     const SizedBox(height: 16),
-  //                     ElevatedButton.icon(
-  //                       onPressed: () {
-  //                         controller.loadPredefinedChallenges();
-  //                       },
-  //                       icon: const Icon(Icons.refresh),
-  //                       label: Text(TrKeys.retry.tr),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               );
-  //             }
-
-  //             if (controller.filteredChallenges.isEmpty) {
-  //               return Center(
-  //                 child: Column(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: [
-  //                     const Icon(Icons.search_off,
-  //                         size: 48, color: Colors.grey),
-  //                     const SizedBox(height: 16),
-  //                     Text(
-  //                       TrKeys.noChallengesFound.tr,
-  //                       textAlign: TextAlign.center,
-  //                       style: const TextStyle(
-  //                         fontSize: 18,
-  //                         fontWeight: FontWeight.bold,
-  //                         color: Colors.grey,
-  //                       ),
-  //                     ),
-  //                     const SizedBox(height: 8),
-  //                     Text(
-  //                       TrKeys.tryChangingFilters.tr,
-  //                       textAlign: TextAlign.center,
-  //                       style: const TextStyle(color: Colors.grey),
-  //                     ),
-  //                     const SizedBox(height: 16),
-  //                     ElevatedButton.icon(
-  //                       onPressed: () {
-  //                         controller.clearFilters();
-  //                       },
-  //                       icon: const Icon(Icons.filter_list_off),
-  //                       label: Text(TrKeys.clearAllFilters.tr),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               );
-  //             }
-
-  //             return ListView.builder(
-  //               padding: const EdgeInsets.all(16.0),
-  //               itemCount: controller.filteredChallenges.length,
-  //               itemBuilder: (context, index) {
-  //                 final challenge = controller.filteredChallenges[index];
-
-  //                 // Adaptar puntos según la edad seleccionada
-  //                 final adaptedPoints = controller.adaptPointsByAge(
-  //                   challenge.points,
-  //                   challenge.ageRange['min'] as int,
-  //                   challenge.ageRange['max'] as int,
-  //                   controller.selectedChildAge.value,
-  //                 );
-
-  //                 return ChallengeCard(
-  //                   challenge: challenge,
-  //                   adaptedPoints: adaptedPoints,
-  //                   childAge: controller.selectedChildAge.value,
-  //                   isSelected: controller.isChallengeSelected(challenge.id),
-  //                   onSelect: () =>
-  //                       controller.toggleChallengeSelection(challenge.id),
-  //                   onConvert: () =>
-  //                       controller.convertTemplateToFamilyChallenge(challenge),
-  //                   onTap: () =>
-  //                       _showChallengeDetail(context, challenge, adaptedPoints),
-  //                 );
-  //               },
-  //             );
-  //           }),
-  //         ),
-  //       ],
-  //     ),
-
-  //     // Botón flotante para acciones con selección
-  //     floatingActionButton: Obx(() {
-  //       if (controller.selectedChallengeIds.isEmpty) {
-  //         return const SizedBox.shrink();
-  //       }
-
-  //       return FloatingActionButton.extended(
-  //         onPressed: () => _showSelectionOptions(context),
-  //         label: Text(
-  //             "${controller.selectedChallengeIds.length} ${TrKeys.selected.tr}"),
-  //         icon: const Icon(Icons.check_circle),
-  //         backgroundColor: AppColors.primary,
-  //       );
-  //     }),
-  //   );
-  // }
-
-  // Mostrar opciones para los retos seleccionados
-  void _showSelectionOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Añadir opción de asignación directa
-            ListTile(
-              leading: const Icon(Icons.assignment_ind, color: Colors.blue),
-              title: Text(TrKeys.assignToChildren.tr),
-              onTap: () {
-                Navigator.pop(context);
-                Get.toNamed('/batch-assign-challenges');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.copy, color: AppColors.primary),
-              title: Text(TrKeys.importToFamily.tr),
-              onTap: () {
-                Navigator.pop(context);
-                _importSelectedToFamily();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.upload, color: AppColors.secondary),
-              title: Text(TrKeys.exportSelected.tr),
-              onTap: () {
-                Navigator.pop(context);
-                _exportSelected(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.clear_all, color: Colors.grey),
-              title: Text(TrKeys.clearSelection.tr),
-              onTap: () {
-                Navigator.pop(context);
-                controller.clearSelection();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Importar retos seleccionados a la familia
-  void _importSelectedToFamily() {
-    // Obtener retos seleccionados
-    final selectedChallenges = controller.filteredChallenges
-        .where((challenge) =>
-            controller.selectedChallengeIds.contains(challenge.id))
-        .toList();
-
-    if (selectedChallenges.isEmpty) return;
-
-    // Mostrar diálogo de confirmación
-    Get.dialog(
-      AlertDialog(
-        title: Text(TrKeys.importToFamily.tr),
-        content: Text(
-          Tr.tp(TrKeys.importSelectedConfirmation,
-              {'count': selectedChallenges.length.toString()}),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(TrKeys.cancel.tr),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Get.back();
-
-              // Importar cada reto seleccionado
-              for (final challenge in selectedChallenges) {
-                controller.convertTemplateToFamilyChallenge(challenge);
-              }
-
-              // Limpiar selección después de importar
-              controller.clearSelection();
-
-              // Mostrar mensaje de éxito
-              Get.snackbar(
-                TrKeys.importSuccess.tr,
-                Tr.tp(TrKeys.challengesImported,
-                    {'count': selectedChallenges.length.toString()}),
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.green.shade50,
-                colorText: Colors.green,
-              );
-            },
-            child: Text(TrKeys.import.tr),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Exportar retos seleccionados
-  void _exportSelected(BuildContext context) {
-    // Obtener retos seleccionados
-    final selectedChallenges = controller.filteredChallenges
-        .where((challenge) =>
-            controller.selectedChallengeIds.contains(challenge.id))
-        .toList();
-
-    if (selectedChallenges.isEmpty) return;
-
-    // Exportar retos seleccionados
-    controller.exportChallengesToJson(selectedChallenges).then((jsonString) {
-      if (jsonString.isNotEmpty) {
-        // Aquí se podría implementar la función para compartir o guardar el JSON
-        Get.snackbar(
-          TrKeys.exportSuccess.tr,
-          Tr.tp(TrKeys.challengesExported,
-              {'count': selectedChallenges.length.toString()}),
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.shade50,
-          colorText: Colors.green,
-        );
-
-        // Limpiar selección después de exportar
-        controller.clearSelection();
-      }
-    });
-  }
-
-  // Seleccionar todos los retos filtrados
-  void _selectAll() {
-    for (final challenge in controller.filteredChallenges) {
-      if (!controller.selectedChallengeIds.contains(challenge.id)) {
-        controller.selectedChallengeIds.add(challenge.id);
-      }
-    }
-  }
+  // Se elimina _selectAll
 
   // Mostrar diálogo de importación
   void _showImportDialog(BuildContext context) {
@@ -1024,100 +497,44 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
     );
   }
 
-  // Manejar exportación de todos los retos
+  // Manejar exportación de todos los retos filtrados
   void _handleExport(BuildContext context) {
     // Captura el BuildContext actual en una variable local
-    final currentContext = context;
+    //final currentContext = context;
 
-    // Mostrar opciones de exportación
-    showDialog(
-      context: currentContext,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(TrKeys.exportChallenges.tr),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.filter_list),
-              title: Text(TrKeys.exportFiltered.tr),
-              subtitle: Text(
-                Tr.tp(TrKeys.numberOfChallenges,
-                    {'count': controller.filteredChallenges.length.toString()}),
-              ),
-              onTap: () {
-                Navigator.pop(dialogContext);
+    // Guarda una referencia local a los retos filtrados
+    final challengesToExport =
+        List<Challenge>.from(controller.filteredChallenges);
 
-                // Guarda una referencia local a los retos filtrados
-                final challengesToExport =
-                    List<Challenge>.from(controller.filteredChallenges);
+    if (challengesToExport.isEmpty) {
+      Get.snackbar(
+        TrKeys.warning.tr,
+        TrKeys.noChallengesFound.tr, // Mensaje si no hay retos para exportar
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.amber.shade50,
+        colorText: Colors.amber.shade900,
+      );
+      return;
+    }
 
-                controller
-                    .exportChallengesToJson(challengesToExport)
-                    .then((jsonString) {
-                  // No podemos usar mounted, así que verificamos si Navigator está disponible
-                  if (jsonString.isNotEmpty) {
-                    // Usar Get.context en lugar de currentContext
-                    if (Get.context != null) {
-                      _showExportResult(Get.context!, jsonString);
-                    } else {
-                      // Fallback: mostrar un snackbar que no requiere contexto
-                      Get.snackbar(
-                        TrKeys.exportSuccess.tr,
-                        TrKeys.jsonCopied.tr,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.green.shade50,
-                        colorText: Colors.green,
-                      );
-                    }
-                  }
-                });
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.all_inclusive),
-              title: Text(TrKeys.exportAll.tr),
-              subtitle: Text(
-                Tr.tp(TrKeys.numberOfChallenges, {
-                  'count': controller.predefinedChallenges.length.toString()
-                }),
-              ),
-              onTap: () {
-                Navigator.pop(dialogContext);
-
-                // Guarda una referencia local a todos los retos
-                final challengesToExport =
-                    List<Challenge>.from(controller.predefinedChallenges);
-
-                controller
-                    .exportChallengesToJson(challengesToExport)
-                    .then((jsonString) {
-                  // Usar Get.context que es actualizado dinámicamente por GetX
-                  if (jsonString.isNotEmpty && Get.context != null) {
-                    _showExportResult(Get.context!, jsonString);
-                  } else if (jsonString.isNotEmpty) {
-                    // Fallback: mostrar un snackbar que no requiere contexto
-                    Get.snackbar(
-                      TrKeys.exportSuccess.tr,
-                      TrKeys.jsonCopied.tr,
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Colors.green.shade50,
-                      colorText: Colors.green,
-                    );
-                  }
-                });
-              },
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(TrKeys.cancel.tr),
-          ),
-        ],
-      ),
-    );
+    controller.exportChallengesToJson(challengesToExport).then((jsonString) {
+      // No podemos usar mounted, así que verificamos si Navigator está disponible
+      if (jsonString.isNotEmpty) {
+        // Usar Get.context en lugar de currentContext
+        if (Get.context != null) {
+          _showExportResult(Get.context!, jsonString);
+        } else {
+          // Fallback: mostrar un snackbar que no requiere contexto
+          Get.snackbar(
+            TrKeys.exportSuccess.tr,
+            TrKeys.jsonCopied.tr,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green.shade50,
+            colorText: Colors.green,
+          );
+        }
+      }
+    });
   }
 
   // Mostrar resultado de exportación
@@ -1170,6 +587,7 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
             label: Text(TrKeys.copyToClipboard.tr),
             onPressed: () {
               // Aquí se implementaría la función para copiar al portapapeles
+              Clipboard.setData(ClipboardData(text: jsonString));
               Navigator.pop(dialogContext);
               Get.snackbar(
                 TrKeys.copied.tr,
@@ -1185,7 +603,7 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
     );
   }
 
-  // Mostrar detalle de un reto
+  // Mostrar detalle de un reto (modificado)
   void _showChallengeDetail(
       BuildContext context, Challenge challenge, int adaptedPoints) {
     showModalBottomSheet(
@@ -1222,12 +640,14 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
+                    color: _getCategoryColor(challenge.category)
+                        .withValues(alpha: 0.1), // Color basado en categoría
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
                     _getCategoryIcon(challenge.category),
-                    color: AppColors.primary,
+                    color: _getCategoryColor(
+                        challenge.category), // Color basado en categoría
                     size: 32,
                   ),
                 ),
@@ -1246,6 +666,9 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                       Row(
                         children: [
                           _buildCategoryChip(challenge.category),
+                          const SizedBox(width: 8), // Espacio entre chips
+                          _buildDurationChip(
+                              challenge.duration), // Mostrar chip de duración
                         ],
                       ),
                     ],
@@ -1287,21 +710,67 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                 TrKeys.originalPoints.tr, challenge.points.toString()),
             _buildDetailRow(TrKeys.adaptedPoints.tr, adaptedPoints.toString()),
 
+            // Mostrar si es plantilla o reto de familia
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Icon(
+                  challenge.isTemplate ? Icons.copy_all : Icons.home,
+                  size: 18,
+                  color: Colors.grey.shade600,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  challenge.isTemplate
+                      ? 'Template Challenge'
+                      : 'Family Challenge', // Traducciones pendientes
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+              ],
+            ),
+
             const SizedBox(height: 32),
 
-            // Botones de acción
-            Column(
-              children: [
-                Row(
+            // Botón para asignar a niño/s (nuevo)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.assignment_ind),
+                label: Text(TrKeys.assignToChildren.tr),
+                onPressed: () {
+                  Navigator.pop(context); // Cerrar el modal
+                  // Seleccionar este reto en el controlador antes de navegar
+                  controller.selectedChallenge.value = challenge;
+                  // Navegar a la página de asignación
+                  Get.toNamed(Routes.assignChallenge);
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  backgroundColor:
+                      AppColors.secondary, // Color diferente para asignar
+                ),
+              ),
+            ),
+
+            // Botones existentes (Edit, Delete) - Solo si es un reto de la familia
+            if (!challenge.isTemplate || challenge.familyId != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Row(
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        icon: const Icon(Icons.add_circle_outline),
-                        label: Text(TrKeys.addToFamily.tr),
+                        icon: const Icon(Icons.edit),
+                        label: Text(TrKeys.edit.tr),
                         onPressed: () {
                           Navigator.pop(context);
-                          controller
-                              .convertTemplateToFamilyChallenge(challenge);
+                          // Seleccionar este reto en el controlador
+                          controller.selectChallengeForEdit(challenge);
+                          // Navegar a la página de edición
+                          Get.toNamed(Routes.editChallenge);
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -1310,76 +779,44 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: ElevatedButton.icon(
-                        icon: Obx(() => Icon(
-                            controller.isChallengeSelected(challenge.id)
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank)),
-                        label: Obx(() => Text(
-                            controller.isChallengeSelected(challenge.id)
-                                ? TrKeys.selected.tr
-                                : TrKeys.select.tr)),
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        label: Text(TrKeys.delete.tr),
                         onPressed: () {
-                          controller.toggleChallengeSelection(challenge.id);
+                          Navigator.pop(context); // Cerrar el modal
+                          _showDeleteConfirmation(context,
+                              challenge); // Mostrar diálogo de confirmación
                         },
-                        style: ElevatedButton.styleFrom(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red,
+                          side: const BorderSide(color: Colors.red),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+              ),
 
-                // Nueva fila con botones para editar y asignar
-                Row(
-                  children: [
-                    // Botón para editar (solo si no es template o si es un reto de la familia)
-                    if (!challenge.isTemplate || challenge.familyId != null)
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          icon: const Icon(Icons.edit),
-                          label: Text(TrKeys.edit.tr),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            // Seleccionar este reto en el controlador
-                            controller.selectChallengeForEdit(challenge);
-                            // Navegar a la página de edición
-                            Get.toNamed(Routes.editChallenge);
-                          },
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                        ),
-                      ),
-
-                    // Espacio entre botones si ambos están visibles
-                    if (!challenge.isTemplate || challenge.familyId != null)
-                      const SizedBox(width: 16),
-
-                    // Botón para asignar (solo si es un reto de la familia)
-                    if (challenge.familyId != null)
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.assignment_ind),
-                          label: Text(TrKeys.assignToChild.tr),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            // Seleccionar este reto en el controlador
-                            controller.selectedChallenge.value = challenge;
-                            // Navegar a la página de asignación
-                            Get.toNamed(Routes.assignChallenge);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            backgroundColor: AppColors.secondary,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
+            // Opción para añadir a mi familia si es un template (comentado, no se añaden retos a familia)
+            // if (challenge.isTemplate)
+            //   Padding(
+            //     padding: const EdgeInsets.only(top: 16.0),
+            //     child: SizedBox(
+            //       width: double.infinity,
+            //       child: OutlinedButton.icon(
+            //         icon: const Icon(Icons.add_circle_outline),
+            //         label: Text(TrKeys.addToFamily.tr),
+            //         onPressed: () {
+            //           Navigator.pop(context);
+            //           controller.convertTemplateToFamilyChallenge(challenge);
+            //         },
+            //         style: OutlinedButton.styleFrom(
+            //           padding: const EdgeInsets.symmetric(vertical: 12),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
           ],
         ),
       ),
@@ -1420,20 +857,69 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight,
+        color: _getCategoryColor(category)
+            .withValues(alpha: 0.1), // Color basado en categoría
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         _getCategoryName(category),
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 12,
-          color: AppColors.primary,
+          color: _getCategoryColor(category), // Color basado en categoría
         ),
       ),
     );
   }
 
-  // Obtener nombre de categoría
+  // Nuevo: Construir chip de duración
+  Widget _buildDurationChip(ChallengeDuration duration) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors
+            .infoLight, // Puedes elegir un color específico para duración
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        _getDurationName(duration), // Función para obtener nombre de duración
+        style: const TextStyle(
+          fontSize: 12,
+          color: AppColors.info, // Color específico para duración
+        ),
+      ),
+    );
+  }
+
+  // Diálogo de confirmación de eliminación - Modificado
+  void _showDeleteConfirmation(BuildContext context, Challenge challenge) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(TrKeys.delete.tr),
+        content: Text(TrKeys.confirmDeleteProfile
+            .trParams({'name': challenge.title})), // Usar nombre del reto
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(TrKeys.cancel.tr),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Eliminar el reto
+              controller.deleteChallenge(challenge.id).then((_) {
+                // No se vuelve a la página anterior aquí, solo se elimina de la lista
+              });
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(TrKeys.delete.tr),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Funciones auxiliares para traducir categorías y frecuencias
   String _getCategoryName(ChallengeCategory category) {
     switch (category) {
       case ChallengeCategory.hygiene:
@@ -1450,6 +936,26 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
         return TrKeys.categorySpecial.tr;
       case ChallengeCategory.sibling:
         return TrKeys.categorySibling.tr;
+    }
+  }
+
+  // Obtener color de categoría
+  Color _getCategoryColor(ChallengeCategory category) {
+    switch (category) {
+      case ChallengeCategory.hygiene:
+        return Colors.blue;
+      case ChallengeCategory.school:
+        return Colors.purple;
+      case ChallengeCategory.order:
+        return Colors.teal;
+      case ChallengeCategory.responsibility:
+        return Colors.orange;
+      case ChallengeCategory.help:
+        return Colors.green;
+      case ChallengeCategory.special:
+        return Colors.pink;
+      case ChallengeCategory.sibling:
+        return Colors.indigo;
     }
   }
 
@@ -1470,6 +976,22 @@ class ChallengesLibraryPage extends GetView<ChallengeController> {
         return Icons.celebration;
       case ChallengeCategory.sibling:
         return Icons.family_restroom;
+    }
+  }
+
+  // Obtener nombre de duración
+  String _getDurationName(ChallengeDuration duration) {
+    switch (duration) {
+      case ChallengeDuration.weekly:
+        return TrKeys.durationWeekly.tr;
+      case ChallengeDuration.monthly:
+        return TrKeys.durationMonthly.tr;
+      case ChallengeDuration.quarterly:
+        return TrKeys.durationQuarterly.tr;
+      case ChallengeDuration.yearly:
+        return TrKeys.durationYearly.tr;
+      case ChallengeDuration.punctual:
+        return TrKeys.durationPunctual.tr;
     }
   }
 }

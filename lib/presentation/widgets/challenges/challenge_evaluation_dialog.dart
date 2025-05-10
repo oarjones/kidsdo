@@ -675,4 +675,95 @@ class _ChallengeEvaluationDialogState extends State<ChallengeEvaluationDialog> {
         return TrKeys.inactive.tr;
     }
   }
+
+  // Obtener color de estado
+  // Color _getStatusColor(AssignedChallengeStatus status) {
+  //   switch (status) {
+  //     case AssignedChallengeStatus.active:
+  //       return Colors.blue;
+  //     case AssignedChallengeStatus.completed:
+  //       return Colors.green;
+  //     case AssignedChallengeStatus.failed:
+  //       return Colors.red;
+  //     case AssignedChallengeStatus.pending:
+  //       return Colors.orange;
+  //     case AssignedChallengeStatus.inactive:
+  //       return Colors.grey;
+  //   }
+  // }
+
+  // Obtener icono de estado
+  // IconData _getStatusIcon(AssignedChallengeStatus status) {
+  //   switch (status) {
+  //     case AssignedChallengeStatus.active:
+  //       return Icons.hourglass_top;
+  //     case AssignedChallengeStatus.completed:
+  //       return Icons.check_circle;
+  //     case AssignedChallengeStatus.failed:
+  //       return Icons.cancel;
+  //     case AssignedChallengeStatus.pending:
+  //       return Icons.pending;
+  //     case AssignedChallengeStatus.inactive:
+  //       return Icons.cancel_outlined;
+  //   }
+  // }
+
+  // String _getCategoryName(ChallengeCategory category) {
+  //   switch (category) {
+  //     case ChallengeCategory.hygiene:
+  //       return TrKeys.categoryHygiene.tr;
+  //     case ChallengeCategory.school:
+  //       return TrKeys.categorySchool.tr;
+  //     case ChallengeCategory.order:
+  //       return TrKeys.categoryOrder.tr;
+  //     case ChallengeCategory.responsibility:
+  //       return TrKeys.categoryResponsibility.tr;
+  //     case ChallengeCategory.help:
+  //       return TrKeys.categoryHelp.tr;
+  //     case ChallengeCategory.special:
+  //       return TrKeys.categorySpecial.tr;
+  //     case ChallengeCategory.sibling:
+  //       return TrKeys.categorySibling.tr;
+  //   }
+  // }
+
+  // Obtener color de categoría
+  // Color _getCategoryColor(ChallengeCategory category) {
+  //   switch (category) {
+  //     case ChallengeCategory.hygiene:
+  //       return Colors.blue;
+  //     case ChallengeCategory.school:
+  //       return Colors.purple;
+  //     case ChallengeCategory.order:
+  //       return Colors.teal;
+  //     case ChallengeCategory.responsibility:
+  //       return Colors.orange;
+  //     case ChallengeCategory.help:
+  //       return Colors.green;
+  //     case ChallengeCategory.special:
+  //       return Colors.pink;
+  //     case ChallengeCategory.sibling:
+  //       return Colors.indigo;
+  //   }
+  // }
+
+  // Obtener icono de categoría
+  // IconData _getCategoryIcon(ChallengeCategory category) {
+  //   switch (category) {
+  //     case ChallengeCategory.hygiene:
+  //       return Icons.clean_hands;
+  //     case ChallengeCategory.school:
+  //       return Icons.school;
+  //     case ChallengeCategory.order:
+  //       return Icons.cleaning_services;
+  //     case ChallengeCategory.responsibility:
+  //       return Icons.assignment_turned_in;
+  //     case ChallengeCategory.help:
+  //       return Icons.emoji_people;
+  //     case ChallengeCategory.special:
+  //       return Icons.celebration;
+  //     case ChallengeCategory.sibling:
+  //       return Icons.family_restroom;
+  //   }
+  // }
 }

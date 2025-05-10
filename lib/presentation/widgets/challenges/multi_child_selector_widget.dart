@@ -28,13 +28,29 @@ class MultiChildSelectorWidget extends StatefulWidget {
 
 class _MultiChildSelectorWidgetState extends State<MultiChildSelectorWidget> {
   late Set<String> selectedIds;
+  bool _isInitialBuild = true;
 
   @override
   void initState() {
     super.initState();
-    // Inicializar con la selección inicial si existe
-    selectedIds =
-        widget.initialSelection?.map((child) => child.id).toSet() ?? <String>{};
+    // Inicializar con todos los niños seleccionados por defecto
+    // A menos que haya una selección inicial específica
+    selectedIds = widget.initialSelection?.map((child) => child.id).toSet() ??
+        widget.children.map((child) => child.id).toSet();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Usamos didChangeDependencies para notificar después de la primera construcción
+    if (_isInitialBuild) {
+      // Programamos la notificación para después del ciclo de construcción actual
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _notifySelectionChange();
+        _isInitialBuild = false;
+      });
+    }
   }
 
   @override
@@ -46,30 +62,69 @@ class _MultiChildSelectorWidgetState extends State<MultiChildSelectorWidget> {
       ),
       child: Column(
         children: [
-          // Encabezado con acciones
+          // Encabezado con acciones - VERSIÓN MEJORADA RESPONSIVA
           Padding(
-            padding: const EdgeInsets.all(AppDimensions.md),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.md,
+              vertical: AppDimensions.sm,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  TrKeys.assignToChildren.tr,
-                  style: const TextStyle(
-                    fontSize: AppDimensions.fontLg,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextButton(
-                      onPressed: _selectAll,
-                      child: Text(TrKeys.selectAll.tr),
+                    Text(
+                      TrKeys.assignToChildren.tr,
+                      style: const TextStyle(
+                        fontSize: AppDimensions.fontMd,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    const Text(' / '),
-                    TextButton(
-                      onPressed: _clearSelection,
-                      child: Text(TrKeys.clearSelection.tr),
-                    ),
+
+                    // Fila de botones responsiva
+                    // Row(
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     InkWell(
+                    //       onTap: _selectAll,
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.symmetric(
+                    //             horizontal: AppDimensions.sm,
+                    //             vertical: AppDimensions.xs),
+                    //         child: Text(
+                    //           TrKeys.selectAll.tr,
+                    //           style: const TextStyle(
+                    //             color: AppColors.primary,
+                    //             fontSize: AppDimensions.fontSm,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     const SizedBox(width: 4),
+                    //     Container(
+                    //       height: 16,
+                    //       width: 1,
+                    //       color: Colors.grey.withValues(alpha: 150),
+                    //     ),
+                    //     const SizedBox(width: 4),
+                    //     InkWell(
+                    //       onTap: _clearSelection,
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.symmetric(
+                    //             horizontal: AppDimensions.sm,
+                    //             vertical: AppDimensions.xs),
+                    //         child: Text(
+                    //           TrKeys.clearSelection.tr,
+                    //           style: TextStyle(
+                    //             color: Colors.grey.shade700,
+                    //             fontSize: AppDimensions.fontSm,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ],
@@ -115,47 +170,76 @@ class _MultiChildSelectorWidgetState extends State<MultiChildSelectorWidget> {
                 final isSelected = selectedIds.contains(child.id);
                 final isAgeAppropriate = _isAgeAppropriate(child);
 
-                return CheckboxListTile(
-                  value: isSelected,
-                  onChanged: (_) => _toggleChild(child.id),
-                  secondary: CachedAvatar(
-                    url: child.avatarUrl,
-                    radius: 24,
+                return ListTile(
+                  onTap: () => _toggleChild(child.id),
+                  leading: Stack(
+                    children: [
+                      CachedAvatar(
+                        url: child.avatarUrl,
+                        radius: 20,
+                      ),
+                      // Indicador visual de selección
+                      if (isSelected)
+                        Positioned(
+                          right: -2,
+                          bottom: -2,
+                          child: Container(
+                            padding: const EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: AppColors.primary, width: 1),
+                            ),
+                            child: const Icon(
+                              Icons.check_circle,
+                              color: AppColors.primary,
+                              size: 10,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   title: Text(
                     child.name,
                     style: TextStyle(
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontSize: AppDimensions.fontMd,
                     ),
                   ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  subtitle: Row(
                     children: [
-                      Text('${child.age} ${TrKeys.yearsOld.tr}'),
+                      Text(
+                        '${child.age} ${TrKeys.yearsOld.tr}',
+                        style: const TextStyle(fontSize: AppDimensions.fontSm),
+                      ),
                       if (!isAgeAppropriate) ...[
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(Icons.warning_amber,
-                                size: 16, color: Colors.amber.shade700),
-                            const SizedBox(width: 4),
-                            Text(
-                              TrKeys.ageAppropriate.tr,
-                              style: TextStyle(
-                                color: Colors.amber.shade700,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
+                        const SizedBox(width: 4),
+                        Icon(Icons.warning_amber,
+                            size: 12, color: Colors.amber.shade700),
                       ],
                     ],
                   ),
-                  activeColor: AppColors.primary,
+                  trailing: IconButton(
+                    icon: Icon(
+                      isSelected
+                          ? Icons.remove_circle_outline
+                          : Icons.add_circle_outline,
+                      color: isSelected ? Colors.red : AppColors.primary,
+                      size: 20,
+                    ),
+                    onPressed: () => _toggleChild(child.id),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(
+                      minWidth: 36,
+                      minHeight: 36,
+                    ),
+                  ),
+                  dense: true,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: AppDimensions.md,
-                    vertical: AppDimensions.sm,
+                    vertical: AppDimensions.xs,
                   ),
                 );
               },
@@ -164,7 +248,8 @@ class _MultiChildSelectorWidgetState extends State<MultiChildSelectorWidget> {
           // Resumen de selección
           if (widget.children.isNotEmpty)
             Container(
-              padding: const EdgeInsets.all(AppDimensions.md),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.md, vertical: AppDimensions.sm),
               decoration: BoxDecoration(
                 color: Colors.grey.withValues(alpha: 10),
                 borderRadius: const BorderRadius.only(
@@ -176,15 +261,17 @@ class _MultiChildSelectorWidgetState extends State<MultiChildSelectorWidget> {
                 children: [
                   Icon(
                     Icons.info_outline,
-                    size: 16,
+                    size: 14,
                     color: Colors.grey.shade600,
                   ),
-                  const SizedBox(width: AppDimensions.sm),
-                  Text(
-                    _getSelectionSummary(),
-                    style: TextStyle(
-                      fontSize: AppDimensions.fontSm,
-                      color: Colors.grey.shade600,
+                  const SizedBox(width: AppDimensions.xs),
+                  Expanded(
+                    child: Text(
+                      _getSelectionSummary(),
+                      style: TextStyle(
+                        fontSize: AppDimensions.fontSm,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ),
                 ],
@@ -213,34 +300,36 @@ class _MultiChildSelectorWidgetState extends State<MultiChildSelectorWidget> {
       }
     });
 
-    // Notificar cambios al padre
+    _notifySelectionChange();
+  }
+
+  // void _selectAll() {
+  //   setState(() {
+  //     selectedIds = widget.children.map((child) => child.id).toSet();
+  //   });
+
+  //   _notifySelectionChange();
+  // }
+
+  // void _clearSelection() {
+  //   setState(() {
+  //     selectedIds.clear();
+  //   });
+
+  //   _notifySelectionChange();
+  // }
+
+  // Método para notificar cambios al widget padre
+  void _notifySelectionChange() {
     final selectedChildren = widget.children
         .where((child) => selectedIds.contains(child.id))
         .toList();
     widget.onSelectionChanged(selectedChildren);
   }
 
-  void _selectAll() {
-    setState(() {
-      selectedIds = widget.children.map((child) => child.id).toSet();
-    });
-
-    // Notificar cambios al padre
-    widget.onSelectionChanged(widget.children);
-  }
-
-  void _clearSelection() {
-    setState(() {
-      selectedIds.clear();
-    });
-
-    // Notificar cambios al padre
-    widget.onSelectionChanged([]);
-  }
-
   String _getSelectionSummary() {
     if (selectedIds.isEmpty) {
-      return TrKeys.noChildrenAvailable.tr;
+      return TrKeys.noChildSelected.tr;
     }
 
     final count = selectedIds.length;

@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application
         android:label="kidsdo"
         android:name="${applicationName}"
@@ -30,6 +33,23 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Añade esto dentro de la etiqueta application -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel" />
+            
+        <!-- Agrega esto si necesitas manejar notificaciones cuando la app está cerrada -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+            
+        <!-- Añade esto si quieres que las notificaciones abran la app -->
+        <intent-filter>
+            <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
