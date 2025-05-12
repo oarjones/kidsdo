@@ -498,6 +498,26 @@ class ChildProfileController extends GetxController {
     }
   }
 
+  /// Actualiza un perfil de FamilyChild en la lista local del controlador.
+  void updateChildProfileLocally(FamilyChild updatedProfile) {
+    final index = childProfiles.indexWhere((p) => p.id == updatedProfile.id);
+    if (index != -1) {
+      childProfiles[index] = updatedProfile;
+      // childProfiles.refresh(); // Si childProfiles es RxList, la asignación directa a un índice ya dispara la reactividad.
+      //                           // refresh() es más para forzar la actualización de toda la lista si se hacen cambios internos complejos.
+
+      // Si tienes un FamilyChild seleccionado observable, actualízalo también si es el mismo.
+      // if (selectedChildProfile.value?.id == updatedProfile.id) { // Asumiendo que tienes selectedChildProfile
+      //   selectedChildProfile.value = updatedProfile;
+      // }
+      _logger.i(
+          'Child profile ${updatedProfile.id} points updated locally in ChildProfileController to ${updatedProfile.points}.');
+    } else {
+      _logger.w(
+          'Could not find child profile ${updatedProfile.id} in local list to update.');
+    }
+  }
+
   /// Elimina un perfil infantil
   Future<void> deleteChildProfile(String childId) async {
     status.value = ChildProfileStatus.loading;

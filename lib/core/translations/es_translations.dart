@@ -785,4 +785,83 @@ final Map<String, String> esTranslations = {
   'batch_evaluation_button_text': 'Evaluar @count retos',
   'evaluationNoteOptionalHint': 'Nota de evaluación (opcional)',
   'batch_evaluation_filter_child_selected': '@count niño/s',
+
+  'stream_generic_error':
+      'Error al cargar datos en tiempo real. Inténtalo de nuevo.',
+  'user_not_authenticated_error':
+      'Debes iniciar sesión o verificar tu familia para realizar esta acción.',
+  'points_adjusted_title': 'Puntos Ajustados',
+  'points_adjusted_message': 'Los puntos de @childName ahora son @points.',
+  'auth_generic_error':
+      'Error de autenticación. Por favor, intenta iniciar sesión de nuevo.',
+
+  // Nuevas para recompensas
+  'rewards_title': 'Recompensas',
+  'create_reward_title': 'Crear Recompensa',
+  'edit_reward_title': 'Editar Recompensa',
+  'reward_name_label': 'Nombre de la recompensa',
+  'reward_description_label': 'Descripción (opcional)',
+  'reward_points_required_label': 'Puntos necesarios',
+  'reward_type_label': 'Tipo de recompensa',
+  'reward_icon_label': 'Icono (opcional)',
+  'reward_is_unique_label':
+      '¿Es una recompensa única? (Solo se puede canjear una vez)',
+  'reward_is_enabled_label': 'Habilitada (visible para canjear)',
+  'reward_type_simple': 'Simple',
+  'reward_type_product': 'Producto',
+  'reward_type_experience': 'Experiencia',
+  'reward_type_digital_access': 'Acceso Digital',
+  'reward_type_long_term_goal': 'Meta a Largo Plazo',
+  'reward_type_surprise': 'Sorpresa',
+  'manage_rewards': 'Gestionar Recompensas',
+  'no_rewards_available': 'Aún no hay recompensas disponibles.',
+  'add_first_reward': 'Añade tu primera recompensa',
+  'confirm_delete_reward_title': 'Confirmar Eliminación',
+  'confirm_delete_reward_message':
+      '¿Estás seguro de que quieres eliminar la recompensa "@rewardName"? Esta acción no se puede deshacer.',
+  'adjust_points_title': 'Ajustar Puntos Manualmente',
+  'points_to_adjust_label': 'Puntos a sumar o restar',
+  'current_points_label': 'Puntos actuales: @points',
+  'reward_created_success': 'Recompensa creada con éxito.',
+  'reward_updated_success': 'Recompensa actualizada con éxito.',
+  'reward_deleted_success': 'Recompensa eliminada con éxito.',
+  'points_suffix': 'Puntos',
+  'reward_disabled_hint': 'Deshabilitada',
+  'predefined_rewards_title': 'Biblioteca de Recompensas',
+
+  // --- Recompensas: Creación y Edición (Formulario) ---
+  'delete_reward': 'Eliminar Recompensa',
+  'reward_basic_info': 'Información Básica',
+  'reward_name_hint': 'Ej: Helado después de cenar',
+  'reward_description_hint': 'Ej: Una deliciosa bola de tu sabor favorito.',
+  'reward_details': 'Detalles de la Recompensa',
+  'tap_to_change_icon': 'Toca para cambiar el icono',
+  'reward_options': 'Opciones Adicionales',
+  'reward_is_enabled_hint':
+      'Si está deshabilitada, los niños no podrán verla ni canjearla.',
+  'reward_is_unique_hint':
+      'Si es única, solo se podrá canjear una vez por niño.',
+  'reward_specific_data_title': 'Datos Específicos del Tipo',
+  'save_changes': 'Guardar Cambios',
+  'create_reward_button': 'Crear Recompensa',
+  'optional': 'opcional',
+
+  // --- Diálogos y Mensajes de Feedback ---
+  'form_error_title': 'Error en el Formulario',
+  'form_error_message': 'Por favor, corrige los errores indicados.',
+  'field_required_error': 'Este campo es obligatorio.',
+  'points_positive_error':
+      'Los puntos deben ser un número positivo mayor que cero.',
+  'select_reward_icon_title': 'Seleccionar Icono de Recompensa',
+
+  'reward_category_treats': 'Golosinas',
+  'reward_category_screenTime': 'Tiempo Pantalla',
+  'reward_category_activities': 'Actividades',
+  'reward_category_privileges': 'Privilegios',
+  'reward_category_toysAndGames': 'Juguetes y Juegos',
+  'reward_category_learning': 'Aprendizaje',
+  'reward_category_other': 'Otros',
+  'no_predefined_rewards_found': 'No se encontraron recompensas predefinidas',
+  'try_different_filters_predefined':
+      'Intenta seleccionar otra categoría o revisa más tarde.',
 };

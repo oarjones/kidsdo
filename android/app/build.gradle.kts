@@ -15,12 +15,18 @@ android {
     ndkVersion = "27.0.12077973"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        // Configura Java 8 para compatibilidad con desugaring
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+        // Habilita el desugaring de bibliotecas principales
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        // Si cambiaste a Java 8 arriba, también puedes ajustar jvmTarget si es necesario,
+        // aunque a menudo puede dejarse en 1.8 o incluso más alto si el Kotlin plugin lo maneja.
+        // Por ahora, prueba dejándolo o ajústalo a "1.8".
+        jvmTarget = JavaVersion.VERSION_1_8.toString() // O déjalo como VERSION_11 si no da problemas después del cambio de compileOptions
     }
 
     defaultConfig {
@@ -45,4 +51,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

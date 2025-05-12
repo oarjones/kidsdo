@@ -141,6 +141,8 @@ class HomePage extends GetView<AuthController> {
             case 1: // Retos
               Get.toNamed(Routes.challenges);
               break;
+            case 2: // Perfil
+              Get.toNamed(Routes.rewardsManagement);
             case 3: // Perfil
               Get.toNamed(Routes.profile);
               break;

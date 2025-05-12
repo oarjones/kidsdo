@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:kidsdo/core/middleware/auth_middleware.dart';
+import 'package:kidsdo/domain/entities/reward.dart';
 import 'package:kidsdo/presentation/pages/challenges/active_challenges_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/assign_challenge_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/batch_assign_challenges_page.dart';
@@ -8,6 +9,9 @@ import 'package:kidsdo/presentation/pages/challenges/challenges_library_page.dar
 import 'package:kidsdo/presentation/pages/challenges/challenges_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/create_edit_challenge_page.dart';
 import 'package:kidsdo/presentation/pages/child_access/child_challenges_page.dart';
+import 'package:kidsdo/presentation/pages/rewards/create_edit_reward_page.dart';
+import 'package:kidsdo/presentation/pages/rewards/predefined_rewards_library_page.dart';
+import 'package:kidsdo/presentation/pages/rewards/rewards_management_page.dart';
 import 'package:kidsdo/presentation/pages/settings/parental_control_page.dart';
 import 'package:kidsdo/presentation/pages/splash/splash_page.dart';
 import 'package:kidsdo/presentation/pages/auth/login_page.dart';
@@ -59,6 +63,13 @@ abstract class Routes {
   static const activeChallenges = '/active-challenges';
   static const batchAssignChallenges = '/batch-assign-challenges';
   static const batchEvaluation = '/batch-evaluation';
+
+  // Rutas para gestión de recompensas
+  static const String rewardsManagement = '/rewards-management';
+  static const String createReward = '/create-reward';
+  static const String editReward =
+      '/edit-reward'; // Se pasará Reward como argumento
+  static const String predefinedRewardsLibrary = '/predefined-rewards-library';
 }
 
 class AppPages {
@@ -220,6 +231,50 @@ class AppPages {
     GetPage(
       name: Routes.batchEvaluation,
       page: () => const BatchEvaluationPage(),
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+
+    GetPage(
+      name: Routes.rewardsManagement,
+      page: () => const RewardsManagementPage(),
+      middlewares: [AuthMiddleware()], // Si requiere autenticación
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.createReward,
+      page: () => const CreateEditRewardPage(
+          isEditing: false), // Necesitaremos esta página
+      middlewares: [AuthMiddleware()],
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: Routes.editReward,
+      page: () {
+        // Cuando navegas a esta ruta, se espera que pases el objeto Reward
+        // como argumento. Ejemplo de navegación:
+        // Get.toNamed(Routes.editReward, arguments: laRecompensaAEditar);
+
+        final Reward? rewardToEdit = Get.arguments as Reward?;
+
+        // Es una buena práctica verificar si el argumento es del tipo esperado
+        // y manejar el caso en que no lo sea, aunque aquí lo pasamos directamente.
+        // La página CreateEditRewardPage ya está preparada para recibir `rewardForEditing`.
+        return CreateEditRewardPage(
+          isEditing: true,
+          rewardForEditing:
+              rewardToEdit, // Se pasa la recompensa al constructor
+        );
+      },
+      middlewares: [
+        AuthMiddleware()
+      ], // Aplica tu middleware de autenticación si es necesario
+      transition: Transition.rightToLeft, // O la transición que prefieras
+    ),
+    GetPage(
+      name: Routes.predefinedRewardsLibrary,
+      page: () =>
+          const PredefinedRewardsLibraryPage(), // Necesitaremos esta página
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
     ),

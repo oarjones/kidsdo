@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:kidsdo/core/errors/failures.dart';
 import 'package:kidsdo/data/models/notification_model.dart'; // Asegúrate que la ruta sea correcta
 import 'package:logger/logger.dart';
-import 'package:meta/meta.dart';
 
 // Interfaz del DataSource
 abstract class INotificationRemoteDataSource {

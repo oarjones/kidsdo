@@ -12,6 +12,7 @@ import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
 import 'package:kidsdo/presentation/controllers/child_challenges_controller.dart';
 import 'package:kidsdo/presentation/controllers/parental_control_controller.dart';
 import 'package:kidsdo/presentation/controllers/profile_controller.dart';
+import 'package:kidsdo/presentation/controllers/rewards_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // DataSources
@@ -38,6 +39,11 @@ import 'package:kidsdo/presentation/controllers/family_controller.dart';
 import 'package:kidsdo/presentation/controllers/child_profile_controller.dart';
 import 'package:kidsdo/presentation/controllers/child_access_controller.dart';
 
+import 'package:kidsdo/data/datasources/remote/reward_remote_datasource.dart';
+import 'package:kidsdo/data/repositories/reward_repository_impl.dart';
+import 'package:kidsdo/domain/repositories/reward_repository.dart';
+import 'package:uuid/uuid.dart'; // Asegúrate de tener esta dependencia en pubspec.yaml
+
 //Logging
 import 'package:logger/logger.dart';
 
@@ -62,6 +68,10 @@ Future<void> init() async {
 
   // Registra la instancia del logger como un singleton permanente
   Get.put<Logger>(logger, permanent: true);
+
+  if (!Get.isRegistered<Uuid>()) {
+    Get.lazyPut<Uuid>(() => const Uuid(), fenix: true);
+  }
 
   // External
   Get.lazyPut(() => FirebaseAuth.instance, fenix: true);
@@ -248,4 +258,46 @@ Future<void> init() async {
       logger: Get.find<Logger>(),
     ),
   );
+
+  // Rewards Feature
+  // Datasource
+  Get.lazyPut<IRewardRemoteDataSource>(
+    () => RewardRemoteDataSourceImpl(
+      firestore:
+          Get.find<FirebaseFirestore>(), // Ya deberías tenerlo registrado
+      logger: Get.find<Logger>(),
+      uuid: Get.find<Uuid>(),
+    ),
+    fenix: true,
+  );
+
+  // Repository
+  Get.lazyPut<IRewardRepository>(
+    () => RewardRepositoryImpl(
+      remoteDataSource: Get.find<IRewardRemoteDataSource>(),
+      sessionController: Get.find<SessionController>(), // Ya registrado
+      uuid: Get.find<Uuid>(),
+      logger: Get.find<Logger>(), // Ya registrado
+    ),
+    fenix: true,
+  );
+
+  Get.lazyPut<RewardsController>(
+    () => RewardsController(
+      rewardRepository: Get.find<IRewardRepository>(),
+      familyChildRepository: Get.find<IFamilyChildRepository>(),
+      sessionController: Get.find<SessionController>(),
+      logger: Get.find<Logger>(),
+    ),
+    fenix:
+        true, // Para que se recree si se elimina, o false si quieres que persista más
+  );
+
+  // RewardsController (se registrará cuando lo creemos)
+  // Get.lazyPut<RewardsController>(() => RewardsController(
+  //   rewardRepository: Get.find<IRewardRepository>(),
+  //   familyChildRepository: Get.find<IFamilyChildRepository>(),
+  //   sessionController: Get.find<SessionController>(),
+  //   logger: Get.find<Logger>(),
+  // ));
 }

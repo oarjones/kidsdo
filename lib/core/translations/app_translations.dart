@@ -657,4 +657,89 @@ class TrKeys {
   static const evaluationNoteOptionalHint = 'evaluation_note_optional_hint';
   static void batchEvaluationFilterChildSelected =
       'batch_evaluation_filter_child_selected';
+
+  static const streamGenericError = 'stream_generic_error';
+  static const userNotAuthenticatedError = 'user_not_authenticated_error';
+  static const pointsAdjustedTitle = 'points_adjusted_title';
+  static const pointsAdjustedMessage =
+      'points_adjusted_message'; // Con parámetros: @childName, @points
+  static const authGenericError =
+      'auth_generic_error'; // Podrías tener una más general ya
+
+  // Nuevas claves para el módulo de recompensas (ejemplos)
+  static const rewardsTitle = 'rewards_title';
+  static const createRewardTitle = 'create_reward_title';
+  static const editRewardTitle = 'edit_reward_title';
+  static const rewardNameLabel = 'reward_name_label';
+  static const rewardDescriptionLabel = 'reward_description_label';
+  static const rewardPointsRequiredLabel = 'reward_points_required_label';
+  static const rewardTypeLabel = 'reward_type_label';
+  static const rewardIconLabel = 'reward_icon_label';
+  static const rewardIsUniqueLabel = 'reward_is_unique_label';
+  static const rewardIsEnabledLabel = 'reward_is_enabled_label';
+  static const rewardTypeSimple = 'reward_type_simple';
+  static const rewardTypeProduct = 'reward_type_product';
+  static const rewardTypeExperience = 'reward_type_experience';
+  static const rewardTypeDigitalAccess = 'reward_type_digital_access';
+  static const rewardTypeLongTermGoal = 'reward_type_long_term_goal';
+  static const rewardTypeSurprise = 'reward_type_surprise';
+  static const manageRewards = 'manage_rewards';
+  static const noRewardsAvailable = 'no_rewards_available';
+  static const addFirstReward = 'add_first_reward';
+  static const confirmDeleteRewardTitle = 'confirm_delete_reward_title';
+  static const confirmDeleteRewardMessage =
+      'confirm_delete_reward_message'; // Parámetro: @rewardName
+  static const adjustPointsTitle = 'adjust_points_title';
+  static const pointsToAdjustLabel = 'points_to_adjust_label';
+  static const currentPointsLabel =
+      'current_points_label'; // Parámetro: @points
+  static const rewardCreatedSuccess = 'reward_created_success';
+  static const rewardUpdatedSuccess = 'reward_updated_success';
+  static const rewardDeletedSuccess = 'reward_deleted_success';
+
+  static const pointsSuffix =
+      'points_suffix'; // Sufijo para puntos, por ejemplo: "puntos"
+  static const rewardDisabledHint =
+      'reward_disabled_hint'; // Mensaje que indica que la recompensa está deshabilitada
+  static const predefinedRewardsTitle =
+      'predefined_rewards_title'; // Título para la biblioteca de recompensas predefinidas
+
+// --- Recompensas: Gestión y Lista ---
+// --- Recompensas: Creación y Edición (Formulario) ---
+  static const deleteReward =
+      'delete_reward'; // Para el botón/tooltip de eliminar en la página de edición
+  static const rewardBasicInfo = 'reward_basic_info';
+  static const rewardNameHint = 'reward_name_hint';
+  static const rewardDescriptionHint = 'reward_description_hint';
+  static const rewardDetails = 'reward_details';
+  static const tapToChangeIcon = 'tap_to_change_icon';
+  static const rewardOptions = 'reward_options';
+  static const rewardIsEnabledHint = 'reward_is_enabled_hint';
+  static const rewardIsUniqueHint = 'reward_is_unique_hint';
+  static const rewardSpecificDataTitle =
+      'reward_specific_data_title'; // Para futuros campos específicos
+  static const saveChanges = 'save_changes';
+  static const createRewardButton =
+      'create_reward_button'; // Texto del botón de crear
+  static const optional = 'optional'; // Para campos opcionales
+
+// --- Diálogos y Mensajes de Feedback ---
+  static const formErrorTitle = 'form_error_title';
+  static const formErrorMessage = 'form_error_message';
+  static const fieldRequiredError =
+      'field_required_error'; // Error de validación
+  static const pointsPositiveError =
+      'points_positive_error'; // Error de validación para puntos
+  static const selectRewardIconTitle = 'select_reward_icon_title';
+
+  static const reward_category_treats = 'reward_category_treats';
+  static const reward_category_screenTime = 'reward_category_screenTime';
+  static const reward_category_activities = 'reward_category_activities';
+  static const reward_category_privileges = 'reward_category_privileges';
+  static const reward_category_toysAndGames = 'reward_category_toysAndGames';
+  static const reward_category_learning = 'reward_category_learning';
+  static const reward_category_other = 'reward_category_other';
+  static const noPredefinedRewardsFound = 'no_predefined_rewards_found';
+  static const tryDifferentFiltersPredefined =
+      'try_different_filters_predefined';
 }
