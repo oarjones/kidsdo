@@ -65,8 +65,6 @@ class RewardsController extends GetxController {
     // y el usuario (padre/madre) tiene una familia asignada.
     // Escuchar cambios en el currentUser para reaccionar si cambia la familia.
 
-    loadPredefinedRewardsToFirestoreIfNeeded();
-
     ever(_sessionController.currentUser, (parent) {
       if (parent?.familyId != null) {
         fetchRewards(parent!.familyId!);
