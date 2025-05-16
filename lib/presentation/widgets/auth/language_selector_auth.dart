@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kidsdo/core/constants/colors.dart';
 import 'package:kidsdo/core/constants/dimensions.dart';
-import 'package:kidsdo/presentation/controllers/language_controller.dart';
+import 'package:kidsdo/presentation/controllers/settings_controller.dart';
 
 class LanguageSelectorAuth extends StatelessWidget {
   const LanguageSelectorAuth({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final LanguageController controller = Get.find<LanguageController>();
+    final SettingsController controller = Get.find<SettingsController>();
 
     // Utilizamos GetBuilder en lugar de Obx para manejar actualizaciones
-    return GetBuilder<LanguageController>(
+    return GetBuilder<SettingsController>(
       init: controller,
       builder: (controller) {
         final currentLanguage = Get.locale?.languageCode ?? 'es';

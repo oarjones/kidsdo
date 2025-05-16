@@ -2,205 +2,207 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kidsdo/core/constants/colors.dart'; // Asegúrate de que esta importación sea correcta
 import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/assigned_challenge.dart';
+import 'package:kidsdo/presentation/controllers/auth_controller.dart';
 import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
 import 'package:kidsdo/routes.dart';
 
-class ChallengesPage extends GetView<ChallengeController> {
+class ChallengesPage extends StatelessWidget {
   const ChallengesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Usamos MediaQuery para obtener el tamaño de la pantalla si necesitamos ajustar algo basado en ella
-    // final screenWidth = MediaQuery.of(context).size.width;
-    // final screenHeight = MediaQuery.of(context).size.height;
+    final AuthController authController = Get.find<AuthController>();
+    final ChallengeController challengeController =
+        Get.find<ChallengeController>(); // Para las estadísticas
+
+    // Definir el estilo de texto para el título del AppBar consistentemente
+    const appBarTitleStyle = TextStyle(
+      fontFamily:
+          'Poppins', // Asegúrate de que Poppins esté configurado en tu tema
+      fontWeight:
+          FontWeight.w600, // O el peso que prefieras para títulos de AppBar
+      fontSize: AppDimensions.fontLg, // Ajusta según tu escala tipográfica
+      color: AppColors
+          .textDark, // O Colors.white si el AppBar usa AppColors.primary
+    );
+
+    // Definir el color de los iconos del AppBar
+    // final appBarIconColor = AppColors.textMedium; // O Colors.white si el AppBar usa AppColors.primary
 
     return Scaffold(
-      // Eliminamos el AppBar para un diseño más limpio como en la imagen
-      // appBar: AppBar(
-      //   title: Text(TrKeys.challenges.tr),
-      //   centerTitle: true,
-      // ),
+      backgroundColor: AppColors.background, // Fondo general de la página
+      appBar: AppBar(
+        title: Text(Tr.t(TrKeys.challenges),
+            style: appBarTitleStyle), // Título específico de la página
+        backgroundColor: AppColors
+            .background, // O AppColors.primary para un AppBar con color
+        elevation:
+            AppDimensions.elevationXs, // Sombra muy sutil o 0.0 si es flat
+        iconTheme: const IconThemeData(
+          color: AppColors.textDark, // Color para el ícono de "atrás" si aplica
+        ),
+        actionsIconTheme: const IconThemeData(
+          color: AppColors.textMedium, // Color para iconos de acción
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              final result = await Get.dialog<bool>(
+                AlertDialog(
+                  title: Text(Tr.t(TrKeys.logout)),
+                  content: Text(Tr.t(TrKeys.logoutConfirmation)),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Get.back(result: false),
+                      child: Text(Tr.t(TrKeys.cancel),
+                          style: const TextStyle(color: AppColors.primary)),
+                    ),
+                    TextButton(
+                      onPressed: () => Get.back(result: true),
+                      child: Text(Tr.t(TrKeys.logout),
+                          style: const TextStyle(color: AppColors.error)),
+                    ),
+                  ],
+                ),
+              );
+              if (result == true) {
+                authController.logout();
+              }
+            },
+          ),
+        ],
+      ),
+
       body: SafeArea(
         child: SingleChildScrollView(
-          // Usamos SingleChildScrollView para evitar overflows si el contenido es largo, crucial para responsividad
           child: Padding(
             padding: const EdgeInsets.all(AppDimensions.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Sección de título y subtítulo
+                // Sección de título y subtítulo de la página
                 Text(
                   TrKeys.challenges.tr,
                   style: const TextStyle(
-                    fontSize: 28, // Aumentamos el tamaño para que resalte más
+                    fontFamily: 'Poppins',
+                    fontSize: AppDimensions.fontXxl, // Ejemplo: 28 o 32
                     fontWeight: FontWeight.bold,
-                    color: Colors
-                        .black87, // Color de texto más oscuro para contraste
+                    color: AppColors.textDark,
                   ),
                 ),
-                const SizedBox(height: AppDimensions.sm), // Espacio reducido
+                const SizedBox(height: AppDimensions.xs),
                 Text(
                   TrKeys.challengesPageSubtitle.tr,
                   style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey, // Color gris para el subtítulo
+                    fontFamily: 'Poppins',
+                    fontSize: AppDimensions.fontMd, // Ejemplo: 16
+                    color: AppColors.textMedium,
                   ),
                 ),
                 const SizedBox(height: AppDimensions.xl),
 
-                // Retos Activos - con degradado y sombra
+                // Retos Activos
                 _buildFeatureCard(
                   title: TrKeys.activeChallenges.tr,
                   description: TrKeys.challengesAsignedVisualEval.tr,
-                  icon: Icons.assignment,
-                  // Usamos un degradado en lugar de un color sólido
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF6A1B9A),
-                      Color(0xFFAB47BC)
-                    ], // Tonos morados
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  icon: Icons
+                      .assignment_turned_in_outlined, // Icono más descriptivo
+                  iconBackgroundColor: AppColors.primaryLight,
+                  iconColor: AppColors.primary,
                   onTap: () => Get.toNamed(Routes.activeChallenges),
                 ),
+                const SizedBox(height: AppDimensions.md),
 
-                const SizedBox(height: AppDimensions.lg),
-
-                // **NUEVO:** Tarjeta para Evaluación en Lote
+                // Evaluación en Lote
                 _buildFeatureCard(
-                  title: TrKeys
-                      .batchEvaluationPageTitle.tr, // Usar traducción pendiente
-                  description: TrKeys.batchEvaluationPageDescription
-                      .tr, // Traducción pendiente
-                  icon: Icons.rate_review, // Icono sugerido para evaluación
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF00796B), // Color Teal oscuro
-                      Color(0xFF4DB6AC), // Color Teal claro
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  onTap: () => Get.toNamed(
-                      Routes.batchEvaluation), // Navegar a la nueva página
+                  title: TrKeys.batchEvaluationPageTitle.tr,
+                  description: TrKeys.batchEvaluationPageDescription.tr,
+                  icon: Icons.rate_review_outlined,
+                  iconBackgroundColor:
+                      AppColors.secondaryLight, // Usar color secundario
+                  iconColor: AppColors.secondary,
+                  onTap: () => Get.toNamed(Routes.batchEvaluation),
                 ),
+                const SizedBox(height: AppDimensions.md),
 
-                const SizedBox(
-                    height: AppDimensions
-                        .lg), // Añadir espacio después de la nueva tarjeta
-
-                // Biblioteca de Retos - con degradado y sombra
+                // Biblioteca de Retos
                 _buildFeatureCard(
                   title: TrKeys.challengeLibrary.tr,
                   description: TrKeys.exploreChallengeLibrary.tr,
-                  icon: Icons.menu_book,
-                  // Usamos un degradado diferente
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF00ACC1),
-                      Color(0xFF4DD0E1)
-                    ], // Tonos turquesa
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  icon: Icons.menu_book_outlined,
+                  iconBackgroundColor:
+                      AppColors.tertiaryLight, // Usar color terciario
+                  iconColor: AppColors.tertiary,
                   onTap: () => Get.toNamed(Routes.challengeLibrary),
                 ),
+                const SizedBox(height: AppDimensions.md),
 
-                const SizedBox(height: AppDimensions.lg),
-
-                // Crear reto - con degradado y sombra
+                // Crear reto
                 _buildFeatureCard(
                   title: TrKeys.createChallenge.tr,
                   description: TrKeys.createCustomChallenges.tr,
-                  icon: Icons.add,
-                  // Usamos otro degradado
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF66BB6A),
-                      Color(0xFFA5D6A7)
-                    ], // Tonos verdes
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  icon: Icons.add_circle_outline,
+                  iconBackgroundColor:
+                      AppColors.successLight, // Usar color de éxito o un neutro
+                  iconColor: AppColors.success,
                   onTap: () => Get.toNamed(Routes.createChallenge),
                 ),
-
-                const SizedBox(
-                    height:
-                        AppDimensions.xl), // Espacio antes de las estadísticas
+                const SizedBox(height: AppDimensions.xl),
 
                 // Sección de estadísticas rediseñada
-                _buildStatsSection(),
+                _buildStatsSection(challengeController),
 
-                // Puedes añadir más espacio al final si es necesario
                 const SizedBox(height: AppDimensions.lg),
               ],
             ),
           ),
         ),
       ),
-      // Aquí podrías añadir un BottomNavigationBar si tu diseño lo incluye
-      // bottomNavigationBar: BottomNavigationBar(...)
     );
   }
 
-  // Modificamos la firma para aceptar un Gradient
   Widget _buildFeatureCard({
     required String title,
     required String description,
     required IconData icon,
-    required Gradient gradient, // Ahora aceptamos un Gradient
+    required Color iconBackgroundColor,
+    required Color iconColor,
     required VoidCallback onTap,
   }) {
-    return Material(
-      color: Colors.transparent,
+    return Card(
+      elevation: AppDimensions.elevationSm,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
+      ),
+      color: AppColors.card, // Fondo blanco para la tarjeta
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
-        child: Container(
-          width: double
-              .infinity, // Esto ayuda a que la tarjeta ocupe todo el ancho disponible
-          padding: const EdgeInsets.symmetric(
-            vertical: AppDimensions.lg,
-            horizontal: AppDimensions.xl,
-          ),
-          decoration: BoxDecoration(
-            // Usamos el degradado en la decoración
-            gradient: gradient,
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black
-                    .withValues(alpha: 0.2), // Sombra más pronunciada
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
+        borderRadius: BorderRadius.circular(
+            AppDimensions.borderRadiusLg), // Para el efecto ripple
+        child: Padding(
+          padding: const EdgeInsets.all(AppDimensions.md), // Espaciado interno
           child: Row(
             children: [
-              // Icono con fondo blanco semitransparente y forma circular
               Container(
-                width: 50, // Tamaño del icono aumentado
+                width: 50, // Tamaño del contenedor del icono
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.white
-                      .withValues(alpha: 0.3), // Fondo blanco semitransparente
-                  shape: BoxShape.circle, // Forma circular
+                  color:
+                      iconBackgroundColor, // Color de fondo para el círculo del icono
+                  shape: BoxShape.circle,
                 ),
                 child: Icon(
                   icon,
-                  size: 30, // Tamaño del icono
-                  color: Colors.white, // Color del icono blanco
+                  size: AppDimensions.iconMd, // Tamaño del icono, ej: 28 o 30
+                  color: iconColor, // Color del icono
                 ),
               ),
               const SizedBox(width: AppDimensions.md),
-
-              // Texto en blanco - Usamos Expanded para que ocupe el espacio restante
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,30 +210,33 @@ class ChallengesPage extends GetView<ChallengeController> {
                     Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 20, // Tamaño de título aumentado
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontFamily: 'Poppins',
+                        fontSize: AppDimensions.fontLg, // Ejemplo: 18
+                        fontWeight: FontWeight.w600, // SemiBold
+                        color: AppColors.textDark,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: AppDimensions.xs),
                     Text(
                       description,
                       style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors
-                            .white70, // Color blanco con transparencia para la descripción
+                        fontFamily: 'Poppins',
+                        fontSize: AppDimensions.fontSm, // Ejemplo: 14
+                        color: AppColors.textMedium,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-
-              // Flecha de navegación
+              const SizedBox(width: AppDimensions.sm),
               const Icon(
-                // Usamos solo el icono sin un contenedor adicional si no es necesario un fondo
                 Icons.chevron_right,
-                color: Colors.white, // Color blanco
-                size: 24, // Tamaño aumentado
+                color: AppColors.textLight, // Un color sutil para la flecha
+                size: AppDimensions.iconSm, // Ejemplo: 24
               ),
             ],
           ),
@@ -240,102 +245,99 @@ class ChallengesPage extends GetView<ChallengeController> {
     );
   }
 
-  Widget _buildStatsSection() {
-    return Obx(() => Container(
-          width: double.infinity, // Ocupa todo el ancho disponible
-          padding: const EdgeInsets.symmetric(
-            vertical: AppDimensions.lg,
-            horizontal: AppDimensions.md,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: .1),
-                blurRadius: 6,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment
-                .spaceAround, // Distribuye el espacio entre los elementos
-            children: [
-              _buildStatistic(
-                icon: Icons.hourglass_top,
-                value: controller.assignedChallenges
-                    .where((c) => c.status == AssignedChallengeStatus.active)
-                    .length
-                    .toString(),
-                label: TrKeys.activeChallengesLabel.tr,
-                color: const Color(0xFF6A1B9A), // Color morado para el icono
-              ),
-              _buildStatistic(
-                icon: Icons.check_circle,
-                value: controller.assignedChallenges
-                    .where((c) => c.status == AssignedChallengeStatus.completed)
-                    .length
-                    .toString(),
-                label: TrKeys.completedChallengesStat.tr,
-                color: const Color(0xFF66BB6A), // Color verde para el icono
-              ),
-              _buildStatistic(
-                icon: Icons.menu_book,
-                value: controller.familyChallenges.length.toString(),
-                label: TrKeys.libraryChallengesStat.tr,
-                color: const Color(0xFF00ACC1), // Color turquesa para el icono
-              ),
-            ],
-          ),
-        ));
+  Widget _buildStatsSection(ChallengeController controller) {
+    return Card(
+      elevation: AppDimensions.elevationSm,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLg),
+      ),
+      color: AppColors.card,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppDimensions.lg,
+          horizontal: AppDimensions.md,
+        ),
+        child: Obx(() => Row(
+              // Obx para reactividad si los valores cambian
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildStatistic(
+                  icon: Icons.hourglass_top_outlined, // Icono actualizado
+                  value: controller.assignedChallenges
+                      .where((c) => c.status == AssignedChallengeStatus.active)
+                      .length
+                      .toString(),
+                  label: TrKeys
+                      .active.tr, // Usar una traducción más corta si es posible
+                  color: AppColors.primary, // Color principal para "Activos"
+                ),
+                _buildStatistic(
+                  icon: Icons.check_circle_outline, // Icono actualizado
+                  value: controller.assignedChallenges
+                      .where(
+                          (c) => c.status == AssignedChallengeStatus.completed)
+                      .length
+                      .toString(),
+                  label: TrKeys.completed.tr, // Usar una traducción más corta
+                  color: AppColors.success, // Color de éxito para "Completados"
+                ),
+                _buildStatistic(
+                  icon:
+                      Icons.collections_bookmark_outlined, // Icono actualizado
+                  value: controller.familyChallenges.length.toString(),
+                  label: 'pruebas', // Usar una traducción más corta
+                  color:
+                      AppColors.tertiary, // Color terciario para "Biblioteca"
+                ),
+              ],
+            )),
+      ),
+    );
   }
 
   Widget _buildStatistic({
     required IconData icon,
     required String value,
     required String label,
-    required Color color, // Color para el icono y el valor
+    required Color color,
   }) {
     return Column(
-      // Los elementos se apilan verticalmente dentro de cada estadística
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 48, // Tamaño fijo, podrías hacerlo responsive con MediaQuery
-          height: 48, // Tamaño fijo, podrías hacerlo responsive con MediaQuery
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
-            color: color.withValues(
-                alpha: 0.1), // Fondo semitransparente del color principal
+            color: color.withValues(alpha: 0.1), // Fondo suave con opacidad
             shape: BoxShape.circle,
           ),
           child: Icon(
             icon,
-            color: color, // Color del icono
-            size: 28, // Tamaño del icono, podrías hacerlo responsive
+            color: color, // Color principal para el icono
+            size: AppDimensions.iconMd - 2, // Tamaño del icono, ej: 26
           ),
         ),
         const SizedBox(height: AppDimensions.sm),
         Text(
           value,
           style: const TextStyle(
-            fontSize: 20, // Tamaño del valor aumentado
+            fontFamily: 'Poppins',
+            fontSize: AppDimensions.fontLg, // Ejemplo: 20
             fontWeight: FontWeight.bold,
-            color:
-                Colors.black87, // Color oscuro para el valor - Mejor contraste
+            color: AppColors.textDark,
           ),
         ),
         const SizedBox(height: AppDimensions.xs),
         SizedBox(
-          width:
-              80, // Ancho fijo para el texto de la etiqueta, podrías ajustarlo
+          width: 80, // Ancho para permitir dos líneas si es necesario
           child: Text(
             label,
-            style: const TextStyle(
-              fontSize: 12, // Tamaño de la etiqueta, podrías hacerlo responsive
-              color: Colors
-                  .black54, // Color gris más oscuro para la etiqueta - Mejor contraste
-            ),
             textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: AppDimensions.fontXs, // Ejemplo: 12
+              color: AppColors.textMedium,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),

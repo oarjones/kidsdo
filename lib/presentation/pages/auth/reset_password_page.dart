@@ -75,8 +75,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         const SizedBox(height: AppDimensions.lg),
         // Logo
         const AppLogo(
-          size: 60,
-          showText: false,
+          size: 150,
+          //showText: false,
           showSlogan: false,
         ),
         const SizedBox(height: AppDimensions.lg),

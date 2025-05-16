@@ -846,4 +846,28 @@ final Map<String, String> enTranslations = {
   'no_predefined_rewards_found': 'No predefined rewards found',
   'try_different_filters_predefined':
       'Try selecting another category or check back later.',
+
+  // --- Navigation menu ---
+  'nav_home': 'Home',
+  'nav_challenges': 'Challenges',
+  'nav_rewards': 'Rewards',
+  'nav_profile': 'Profile',
+
+  // Nuevas TrKeys para HomePage y SettingsController
+  'homeInitialSetupTitle': "Let's Get Started!",
+  'homeInitialSetupMessage':
+      "Set up your family and add child profiles to start using all KidsDo features.",
+  'homeGoToFamilyButton': "Set Up Family",
+  'homeManageFamilyButton': "Manage Family",
+  'activateChildModeOnDevice': "Activate Child Mode on this device",
+  'completeSetupTitle': "Setup Incomplete",
+  'completeSetupToNavigate':
+      "Complete family setup to navigate to other sections.",
+  'childModeActivated': "Child Mode activated for this device.",
+  'childModeDeactivated': "Child Mode deactivated for this device.",
+  'settingsLoadingError': "Error loading settings",
+  'parentalControlDisabledTooltip':
+      "Set up your family and at least one child to enable Parental Controls.",
+  'childModeSwitchDisabledTooltip':
+      "Set up your family and at least one child to enable Child Mode.",
 };

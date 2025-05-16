@@ -1000,7 +1000,7 @@ class ChildDashboardPage extends GetView<ChildAccessController> {
     ).then((success) {
       if (success) {
         controller.exitChildMode();
-        Get.offNamed(Routes.home);
+        Get.offNamed(Routes.mainParent);
       }
     });
   }

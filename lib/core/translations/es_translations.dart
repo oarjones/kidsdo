@@ -864,4 +864,28 @@ final Map<String, String> esTranslations = {
   'no_predefined_rewards_found': 'No se encontraron recompensas predefinidas',
   'try_different_filters_predefined':
       'Intenta seleccionar otra categoría o revisa más tarde.',
+
+  // --- Menú ---
+  'nav_home': 'Inicio',
+  'nav_challenges': 'Retos',
+  'nav_rewards': 'Recompensas',
+  'nav_profile': 'Perfil',
+
+  // Nuevas TrKeys para HomePage y SettingsController
+  'homeInitialSetupTitle': "¡Comencemos!",
+  'homeInitialSetupMessage':
+      "Configura tu familia y añade perfiles infantiles para empezar a usar todas las funciones de KidsDo.",
+  'homeGoToFamilyButton': "Configurar Familia",
+  'homeManageFamilyButton': "Gestionar Familia",
+  'activateChildModeOnDevice': "Activar Modo Infantil en este dispositivo",
+  'completeSetupTitle': "Configuración Incompleta",
+  'completeSetupToNavigate':
+      "Completa la configuración familiar para navegar a otras secciones.",
+  'childModeActivated': "Modo Infantil activado para este dispositivo.",
+  'childModeDeactivated': "Modo Infantil desactivado para este dispositivo.",
+  'settingsLoadingError': "Error al cargar la configuración.",
+  'parentalControlDisabledTooltip':
+      "Configura tu familia y al menos un niño para activar el Control Parental.",
+  'childModeSwitchDisabledTooltip':
+      "Configura tu familia y al menos un niño para activar el Modo Infantil.",
 };

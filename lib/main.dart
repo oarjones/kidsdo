@@ -3,101 +3,125 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kidsdo/app.dart';
+import 'package:kidsdo/core/constants/colors.dart';
 import 'package:kidsdo/firebase_options.dart';
 import 'package:kidsdo/injection_container.dart' as di;
+import 'package:kidsdo/presentation/controllers/settings_controller.dart';
 import 'package:logger/logger.dart';
-import 'package:intl/date_symbol_data_local.dart'; // Importante para formato de fechas
-import 'package:get/get.dart'; // Para acceder a Get.locale
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Configuración del Logger
-  Logger logger = Logger(
-    printer: PrettyPrinter(
-      methodCount: 1,
-      errorMethodCount: 8,
-      lineLength: 90,
-      colors: true,
-      printEmojis: true,
-      dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
-    ),
-    level: Level
-        .debug, // Ajustar nivel según sea necesario (debug, info, warning, error)
-  );
+  // Logger (debe ser uno de los primeros, si otros módulos lo usan temprano)
+  final Logger logger = Logger(/* ... tu configuración de logger ... */);
+  if (!Get.isRegistered<Logger>()) {
+    Get.put<Logger>(logger, permanent: true);
+  }
 
-  // Inicializar Firebase
+  // --- 1. Inicializar Firebase PRIMERO ---
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
     logger.i("Firebase initialized successfully.");
-  } catch (e) {
-    logger.e("Error initializing Firebase: $e");
-    // Considerar si la app puede continuar sin Firebase o mostrar un error crítico.
-  }
 
-  // Configurar Firebase App Check
-  try {
+    // Configurar Firebase App Check DESPUÉS de inicializar Firebase
     await FirebaseAppCheck.instance.activate(
-      // Para ambientes de desarrollo:
-      androidProvider: AndroidProvider
-          .debug, // Usar AndroidProvider.playIntegrity en producción
-      appleProvider:
-          AppleProvider.debug, // Usar AppleProvider.appAttest en producción
-      // webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'), // Si se usa en web
+      androidProvider: AndroidProvider.debug, // Cambiar en producción
+      appleProvider: AppleProvider.debug, // Cambiar en producción
     );
     logger.i("Firebase App Check activated.");
-  } catch (e) {
-    logger.w(
-        "Error activating Firebase App Check: $e. App will continue without App Check.");
-    // La app puede continuar, pero App Check no protegerá las llamadas a Firebase.
+  } catch (e, s) {
+    logger.e("CRITICAL: Error initializing Firebase or App Check: $e",
+        error: e, stackTrace: s);
+    // Considerar mostrar un error fatal al usuario si Firebase es esencial.
+    // Por ahora, la app podría continuar, pero fallará si se accede a Firebase.
   }
 
-  // Inicializar inyección de dependencias (GetIt o similar)
+  // --- 2. Inicialización de Dependencias (incluyendo SharedPreferences y SettingsController) ---
+  // Ahora que Firebase está inicializado, di.init() puede registrar servicios de Firebase de forma segura.
   try {
     await di.init();
-    logger.i("Dependency injection initialized.");
-  } catch (e) {
-    logger.e("Error initializing dependency injection: $e");
-    // Error crítico, la app podría no funcionar correctamente.
+    logger.i("Dependency injection (di.init) initialized successfully.");
+
+    // Asegurar que SettingsController cargue su configuración inicial
+    if (Get.isRegistered<SettingsController>()) {
+      await Get.find<SettingsController>().loadInitialSettings();
+      logger.i("SettingsController initial settings loaded.");
+    } else {
+      logger.e(
+          "CRITICAL: SettingsController not registered after di.init(). App might not behave as expected.");
+    }
+  } catch (e, s) {
+    logger.e(
+        "Error during dependency injection (di.init) or SettingsController load: $e",
+        error: e,
+        stackTrace: s);
   }
 
-  // Inicializar formato de fechas después de que GetX (y por ende Get.locale) esté disponible.
-  // LanguageController usualmente se inicializa en di.init().
+  // --- 3. Inicializar formato de fechas ---
   try {
-    // Obtener el locale actual de GetX si está disponible, si no, el del dispositivo.
-    final String? initialLocale =
-        Get.locale?.languageCode ?? Get.deviceLocale?.languageCode;
-    if (initialLocale != null && initialLocale.isNotEmpty) {
-      await initializeDateFormatting(initialLocale, null);
-      logger.i("Date formatting initialized for locale: $initialLocale");
+    String localeForDateFormatting = 'es_ES'; // Fallback inicial
+    if (Get.isRegistered<SettingsController>()) {
+      final settingsCtrl = Get.find<SettingsController>();
+      if (!settingsCtrl.isLoading.value &&
+          settingsCtrl.currentLanguageCode.value.isNotEmpty) {
+        localeForDateFormatting = settingsCtrl.formatCurrentLocaleToString();
+      } else if (settingsCtrl.isLoading.value) {
+        logger.w(
+            "SettingsController is still loading, date formatting might use fallback or previously set Get.locale");
+        localeForDateFormatting =
+            Get.locale?.toLanguageTag().replaceAll('-', '_') ?? 'es_ES';
+      }
     } else {
-      // Si no se puede determinar un locale específico, inicializar con el default del sistema.
-      await initializeDateFormatting();
-      logger.i("Date formatting initialized with default system locale.");
+      final deviceLocale = Get.deviceLocale;
+      if (deviceLocale != null) {
+        localeForDateFormatting =
+            deviceLocale.toLanguageTag().replaceAll('-', '_');
+      }
     }
-  } catch (e) {
+
+    await initializeDateFormatting(localeForDateFormatting, null);
+    logger
+        .i("Date formatting initialized for locale: $localeForDateFormatting");
+  } catch (e, s) {
     logger.w(
-        "Error initializing date formatting: $e. Date formats might use default locale.");
-    // Intentar inicialización por defecto como fallback si la específica falla.
+        "Error initializing date formatting for specific locale: $e. Trying default.",
+        error: e,
+        stackTrace: s);
     try {
       await initializeDateFormatting();
-    } catch (e2) {
-      logger.e("Fallback date formatting initialization also failed: $e2");
+      logger.i("Date formatting initialized with default system locale.");
+    } catch (e2, s2) {
+      logger.e("Fallback date formatting initialization also failed: $e2",
+          error: e2, stackTrace: s2);
     }
   }
 
-  // Establecer orientación preferida
+  // --- 4. Establecer orientación preferida y Estilo de UI del Sistema ---
   try {
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
     logger.i("Preferred orientations set to portrait.");
-  } catch (e) {
-    logger.w("Error setting preferred orientations: $e");
+  } catch (e, s) {
+    logger.w("Error setting preferred orientations: $e",
+        error: e, stackTrace: s);
   }
 
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: AppColors.systemNavBarColor,
+    systemNavigationBarIconBrightness: Brightness.light,
+  ));
+
+  // --- 5. Ejecutar la aplicación ---
   runApp(const KidsDoApp());
 }
+
+// Tu widget KidsDoApp (en app.dart) debería permanecer como está en el Canvas "app_dart_updated"
+// usando SettingsController para el locale.

@@ -10,9 +10,11 @@ import 'package:kidsdo/data/repositories/challenge_repository_impl.dart';
 import 'package:kidsdo/domain/repositories/challenge_repository.dart';
 import 'package:kidsdo/presentation/controllers/challenge_controller.dart';
 import 'package:kidsdo/presentation/controllers/child_challenges_controller.dart';
+import 'package:kidsdo/presentation/controllers/main_navigation_controller.dart';
 import 'package:kidsdo/presentation/controllers/parental_control_controller.dart';
 import 'package:kidsdo/presentation/controllers/profile_controller.dart';
 import 'package:kidsdo/presentation/controllers/rewards_controller.dart';
+import 'package:kidsdo/presentation/controllers/settings_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // DataSources
@@ -34,7 +36,6 @@ import 'package:kidsdo/domain/repositories/family_child_repository.dart';
 // Controllers
 import 'package:kidsdo/presentation/controllers/session_controller.dart';
 import 'package:kidsdo/presentation/controllers/auth_controller.dart';
-import 'package:kidsdo/presentation/controllers/language_controller.dart';
 import 'package:kidsdo/presentation/controllers/family_controller.dart';
 import 'package:kidsdo/presentation/controllers/child_profile_controller.dart';
 import 'package:kidsdo/presentation/controllers/child_access_controller.dart';
@@ -49,6 +50,9 @@ import 'package:logger/logger.dart';
 
 Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
+  if (!Get.isRegistered<SharedPreferences>()) {
+    Get.put<SharedPreferences>(sharedPreferences, permanent: true);
+  }
 
   // --- Logger ---
   // Crea y configura tu instancia de Logger aquí
@@ -67,7 +71,9 @@ Future<void> init() async {
   );
 
   // Registra la instancia del logger como un singleton permanente
-  Get.put<Logger>(logger, permanent: true);
+  if (!Get.isRegistered<Logger>()) {
+    Get.put<Logger>(logger, permanent: true);
+  }
 
   if (!Get.isRegistered<Uuid>()) {
     Get.lazyPut<Uuid>(() => const Uuid(), fenix: true);
@@ -91,8 +97,6 @@ Future<void> init() async {
             // serverClientId: 'tu-client-id-web.apps.googleusercontent.com',
           ),
       fenix: true);
-
-  Get.put<SharedPreferences>(sharedPreferences);
 
   // DataSources
   Get.lazyPut<IAuthRemoteDataSource>(
@@ -169,13 +173,17 @@ Future<void> init() async {
     fenix: true,
   );
 
-  // Controllers - Inicializar primero LanguageController
-  Get.put<LanguageController>(
-    LanguageController(
-      sharedPreferences: Get.find<SharedPreferences>(),
-    ),
-    permanent: true, // Hacerlo permanente para que no se elimine de la memoria
-  );
+  // --- SettingsController ---
+  // (Debe registrarse ANTES que cualquier controlador que dependa del idioma cargado por él,
+  // o si esos controladores acceden a él en su `onInit`)
+  if (!Get.isRegistered<SettingsController>()) {
+    Get.put<SettingsController>(
+      SettingsController(sharedPreferences: Get.find<SharedPreferences>()),
+      permanent: true,
+    );
+    // La carga inicial de settings (loadInitialSettings) se llamará desde main.dart
+    // después de di.init() para asegurar que todas las dependencias estén listas.
+  }
 
   // Resto de controladores
   Get.put<SessionController>(
@@ -291,6 +299,12 @@ Future<void> init() async {
     ),
     fenix:
         true, // Para que se recree si se elimina, o false si quieres que persista más
+  );
+
+  Get.lazyPut<MainNavigationController>(
+    () => MainNavigationController(),
+    fenix:
+        true, // Para que se recree si es necesario, o false si quieres que persista más
   );
 
   // RewardsController (se registrará cuando lo creemos)

@@ -9,6 +9,7 @@ import 'package:kidsdo/presentation/pages/challenges/challenges_library_page.dar
 import 'package:kidsdo/presentation/pages/challenges/challenges_page.dart';
 import 'package:kidsdo/presentation/pages/challenges/create_edit_challenge_page.dart';
 import 'package:kidsdo/presentation/pages/child_access/child_challenges_page.dart';
+import 'package:kidsdo/presentation/pages/main_parent_shell_page.dart';
 import 'package:kidsdo/presentation/pages/rewards/create_edit_reward_page.dart';
 import 'package:kidsdo/presentation/pages/rewards/predefined_rewards_library_page.dart';
 import 'package:kidsdo/presentation/pages/rewards/rewards_management_page.dart';
@@ -70,6 +71,9 @@ abstract class Routes {
   static const String editReward =
       '/edit-reward'; // Se pasará Reward como argumento
   static const String predefinedRewardsLibrary = '/predefined-rewards-library';
+
+  // Rutas para la navegación principal
+  static const String mainParent = '/main-parent';
 }
 
 class AppPages {
@@ -277,6 +281,14 @@ class AppPages {
           const PredefinedRewardsLibraryPage(), // Necesitaremos esta página
       middlewares: [AuthMiddleware()],
       transition: Transition.rightToLeft,
+    ),
+
+    GetPage(
+      name: Routes.mainParent, // Nueva ruta principal para padres
+      page: () => const MainParentShellPage(),
+      middlewares: [
+        AuthMiddleware()
+      ], // Asegura que el usuario esté autenticado
     ),
   ];
 }

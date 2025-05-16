@@ -1,84 +1,60 @@
+// lib/presentation/widgets/common/app_logo.dart
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Import for SvgPicture
+import 'package:get/get.dart'; // Solo si usas TrKeys.appSlogan y GetX para traducciones
 import 'package:kidsdo/core/constants/colors.dart';
 import 'package:kidsdo/core/constants/dimensions.dart';
-import 'package:kidsdo/core/translations/app_translations.dart';
+import 'package:kidsdo/core/translations/app_translations.dart'; // Para TrKeys.appSlogan
 
 class AppLogo extends StatelessWidget {
   final double size;
-  final bool showText;
+  // final bool showText; // Eliminado, ya que el texto está en el SVG
   final bool showSlogan;
+  final Color? sloganColor; // Color opcional para el eslogan
 
   const AppLogo({
     Key? key,
-    this.size = 80,
-    this.showText = true,
+    this.size = 80, // Default size for the SVG image itself
+    // this.showText = false, // No longer needed, default to false or remove
     this.showSlogan = false,
+    this.sloganColor,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final Color effectiveSloganColor = sloganColor ?? AppColors.textMedium;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Logo animado/gradiente
-        Container(
-          height: size * 1.5,
-          width: size * 1.5,
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-            gradient: const RadialGradient(
-              colors: [
-                Colors.white,
-                AppColors.primary,
-              ],
-              stops: [0.3, 1.0],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.3),
-                blurRadius: 10,
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-          child: Center(
-            child: Icon(
-              Icons.child_care,
-              size: size,
-              color: Colors.white,
-            ),
-          ),
+        // SVG Logo (que ya incluye el nombre "KidsDo")
+        SvgPicture.asset(
+          'assets/images/kidsdo_logo.svg', // Path to your SVG logo
+          width: size,
+          height: size,
+          semanticsLabel: 'KidsDo Logo', // Accessibility label
         ),
 
-        if (showText) ...[
-          const SizedBox(height: AppDimensions.md),
-          // Nombre de la aplicación
+        // El Text widget para TrKeys.appName se elimina de aquí
+
+        if (showSlogan) ...[
+          const SizedBox(
+              height: AppDimensions.md), // Espacio entre logo y eslogan
+          // Slogan
           Text(
-            TrKeys.appName.tr,
+            TrKeys.appSlogan
+                .tr, // Asegúrate de que esta clave exista en tus traducciones
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: size / 2,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary,
-              letterSpacing: 1.2,
+              fontFamily:
+                  'Poppins', // Asumiendo que Poppins es la fuente de tu app
+              fontSize:
+                  size * 0.12, // Ajusta la proporción según el balance visual
+              color: effectiveSloganColor,
+              fontStyle: FontStyle.italic,
             ),
           ),
-
-          if (showSlogan) ...[
-            const SizedBox(height: AppDimensions.sm),
-            // Eslogan
-            Text(
-              'app_slogan'.tr,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: size / 4,
-                color: AppColors.textMedium,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
         ],
       ],
     );

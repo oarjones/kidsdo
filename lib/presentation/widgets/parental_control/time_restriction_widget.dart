@@ -100,7 +100,7 @@ class TimeRestrictionWidget extends StatelessWidget {
               // Botón para volver al inicio
               if (showHomeButton)
                 ElevatedButton.icon(
-                  onPressed: () => Get.offAllNamed(Routes.home),
+                  onPressed: () => Get.offAllNamed(Routes.mainParent),
                   icon: const Icon(Icons.home),
                   label: Text('go_to_home'.tr),
                   style: ElevatedButton.styleFrom(

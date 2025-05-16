@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kidsdo/presentation/controllers/language_controller.dart';
+import 'package:kidsdo/presentation/controllers/settings_controller.dart';
 
 class LanguageSelector extends StatelessWidget {
   const LanguageSelector({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final LanguageController controller = Get.find<LanguageController>();
+    final SettingsController controller = Get.find<SettingsController>();
 
     return PopupMenuButton<String>(
       icon: const Icon(Icons.language),

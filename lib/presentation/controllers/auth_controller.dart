@@ -227,7 +227,7 @@ class AuthController extends GetxController {
         status.value = AuthStatus.success;
         _sessionController.setCurrentUser(parent);
         _logger.i("Registro exitoso: ${parent.uid}");
-        Get.offAllNamed(Routes.home);
+        Get.offAllNamed(Routes.mainParent);
       },
     );
   }
@@ -256,7 +256,7 @@ class AuthController extends GetxController {
         status.value = AuthStatus.success;
         _sessionController.setCurrentUser(parent);
         _logger.i("Login exitoso: ${parent.uid}");
-        Get.offAllNamed(Routes.home);
+        Get.offAllNamed(Routes.mainParent);
       },
     );
   }
@@ -282,7 +282,7 @@ class AuthController extends GetxController {
         status.value = AuthStatus.success;
         _sessionController.setCurrentUser(parent);
         _logger.i("Google Sign-In exitoso: ${parent.uid}");
-        Get.offAllNamed(Routes.home);
+        Get.offAllNamed(Routes.mainParent);
       },
     );
   }

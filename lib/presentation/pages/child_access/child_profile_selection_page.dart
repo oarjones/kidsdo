@@ -468,7 +468,7 @@ class ChildProfileSelectionPage extends GetView<ChildAccessController> {
       customSubtitle: TrKeys.enterParentalPinMessage.tr,
     ).then((success) {
       if (success) {
-        Get.offNamed(Routes.home);
+        Get.offNamed(Routes.mainParent);
       }
     });
   }

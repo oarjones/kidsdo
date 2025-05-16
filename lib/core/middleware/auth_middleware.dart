@@ -20,7 +20,7 @@ class AuthMiddleware extends GetMiddleware {
     // Si el usuario está logueado y la ruta es login o register, redirigir a home
     if (_sessionController.isUserLoggedIn &&
         (route == Routes.login || route == Routes.register)) {
-      return const RouteSettings(name: Routes.home);
+      return const RouteSettings(name: Routes.mainParent);
     }
 
     return null;
@@ -36,7 +36,7 @@ class NoAuthMiddleware extends GetMiddleware {
     // Si el usuario está logueado y la ruta es login o register, redirigir a home
     if (_sessionController.isUserLoggedIn &&
         (route == Routes.login || route == Routes.register)) {
-      return const RouteSettings(name: Routes.home);
+      return const RouteSettings(name: Routes.mainParent);
     }
 
     return null;

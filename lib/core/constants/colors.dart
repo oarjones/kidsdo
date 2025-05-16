@@ -70,4 +70,7 @@ class AppColors {
       Color(0xFFFFC107); // Naranja/Amarillo advertencia
   static const Color statusInactive =
       Color(0xFF6c757d); // Gris para inactivo (ejemplo)
+
+  static const systemNavBarColor =
+      Color(0xFF212121); // Un gris muy oscuro, casi negro
 }

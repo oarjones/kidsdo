@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:kidsdo/core/constants/colors.dart';
 import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/domain/entities/reward.dart';
-import 'package:kidsdo/presentation/controllers/rewards_controller.dart';
-// import 'package:flutter_svg/flutter_svg.dart'; // Si usas SVGs para los iconos
+//import 'package:flutter_svg/flutter_svg.dart'; // Si usas SVGs para los iconos
 
 class RewardCard extends StatelessWidget {
   final Reward reward;
@@ -96,9 +94,6 @@ class RewardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final RewardsController controller =
-        Get.find<RewardsController>(); // Para acciones
-
     return Card(
       elevation: AppDimensions.elevationSm,
       margin: const EdgeInsets.only(bottom: AppDimensions.md),

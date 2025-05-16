@@ -151,7 +151,7 @@ class _CreateEditRewardPageState extends State<CreateEditRewardPage> {
         Tr.t(TrKeys.formErrorTitle),
         Tr.t(TrKeys.formErrorMessage),
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.error.withOpacity(0.1),
+        backgroundColor: AppColors.error.withValues(alpha: 0.1),
         colorText: AppColors.error,
       );
     }

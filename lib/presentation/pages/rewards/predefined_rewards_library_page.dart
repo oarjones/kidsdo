@@ -4,12 +4,10 @@ import 'package:get/get.dart';
 import 'package:kidsdo/core/constants/dimensions.dart';
 import 'package:kidsdo/core/data/predefined_rewards.dart'; // Para PredefinedRewardCategory
 import 'package:kidsdo/core/translations/app_translations.dart';
-import 'package:kidsdo/domain/entities/reward.dart';
 import 'package:kidsdo/presentation/controllers/rewards_controller.dart';
 import 'package:kidsdo/presentation/pages/rewards/create_edit_reward_page.dart'; // Para la navegación
 import 'package:kidsdo/presentation/widgets/common/empty_state_widget.dart';
 import 'package:kidsdo/presentation/widgets/rewards/reward_card.dart'; // Reutilizamos RewardCard con adaptaciones
-import 'package:kidsdo/routes.dart'; // Para la navegación si se usa por nombre
 
 class PredefinedRewardsLibraryPage extends StatefulWidget {
   const PredefinedRewardsLibraryPage({super.key});
@@ -53,9 +51,10 @@ class _PredefinedRewardsLibraryPageState
               category: _selectedCategory.value?.name);
         },
         backgroundColor: isSelected
-            ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
             : Theme.of(context).chipTheme.backgroundColor,
-        selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+        selectedColor:
+            Theme.of(context).colorScheme.primary.withValues(alpha: .3),
         checkmarkColor: Theme.of(context).colorScheme.primary,
         labelStyle: TextStyle(
           color: isSelected

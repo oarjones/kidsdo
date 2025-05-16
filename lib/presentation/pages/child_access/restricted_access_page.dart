@@ -97,7 +97,7 @@ class RestrictedAccessPage extends StatelessWidget {
 
               // Botones de acción
               ElevatedButton.icon(
-                onPressed: () => Get.offAllNamed(Routes.home),
+                onPressed: () => Get.offAllNamed(Routes.mainParent),
                 icon: const Icon(Icons.home),
                 label: Text('go_to_home'.tr),
                 style: ElevatedButton.styleFrom(
@@ -116,7 +116,7 @@ class RestrictedAccessPage extends StatelessWidget {
                     if (success) {
                       // Si el PIN es correcto, desbloquear
                       parentalControlController.unlockParentalControl();
-                      Get.offAllNamed(Routes.home);
+                      Get.offAllNamed(Routes.mainParent);
                     }
                   });
                 },

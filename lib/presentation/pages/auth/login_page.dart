@@ -73,8 +73,8 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         // Logo personalizado con texto y eslogan
         AppLogo(
-          size: 80,
-          showText: true,
+          size: 150,
+          //showText: true,
           showSlogan: true,
         ),
       ],

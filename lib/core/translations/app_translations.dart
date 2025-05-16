@@ -1,10 +1,31 @@
+import 'dart:ui';
+
 import 'package:get/get.dart';
 import 'package:kidsdo/core/translations/en_translations.dart';
 import 'package:kidsdo/core/translations/es_translations.dart';
 
 class AppTranslations extends Translations {
+  // Define los locales soportados por la aplicación.
+  // Esta lista será la fuente de verdad para los idiomas soportados.
+  static final List<Locale> locales = [
+    const Locale('es', 'ES'), // Español (España)
+    const Locale('en', 'US'), // Inglés (Estados Unidos)
+    // Añade más locales aquí si los soportas
+  ];
+
+  // Locale por defecto si el locale del dispositivo no está soportado.
+  // Debe ser uno de los `locales` definidos arriba.
+  static final Locale fallbackLocale = locales
+      .firstWhere((l) => l.languageCode == 'es', orElse: () => locales.first);
+
   @override
   Map<String, Map<String, String>> get keys => {
+        // Usa los languageTags completos para las claves principales del mapa
+        'es_ES':
+            esTranslations, // Asumiendo que esTranslations es Map<String, String>
+        'en_US':
+            enTranslations, // Asumiendo que enTranslations es Map<String, String>
+        // Mapea también solo el código de idioma si quieres un fallback más simple
         'es': esTranslations,
         'en': enTranslations,
       };
@@ -742,4 +763,39 @@ class TrKeys {
   static const noPredefinedRewardsFound = 'no_predefined_rewards_found';
   static const tryDifferentFiltersPredefined =
       'try_different_filters_predefined';
+
+  // --- Navegación ---
+  static const navHome = 'nav_home';
+  static const navChallenges = 'nav_challenges';
+  static const navRewards = 'nav_rewards';
+  static const navProfile = 'nav_profile';
+
+  // Nuevas TrKeys sugeridas para profile_page.dart y otras páginas
+  static const profileTitle = 'profile_title';
+  static const editProfileMenuItem = 'edit_profile_menu_item';
+  static const errorLoadingProfile = 'error_loading_profile';
+  static const tryLoadingProfileAgain = 'try_loading_profile_again';
+  static const familyAssociated = 'family_associated';
+  static const noFamilyAssociated = 'no_family_associated';
+  static const featureComingSoon =
+      'feature_coming_soon'; // Más específico que comingSoonMessage
+  static const notAvailable = 'not_available'; // Para valores N/A
+
+  // Nuevas TrKeys para HomePage y SettingsController
+  static const String homeInitialSetupTitle = 'homeInitialSetupTitle';
+  static const String homeInitialSetupMessage = 'homeInitialSetupMessage';
+  static const String homeGoToFamilyButton =
+      'homeGoToFamilyButton'; // Para "Configurar Familia"
+  static const String homeManageFamilyButton =
+      'homeManageFamilyButton'; // Para "Gestionar Familia"
+  static const String activateChildModeOnDevice = 'activateChildModeOnDevice';
+  static const String completeSetupTitle = 'completeSetupTitle';
+  static const String completeSetupToNavigate = 'completeSetupToNavigate';
+  static const String childModeActivated = 'childModeActivated';
+  static const String childModeDeactivated = 'childModeDeactivated';
+  static const String settingsLoadingError = 'settingsLoadingError';
+  static const String parentalControlDisabledTooltip =
+      'parentalControlDisabledTooltip';
+  static const String childModeSwitchDisabledTooltip =
+      'childModeSwitchDisabledTooltip';
 }
