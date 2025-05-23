@@ -90,8 +90,8 @@ class SettingsController extends GetxController {
   }
 
   Future<void> setChildModeActiveOnDevice(bool isActive,
-      {bool _calledFromChildAccess = false}) async {
-    if (isChildModeActiveOnDevice.value == isActive && _calledFromChildAccess) {
+      {bool calledFromChildAccess = false}) async {
+    if (isChildModeActiveOnDevice.value == isActive && calledFromChildAccess) {
       // If called from ChildAccessController.exitChildMode and the value is already what CAC expects,
       // and we are trying to set it to the same value, then ChildAccessController already handled its state.
       // We just need to persist.
@@ -121,7 +121,7 @@ class SettingsController extends GetxController {
       );
     } else {
       // Only call exitChildMode if not already called from it
-      if (!_calledFromChildAccess) {
+      if (!calledFromChildAccess) {
         childAccessCtrl.exitChildMode();
       }
       // Similar logic for snackbar

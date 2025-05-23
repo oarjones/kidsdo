@@ -41,6 +41,7 @@ class AppColors {
   static const childGreen = Color(0xFF43A047);
   static const childOrange = Color(0xFFEF6C00);
   static const childPink = Color(0xFFEC407A);
+  static const childTeal = Color(0xFF05918A);
 
   // Añadir estos colores para mejorar el contraste de la navegación
   static const navigationSelected =

@@ -202,7 +202,7 @@ class ChildAccessController extends GetxController {
       final settingsCtrl = Get.find<SettingsController>();
       if (settingsCtrl.isChildModeActiveOnDevice.value) {
         settingsCtrl.setChildModeActiveOnDevice(false,
-            _calledFromChildAccess: true);
+            calledFromChildAccess: true);
       }
     }
   }
@@ -215,7 +215,6 @@ class ChildAccessController extends GetxController {
       _logger.i(
           "Global child mode requested. UI should switch to ChildProfileSelectionPage.");
     }
-
   }
 
   /// Verifica si el PIN introducido es correcto

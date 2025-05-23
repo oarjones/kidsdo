@@ -252,7 +252,6 @@ final Map<String, String> esTranslations = {
   'child_name_preview': 'Nombre',
 
   // Modo de acceso infantil
-  'who_is_using': '¿Quién está usando la app?',
   'select_profile_message':
       'Selecciona tu perfil para acceder a tus retos y recompensas',
   'access_profile': 'Acceder',

@@ -39,13 +39,13 @@ class _ChildProfileSelectionPageState extends State<ChildProfileSelectionPage>
   void _loadProfilesAndAnimate() {
     // Ensure profiles are loaded before trying to animate
     if (childAccessController.status.value != ChildAccessStatus.loading) {
-       childAccessController.loadAvailableChildProfiles().then((_) {
+      childAccessController.loadAvailableChildProfiles().then((_) {
         if (mounted && childAccessController.availableChildren.isNotEmpty) {
           _initializeAnimations();
         }
       });
     } else {
-       // If already loading, wait for it to complete via the `ever` listener or Obx
+      // If already loading, wait for it to complete via the `ever` listener or Obx
     }
   }
 
@@ -106,43 +106,49 @@ class _ChildProfileSelectionPageState extends State<ChildProfileSelectionPage>
             ),
             Column(
               children: [
-                SizedBox(height: AppDimensions.xl),
+                const SizedBox(height: AppDimensions.xl),
                 Text(
                   Tr.t(TrKeys.whoIsUsing),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.bold,
-                    fontSize: AppDimensions.fontHeading, // Using 30.0 as a fallback if needed
+                    fontSize: AppDimensions
+                        .fontHeading, // Using 30.0 as a fallback if needed
                     color: Colors.white,
                     shadows: [
                       Shadow(
                         blurRadius: 4.0,
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         offset: const Offset(2.0, 2.0),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: AppDimensions.lg),
+                const SizedBox(height: AppDimensions.lg),
                 Expanded(
                   child: Obx(() {
                     // Re-initialize animations if controller was disposed or children changed
                     // and we are in a success state with children
-                    if (childAccessController.status.value == ChildAccessStatus.success &&
+                    if (childAccessController.status.value ==
+                            ChildAccessStatus.success &&
                         childAccessController.availableChildren.isNotEmpty &&
-                        (_animationController == null || _animations.length != childAccessController.availableChildren.length)) {
+                        (_animationController == null ||
+                            _animations.length !=
+                                childAccessController
+                                    .availableChildren.length)) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         if (mounted) {
-                           _disposeAnimationController();
-                           _initializeAnimations();
+                          _disposeAnimationController();
+                          _initializeAnimations();
                         }
                       });
                     }
 
                     switch (childAccessController.status.value) {
                       case ChildAccessStatus.loading:
-                      case ChildAccessStatus.initial: // Treat initial as loading for UI
+                      case ChildAccessStatus
+                            .initial: // Treat initial as loading for UI
                         return const Center(
                             child: CircularProgressIndicator(
                                 valueColor: AlwaysStoppedAnimation<Color>(
@@ -150,8 +156,7 @@ class _ChildProfileSelectionPageState extends State<ChildProfileSelectionPage>
                       case ChildAccessStatus.error:
                         return Center(
                           child: Padding(
-                            padding:
-                                EdgeInsets.all(AppDimensions.paddingScreen),
+                            padding: const EdgeInsets.all(AppDimensions.lg),
                             child: Text(
                               childAccessController.errorMessage.isNotEmpty
                                   ? childAccessController.errorMessage.value
@@ -167,12 +172,11 @@ class _ChildProfileSelectionPageState extends State<ChildProfileSelectionPage>
                         if (childAccessController.availableChildren.isEmpty) {
                           return Center(
                             child: Padding(
-                              padding:
-                                  EdgeInsets.all(AppDimensions.paddingScreen),
+                              padding: const EdgeInsets.all(AppDimensions.lg),
                               child: Text(
                                 Tr.t(TrKeys.noChildProfilesSelectMessage),
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: AppDimensions.fontXl,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w500,
@@ -182,13 +186,17 @@ class _ChildProfileSelectionPageState extends State<ChildProfileSelectionPage>
                           );
                         }
 
-                        final children = childAccessController.availableChildren;
-                        
-                        // Ensure animations list matches children count, providing a fallback
-                        final currentAnimations = _animations.length == children.length
-                            ? _animations
-                            : List.generate(children.length, (_) => const AlwaysStoppedAnimation<double>(1.0));
+                        final children =
+                            childAccessController.availableChildren;
 
+                        // Ensure animations list matches children count, providing a fallback
+                        final currentAnimations = _animations.length ==
+                                children.length
+                            ? _animations
+                            : List.generate(
+                                children.length,
+                                (_) =>
+                                    const AlwaysStoppedAnimation<double>(1.0));
 
                         return LayoutBuilder(
                           builder: (context, constraints) {
@@ -207,9 +215,9 @@ class _ChildProfileSelectionPageState extends State<ChildProfileSelectionPage>
                               );
                             } else {
                               return GridView.builder(
-                                padding: EdgeInsets.all(AppDimensions.md),
+                                padding: const EdgeInsets.all(AppDimensions.md),
                                 gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
                                   childAspectRatio: 0.8,
                                   crossAxisSpacing: AppDimensions.md,
@@ -235,7 +243,7 @@ class _ChildProfileSelectionPageState extends State<ChildProfileSelectionPage>
               bottom: AppDimensions.lg,
               right: AppDimensions.lg,
               child: IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.admin_panel_settings_outlined,
                   color: Colors.white,
                   size: AppDimensions.iconXl,
@@ -261,8 +269,7 @@ class _ChildAvatarItem extends StatefulWidget {
   final FamilyChild child;
   final Animation<double> entryAnimation;
 
-  const _ChildAvatarItem(
-      {required this.child, required this.entryAnimation});
+  const _ChildAvatarItem({required this.child, required this.entryAnimation});
 
   @override
   State<_ChildAvatarItem> createState() => _ChildAvatarItemState();
@@ -284,13 +291,20 @@ class _ChildAvatarItemState extends State<_ChildAvatarItem> {
     } catch (e) {
       // Fallback for simple color names or if parsing fails
       switch (colorString.toLowerCase()) {
-        case 'purple': return AppColors.childPurple;
-        case 'blue': return AppColors.childBlue;
-        case 'green': return AppColors.childGreen;
-        case 'orange': return AppColors.childOrange;
-        case 'pink': return AppColors.childPink;
-        case 'teal': return AppColors.childTeal;
-        default: return AppColors.primary;
+        case 'purple':
+          return AppColors.childPurple;
+        case 'blue':
+          return AppColors.childBlue;
+        case 'green':
+          return AppColors.childGreen;
+        case 'orange':
+          return AppColors.childOrange;
+        case 'pink':
+          return AppColors.childPink;
+        case 'teal':
+          return AppColors.childTeal;
+        default:
+          return AppColors.primary;
       }
     }
   }
@@ -307,7 +321,6 @@ class _ChildAvatarItemState extends State<_ChildAvatarItem> {
     } else if (colorSetting is String) {
       itemColor = _parseColor(colorSetting);
     }
-
 
     return FadeTransition(
       opacity: widget.entryAnimation,
@@ -336,12 +349,13 @@ class _ChildAvatarItemState extends State<_ChildAvatarItem> {
                   CircleAvatar(
                     radius: avatarRadius,
                     backgroundColor: itemColor,
-                    child: Icon(Icons.person,
+                    child: const Icon(Icons.person,
                         size: avatarRadius, color: Colors.white),
                   ),
-                SizedBox(height: AppDimensions.sm),
+                const SizedBox(height: AppDimensions.sm),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppDimensions.xs),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppDimensions.xs),
                   child: Text(
                     widget.child.name,
                     textAlign: TextAlign.center,
@@ -354,7 +368,7 @@ class _ChildAvatarItemState extends State<_ChildAvatarItem> {
                       shadows: [
                         Shadow(
                           blurRadius: 2.0,
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withValues(alpha: 0.5),
                           offset: const Offset(1.0, 1.0),
                         ),
                       ],

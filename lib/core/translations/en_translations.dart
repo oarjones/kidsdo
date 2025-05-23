@@ -246,7 +246,6 @@ final Map<String, String> enTranslations = {
   'child_name_preview': 'Name',
 
   // Child access mode
-  'who_is_using': 'Who is using the app?',
   'select_profile_message':
       'Select your profile to access your challenges and rewards',
   'access_profile': 'Access',
