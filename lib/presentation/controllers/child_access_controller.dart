@@ -215,6 +215,7 @@ class ChildAccessController extends GetxController {
       _logger.i(
           "Global child mode requested. UI should switch to ChildProfileSelectionPage.");
     }
+
   }
 
   /// Verifica si el PIN introducido es correcto
