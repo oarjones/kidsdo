@@ -798,4 +798,10 @@ class TrKeys {
       'parentalControlDisabledTooltip';
   static const String childModeSwitchDisabledTooltip =
       'childModeSwitchDisabledTooltip';
+
+  // Nuevas claves para la selección de perfil
+  static const whoIsUsing = 'who_is_using'; // Ya existe, pero la mantengo por si acaso
+  static const parentAccessButtonTooltip = 'parent_access_button_tooltip';
+  static const noChildProfilesSelectMessage =
+      'no_child_profiles_select_message';
 }

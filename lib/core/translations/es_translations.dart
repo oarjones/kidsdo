@@ -888,4 +888,10 @@ final Map<String, String> esTranslations = {
       "Configura tu familia y al menos un niño para activar el Control Parental.",
   'childModeSwitchDisabledTooltip':
       "Configura tu familia y al menos un niño para activar el Modo Infantil.",
+
+  // Nuevas claves para la selección de perfil
+  'who_is_using': '¿Quién eres?',
+  'parent_access_button_tooltip': 'Acceso Padres',
+  'no_child_profiles_select_message':
+      '¡Oh! Parece que aún no hay perfiles. Pídele a un adulto que cree uno.',
 };
