@@ -3,56 +3,65 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 import 'package:kidsdo/core/theme/app_theme.dart';
-import 'package:kidsdo/routes.dart'; // Asegúrate de que tus rutas estén definidas aquí
-import 'package:kidsdo/presentation/controllers/settings_controller.dart'; // Importa SettingsController
-// import 'package:kidsdo/presentation/pages/splash/splash_page.dart'; // No es necesario si usas initialRoute
+import 'package:kidsdo/routes.dart';
+import 'package:kidsdo/presentation/controllers/settings_controller.dart';
+import 'package:kidsdo/presentation/controllers/child_access_controller.dart'; // Import ChildAccessController
+import 'package:kidsdo/presentation/pages/splash/splash_page.dart'; // Import SplashPage
+import 'package:kidsdo/presentation/pages/child_access/child_profile_selection_page.dart'; // Import ChildProfileSelectionPage
 
 class KidsDoApp extends StatelessWidget {
   const KidsDoApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Acceder al SettingsController.
-    // Para cuando se construye KidsDoApp, SettingsController ya debería estar
-    // registrado y sus configuraciones cargadas por la lógica en main.dart.
-    final SettingsController settingsController =
-        Get.find<SettingsController>();
+    final SettingsController settingsController = Get.find<SettingsController>();
+    // Access ChildAccessController
+    final ChildAccessController childAccessController = Get.find<ChildAccessController>();
 
-    // Envolver GetMaterialApp con Obx para que reaccione a los cambios de idioma
-    // y a la carga inicial de SettingsController.
     return Obx(() {
-      // Mientras SettingsController está cargando, podrías mostrar un Loader global
-      // o simplemente dejar que la SplashPage maneje su propia lógica de carga.
-      // Aquí, asumimos que la SplashPage se mostrará y el locale se actualizará
-      // una vez que settingsController.isLoading.value sea false.
-      Locale currentLocale = settingsController.isLoading.value
-          ? (Get.deviceLocale ??
-              AppTranslations.fallbackLocale) // Locale temporal mientras carga
-          : settingsController
-              .getCurrentLocale(); // Locale desde SettingsController
+      // SettingsController loading state
+      if (settingsController.isLoading.value) {
+        // Show a simple loading screen while settings (especially locale) are being loaded.
+        // This prevents UI flicker or building with a temporary locale.
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.lightTheme.primaryColor),
+              ),
+            ),
+          ),
+        );
+      }
 
-      return GetMaterialApp(
-        title: Tr.t(TrKeys.appName), // Usar Tr.t para el título
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode
-            .system, // O gestionado por SettingsController en el futuro
+      Locale currentLocale = settingsController.getCurrentLocale();
+      
+      // Determine the home widget based on child mode.
+      // Another Obx is used here to specifically react to changes in isChildMode.
+      return Obx(() {
+        Widget homeWidget;
+        if (childAccessController.isChildMode.value) {
+          homeWidget = const ChildProfileSelectionPage();
+        } else {
+          homeWidget = const SplashPage(); // Default entry for parent mode
+        }
 
-        // Configuración de internacionalización
-        translations: AppTranslations(), // Tu clase de traducciones
-        locale:
-            currentLocale, // Establecer el locale basado en SettingsController
-        fallbackLocale: AppTranslations.fallbackLocale, // Idioma por defecto
-
-        initialRoute: Routes.splash, // Ruta inicial de tu aplicación
-        getPages:
-            AppPages.routes, // Tus GetPage si usas navegación nombrada de GetX
-
-        defaultTransition: Transition.cupertino,
-        transitionDuration: const Duration(milliseconds: 300),
-        // home: const SplashPage(), // No es necesario si usas initialRoute
-      );
+        return GetMaterialApp(
+          title: Tr.t(TrKeys.appName),
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system, 
+          translations: AppTranslations(),
+          locale: currentLocale,
+          fallbackLocale: AppTranslations.fallbackLocale,
+          home: homeWidget, // Dynamically set home page
+          getPages: AppPages.routes, // Keep GetPage routes for navigation
+          defaultTransition: Transition.cupertino,
+          transitionDuration: const Duration(milliseconds: 300),
+        );
+      });
     });
   }
 }

@@ -5,6 +5,7 @@ import 'package:kidsdo/domain/entities/family_child.dart';
 import 'package:kidsdo/domain/repositories/family_child_repository.dart';
 import 'package:kidsdo/presentation/controllers/family_controller.dart';
 import 'package:kidsdo/presentation/controllers/parental_control_controller.dart';
+import 'package:kidsdo/presentation/controllers/settings_controller.dart'; // Added import
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -190,11 +191,31 @@ class ChildAccessController extends GetxController {
 
   /// Sale del modo infantil y vuelve al modo padre
   void exitChildMode() {
-    isChildMode.value = false;
-    activeChildProfile.value = null; // Limpiar perfil activo
-    sessionStartTime.value = null;
-    timeWarningShown.value = false;
-    _logger.i("Salido del modo infantil");
+    if (isChildMode.value) {
+      isChildMode.value = false;
+      activeChildProfile.value = null;
+      sessionStartTime.value = null;
+      timeWarningShown.value = false;
+      _logger.i("Exiting child mode. UI should switch to Parent mode.");
+
+      // Update the setting in SettingsController to keep it in sync
+      final settingsCtrl = Get.find<SettingsController>();
+      if (settingsCtrl.isChildModeActiveOnDevice.value) {
+        settingsCtrl.setChildModeActiveOnDevice(false,
+            _calledFromChildAccess: true);
+      }
+    }
+  }
+
+  /// Enters global child mode, typically called from SettingsController.
+  /// This method itself does not navigate. Navigation is handled by UI reacting to `isChildMode`.
+  void enterGlobalChildMode() {
+    if (!isChildMode.value) {
+      isChildMode.value = true;
+      _logger.i(
+          "Global child mode requested. UI should switch to ChildProfileSelectionPage.");
+    }
+
   }
 
   /// Verifica si el PIN introducido es correcto

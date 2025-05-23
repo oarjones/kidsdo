@@ -1,6 +1,7 @@
 // lib/presentation/controllers/settings_controller.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kidsdo/presentation/controllers/child_access_controller.dart'; // Added import
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kidsdo/core/translations/app_translations.dart';
 
@@ -88,18 +89,51 @@ class SettingsController extends GetxController {
     Get.updateLocale(locale);
   }
 
-  Future<void> setChildModeActiveOnDevice(bool isActive) async {
-    // ... (sin cambios)
+  Future<void> setChildModeActiveOnDevice(bool isActive,
+      {bool _calledFromChildAccess = false}) async {
+    if (isChildModeActiveOnDevice.value == isActive && _calledFromChildAccess) {
+      // If called from ChildAccessController.exitChildMode and the value is already what CAC expects,
+      // and we are trying to set it to the same value, then ChildAccessController already handled its state.
+      // We just need to persist.
+      await sharedPreferences.setBool(_prefChildModeActiveKey, isActive);
+      // No snackbar here if called from CAC to avoid double snackbar
+      return;
+    }
+
+    if (isChildModeActiveOnDevice.value == isActive) return; // No change needed
+
     isChildModeActiveOnDevice.value = isActive;
     await sharedPreferences.setBool(_prefChildModeActiveKey, isActive);
-    Get.snackbar(
-      TrKeys.info.tr,
-      isActive ? TrKeys.childModeActivated.tr : TrKeys.childModeDeactivated.tr,
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 2),
-      backgroundColor: isActive ? Colors.blueAccent : Colors.orangeAccent,
-      colorText: Colors.white,
-    );
+
+    final childAccessCtrl = Get.find<ChildAccessController>();
+
+    if (isActive) {
+      childAccessCtrl.enterGlobalChildMode();
+      // Show snackbar only if not called from ChildAccessController, or if you always want to show it
+      // For this implementation, we'll show it as it indicates the setting was changed.
+      Get.snackbar(
+        TrKeys.info.tr,
+        TrKeys.childModeActivated.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.blueAccent,
+        colorText: Colors.white,
+      );
+    } else {
+      // Only call exitChildMode if not already called from it
+      if (!_calledFromChildAccess) {
+        childAccessCtrl.exitChildMode();
+      }
+      // Similar logic for snackbar
+      Get.snackbar(
+        TrKeys.info.tr,
+        TrKeys.childModeDeactivated.tr,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.orangeAccent,
+        colorText: Colors.white,
+      );
+    }
   }
 
   // Método interno para formatear un Locale específico a string
