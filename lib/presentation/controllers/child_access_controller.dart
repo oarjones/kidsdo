@@ -114,6 +114,9 @@ class ChildAccessController extends GetxController {
                 !_parentalControlController.isProfileBlocked(child.id))
             .toList();
 
+        // Ordenar alfabéticamente por nombre
+        filteredChildren.sort((a, b) => a.name.compareTo(b.name));
+
         availableChildren.addAll(filteredChildren);
         status.value = ChildAccessStatus.success;
         _logger.i(
@@ -188,6 +191,7 @@ class ChildAccessController extends GetxController {
   /// Sale del modo infantil y vuelve al modo padre
   void exitChildMode() {
     isChildMode.value = false;
+    activeChildProfile.value = null; // Limpiar perfil activo
     sessionStartTime.value = null;
     timeWarningShown.value = false;
     _logger.i("Salido del modo infantil");

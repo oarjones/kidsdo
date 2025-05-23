@@ -870,4 +870,10 @@ final Map<String, String> enTranslations = {
       "Set up your family and at least one child to enable Parental Controls.",
   'childModeSwitchDisabledTooltip':
       "Set up your family and at least one child to enable Child Mode.",
+
+  // New keys for profile selection
+  'who_is_using': 'Who are you?',
+  'parent_access_button_tooltip': 'Parent Access',
+  'no_child_profiles_select_message':
+      'Oh! It seems there are no profiles yet. Ask an adult to create one.',
 };
